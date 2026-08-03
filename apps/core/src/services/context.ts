@@ -30,9 +30,19 @@ export interface ApiConfig {
   /** The verified Postmark sender signature. Usually a no-reply address. */
   readonly authEmailFrom: string;
   /**
-   * The footer's sender identity (spec §25): name, postal address and a
-   * contact address a recipient can actually write to. Distinct from
-   * `authEmailFrom` on purpose — see `senderIdentityFromEnv` in `@luma/email`.
+   * The footer's sender identity: name, postal address and a contact address a
+   * recipient can actually write to.
+   *
+   * §25 requires the footer to carry «avsenderinformasjon og
+   * kontaktinformasjon» and does not itemise it further — the three fields are
+   * `SenderIdentity` in `@luma/email`, not a spec enumeration. (An earlier
+   * version of this comment presented them as §25's list.) §48 lists no sender
+   * variable either, so `SENDER_NAME`, `SENDER_POSTAL_ADDRESS` and
+   * `SENDER_CONTACT_EMAIL` are additions beyond it, recorded in
+   * `docs/spec-deviations.md`. All three are configuration; the postal address
+   * was a hard-coded constant until that variable existed, and is not one now.
+   *
+   * Distinct from `authEmailFrom` on purpose — see `senderIdentityFromEnv`.
    */
   readonly sender: SenderIdentity;
   readonly billingAdminEmail: string;

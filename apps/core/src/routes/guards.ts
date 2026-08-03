@@ -18,8 +18,13 @@ import type { Actor } from '../services/context.js';
  * a server check: an older browser, a `<link rel=prerender>`, or a future
  * top-level navigation that a browser decides to treat as safe all fall
  * outside it, and the server would have no idea. So state-changing requests
- * additionally have to prove they came from our own front end, and this
- * implementation asks for **both** of the two options spec §39 offers:
+ * additionally have to prove they came from our own front end.
+ *
+ * On authority, precisely: §39 requires "CSRF-beskyttelse" and stops there. It
+ * names no mechanism and offers no menu — an earlier version of this comment
+ * said it "offers two options", which it does not. The two below are an
+ * engineering choice made here, and requiring both rather than either is part
+ * of that choice, not compliance with a spec sentence:
  *
  * 1. **A custom header, `x-luma-csrf`.** A cross-origin request cannot set a
  *    non-safelisted header without first passing a CORS preflight, and the

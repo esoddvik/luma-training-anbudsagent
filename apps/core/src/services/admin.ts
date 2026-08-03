@@ -64,15 +64,31 @@ export interface IngestStatusReport {
    *
    * Consequences:
    *
-   * - Spec §47's stalled-queue alert **can** be built on these numbers — a
-   *   rising `ready` with `active` pinned at zero is exactly the signal, and it
-   *   keeps updating precisely because the read recomputes rather than waiting
-   *   for a monitor that has stopped. (An earlier version of this comment said
-   *   the opposite. That was correct for `getQueues` and is wrong for the call
-   *   actually used.) Corroborating it against evidence the work itself leaves
-   *   behind — `ingestion_runs` advancing, `notification_deliveries` being
-   *   written — is still worth doing, but as defence in depth rather than
-   *   because this metric is untrustworthy.
+   * - Spec §47's stalled-queue alert needs **two** signals off this report, and
+   *   they are not interchangeable. Queue depth detects a *consumer-side*
+   *   stall: work arriving with nothing draining it, a rising `ready` while
+   *   `active` sits at zero. It keeps updating during that outage precisely
+   *   because the read recomputes rather than waiting on a stopped monitor.
+   *
+   *   It cannot detect a dead estate. `schedule` is gated on the same
+   *   `WORKER_ENABLED` flag as the handlers (`queue/boss.ts`), and the cron
+   *   entries in `queue/register.ts` are the only producers of `doffin.sync`,
+   *   `notification.digest.prepare` and `share.cleanup`. With no worker
+   *   anywhere, nothing enqueues *and* nothing consumes, so depth reads a
+   *   serene `0/0` — correctly computed, and indistinguishable from an idle
+   *   Sunday. `/ready` does not cover the gap either: its queue probe is
+   *   `boss.isInstalled()`, which a producer-only replica passes.
+   *
+   *   The discriminator is evidence the work itself leaves behind, and this
+   *   report already carries it: `lastSuccessfulRunAt` and `lastRun`. If
+   *   ingest has not advanced in hours, the estate is dead however calm the
+   *   queue looks. Alert on both; neither alone is sufficient.
+   *
+   *   (Two earlier versions of this comment were each half right — one said
+   *   the depth metric was unusable, which was true of `getQueues` and false
+   *   here; the next said depth alone was the signal, which misses the
+   *   worker-less estate entirely. Both are recorded because the next person
+   *   will otherwise re-derive one of them.)
    * - A queue missing from the registry throws rather than returning the other
    *   eleven, and the handler below downgrades that to `null`. "Unavailable" is
    *   the honest answer when queue registration never ran.

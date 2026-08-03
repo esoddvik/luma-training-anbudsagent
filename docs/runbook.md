@@ -62,7 +62,18 @@ The scheduler ticks every fifteen minutes and sends to each profile at its own l
 
 The admin dashboard shows ready, active and failed counts per queue, and they are safe to alert on. `queueStatus` asks pg-boss per queue with `force`, which recomputes from the job table whenever the cached figure is older than about a minute — and always when the queue has never been monitored at all. So the counts keep moving even when no instance is running as a worker, which is precisely the outage the §47 alert exists to catch.
 
-**Rising `ready` with `active` at zero is the signal.** Work is arriving and nothing is picking it up.
+**Rising `ready` with `active` at zero catches one failure and not the other.** Work is arriving and nothing is picking it up — a consumer-side stall, and the counts see it.
+
+They do not see the worse case. `schedule` is gated on the same flag as the handlers, and those three cron entries are the only producers of `doffin.sync`, `notification.digest.prepare` and `share.cleanup`. So if **no** instance is running as a worker, nothing enqueues and nothing consumes: `ready` and `active` both sit at zero, correctly computed, and a depth alert stays silent while the service quietly ingests nothing. `/ready` does not rescue you either — its queue probe only asks whether pg-boss is installed, which a producer-only replica passes.
+
+That topology is not hypothetical. One worker plus several HTTP-only replicas is exactly what the worker flag exists to allow. Lose the worker and every dashboard stays green.
+
+**So §47 needs two signals, and they are not interchangeable:**
+
+| Failure | Caught by |
+| --- | --- |
+| Handlers stalled, work still arriving | Rising `ready`, `active` at zero |
+| No worker anywhere: nothing produced, nothing consumed | Only evidence the work itself produces |
 
 State the guarantee precisely, because it is easy to over-read: this is a **bound on staleness, not freshness**. The numbers are never more than roughly sixty seconds old, with or without a worker. They are not live.
 
@@ -72,7 +83,9 @@ Three traps in the same area:
 - **`updatedOn` is not a freshness stamp.** It records when a queue's *configuration* last changed, so it will render a recent-looking time beside stale counts. The statistics timestamp is `monitor_on`.
 - The counts are a property of the shared database, not of the process asking, so a producer-only replica reports the same values as a worker. That is correct and deliberate.
 
-Even so, **the strongest evidence is what the work itself produces**: `ingestion_runs` gaining a row on schedule, `notification_deliveries` being written when a digest hour passes, the newest tender's `last_synced_at` advancing. Those cannot go quiet and healthy at the same time under any mechanism, and they are what the sections above already tell you to check by hand.
+**The strongest evidence remains what the work itself produces**: `ingestion_runs` gaining a row on schedule, `notification_deliveries` being written when a digest hour passes, the newest tender's `last_synced_at` advancing. These are the only signals that stop when *production* stops, so they are the ones that catch a missing worker. Alert on them, and treat queue depth as the finer-grained companion rather than the primary.
+
+> **This section has now been rewritten twice**, first because the counts came from a cache that a stopped worker also stopped refreshing, then because the fix for that left the guidance covering only half the failure modes. Both revisions were found by tracing the call chain end to end rather than by rereading the code, which had already been read carefully each time. If you are extending the alerting, trace it again rather than trusting this paragraph.
 
 ## Email
 

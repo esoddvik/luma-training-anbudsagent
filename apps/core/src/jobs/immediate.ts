@@ -97,7 +97,9 @@ export async function findImmediateCandidates(
     .filter(
       (row) =>
         (row.tenderAlertsEnabled ?? true) &&
-        // Off by default (spec §22). A user opts in to being interrupted.
+        // Off by default, from the column default in `notification_preferences`
+        // (`@luma/db`), not from §22 — its «Anbefalt standard» block covers only
+        // promotions and marketing consent. A user opts in to being interrupted.
         (row.immediateAlertsEnabled ?? false),
     )
     .map((row) => ({

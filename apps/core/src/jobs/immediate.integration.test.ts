@@ -107,7 +107,8 @@ describeDb('immediate alerts', () => {
   });
 
   it('does not alert when the user has not opted in', async () => {
-    // Off by default per spec §22: being interrupted is opt-in.
+    // Off by default per the `notification_preferences` column default, not
+    // §22: being interrupted is opt-in.
     await db
       .update(notificationPreferences)
       .set({ immediateAlertsEnabled: false })

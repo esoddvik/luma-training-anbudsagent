@@ -69,8 +69,10 @@ async function loadPreferences(db: Database, userId: string): Promise<Notificati
     .limit(1);
   const row = rows[0];
 
-  // Spec §22 defaults: alerts on, promotion on, marketing consent off. Marketing
-  // consent is never read from here — it is derived from the consent log.
+  // Two of these are §22's «Anbefalt standard»: promotion on, marketing consent
+  // off. The three alert defaults are the column defaults in
+  // `notification_preferences` (`@luma/db`) — §22 states no default for them.
+  // Marketing consent is never read from here; it is derived from the consent log.
   return {
     tenderAlertsEnabled: row?.tenderAlertsEnabled ?? true,
     immediateAlertsEnabled: row?.immediateAlertsEnabled ?? false,

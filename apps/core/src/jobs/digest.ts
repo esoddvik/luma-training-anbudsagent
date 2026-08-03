@@ -1,15 +1,17 @@
-import { and, eq, inArray, isNull, notInArray, sql } from 'drizzle-orm';
+import { and, desc, eq, inArray, isNull, notInArray, sql } from 'drizzle-orm';
 import type { Database } from '@luma/db';
 import {
   alertProfiles,
   notificationDeliveries,
   notificationDeliveryItems,
   notificationPreferences,
+  schedulerRuns,
   tenderMatches,
   users,
 } from '@luma/db';
 import type { AlertFrequency } from '@luma/domain';
 import type { Logger } from '@luma/observability';
+import { JOB } from './names.js';
 
 /**
  * Deciding who receives a digest, and making sure nobody receives the same
@@ -297,6 +299,50 @@ export async function markDeliveryFailed(
     .where(eq(notificationDeliveries.id, deliveryId));
 }
 
+/**
+ * Records one scheduler tick (spec §38, «Siste kjørevindu skal registreres»).
+ *
+ * `windowFrom` is read back from the previous row rather than computed from the
+ * cron expression, so the recorded window stays truthful across a restart, a
+ * changed schedule or a period when nothing was running. Deriving it from the
+ * interval would produce a window that looks continuous precisely when it was
+ * not — which is the outage this table exists to make visible.
+ */
+export async function recordSchedulerRun(options: {
+  db: Database;
+  jobName: string;
+  now: Date;
+  report: {
+    candidatesConsidered: number;
+    due: number;
+    claimed: number;
+    skippedAlreadySent: number;
+    skippedEmpty: number;
+  };
+}): Promise<void> {
+  const { db, jobName, now, report } = options;
+
+  const previous = await db
+    .select({ windowTo: schedulerRuns.windowTo })
+    .from(schedulerRuns)
+    .where(eq(schedulerRuns.jobName, jobName))
+    .orderBy(desc(schedulerRuns.windowTo))
+    .limit(1);
+
+  await db.insert(schedulerRuns).values({
+    jobName,
+    // Null on the very first tick. A reader must treat that as "no earlier run
+    // recorded", not as an interval open to the beginning of time.
+    windowFrom: previous[0]?.windowTo ?? null,
+    windowTo: now,
+    candidatesConsidered: report.candidatesConsidered,
+    dueCount: report.due,
+    claimedCount: report.claimed,
+    skippedAlreadySent: report.skippedAlreadySent,
+    skippedEmpty: report.skippedEmpty,
+  });
+}
+
 export interface DigestSchedulerReport {
   candidatesConsidered: number;
   due: number;
@@ -350,6 +396,23 @@ export async function runDigestScheduler(options: {
 
     claims.push({ candidate, deliveryId: claim.deliveryId });
   }
+
+  // §38: «Siste kjørevindu skal registreres». Written unconditionally, before
+  // the log line and whatever the tick found — a tick that claimed nothing is
+  // precisely the one worth recording, because otherwise it is indistinguishable
+  // from a tick that never happened.
+  await recordSchedulerRun({
+    db,
+    jobName: JOB.notificationDigestPrepare,
+    now,
+    report: {
+      candidatesConsidered: candidates.length,
+      due: dueCandidates.length,
+      claimed: claims.length,
+      skippedAlreadySent,
+      skippedEmpty,
+    },
+  });
 
   logger.info(
     {

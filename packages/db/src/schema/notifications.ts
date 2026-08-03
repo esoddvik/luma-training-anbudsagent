@@ -287,3 +287,43 @@ export type NewNotificationDeliveryRow = typeof notificationDeliveries.$inferIns
 export type NotificationDeliveryItemRow = typeof notificationDeliveryItems.$inferSelect;
 export type EmailEventRow = typeof emailEvents.$inferSelect;
 export type EmailSuppressionRow = typeof emailSuppressions.$inferSelect;
+
+/**
+ * One row per scheduler tick (spec §38, «Siste kjørevindu skal registreres»).
+ *
+ * **A tick that claims nothing still writes a row, and that is the entire
+ * point.** Without it, "the scheduler ran and nothing was due" and "the
+ * scheduler never ran" are the same observation: no deliveries, no errors,
+ * nothing anywhere. That ambiguity is exactly the missing-worker case the
+ * runbook says queue depth cannot detect, because `schedule` and the handlers
+ * are gated on the same flag — with no worker in the estate, nothing is
+ * enqueued and nothing is consumed, so every depth reading is a correct zero.
+ *
+ * `windowTo` advancing on schedule is therefore the signal that survives when
+ * production itself stops. Alert on its age, not on queue depth.
+ */
+export const schedulerRuns = pgTable(
+  'scheduler_runs',
+  {
+    id: primaryId(),
+    /** The queue name, e.g. `notification.digest.prepare`. */
+    jobName: text('job_name').notNull(),
+    /**
+     * The window this tick covered: the previous tick's `windowTo`, or null on
+     * the first run for this job. Null means "no earlier run recorded", never
+     * "beginning of time" — a consumer must not treat it as an open interval.
+     */
+    windowFrom: timestamptz('window_from'),
+    /** When this tick ran. The value an alert compares against now(). */
+    windowTo: timestamptz('window_to').notNull(),
+
+    candidatesConsidered: integer('candidates_considered').notNull().default(0),
+    dueCount: integer('due_count').notNull().default(0),
+    claimedCount: integer('claimed_count').notNull().default(0),
+    skippedAlreadySent: integer('skipped_already_sent').notNull().default(0),
+    skippedEmpty: integer('skipped_empty').notNull().default(0),
+
+    createdAt: createdAt(),
+  },
+  (table) => [index('scheduler_runs_job_window_idx').on(table.jobName, table.windowTo)],
+);

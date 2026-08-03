@@ -147,23 +147,46 @@
   --luma-space-2xl: 3rem;
   --luma-space-3xl: 4.5rem;
 
-  /* --- Radii ------------------------------------------------------------- */
-  --luma-radius-xs: 2px;
-  --luma-radius-sm: 4px;
-  --luma-radius-md: 8px;
-  --luma-radius-lg: 12px;
+  /* --- Radii ------------------------------------------------------------- *
+   * Luma Training's site is soft and rounded; a tighter scale reads as a
+   * different product even with the palette right. These values are the
+   * Tailwind radii the site actually uses, translated one step at a time:
+   * buttons and inputs are `rounded-lg` (8px) rounded up to 10px so the
+   * generosity survives our slightly taller controls, cards are `rounded-2xl`
+   * (16px), and `xl` covers the `rounded-3xl` (24px) used on large media and
+   * full-width panels.
+   *
+   * Mirrored in `src/tokens.ts` as `radii`; `tokens.test.ts` fails if the two
+   * drift apart, exactly as it does for colours.
+   * ----------------------------------------------------------------------- */
+  --luma-radius-xs: 4px;
+  --luma-radius-sm: 6px;
+  --luma-radius-md: 10px;
+  --luma-radius-lg: 16px;
+  --luma-radius-xl: 24px;
   --luma-radius-pill: 999px;
 
   /* --- Borders, focus and hit targets ------------------------------------ */
   --luma-border-width: 1px;
+  /* The heavy rule that separates the promotion block from tender content
+   * (spec 23.4). It has its own token because it used to borrow
+   * `--luma-radius-sm`, which quietly made the strength of a compliance-driven
+   * separator a side effect of the radius scale — widening the radii for the
+   * brand refresh changed it without anyone asking. */
+  --luma-border-width-heavy: 4px;
   --luma-focus-ring-width: 3px;
   --luma-focus-ring-offset: 2px;
   /* Section 16: mobile-friendly. 44px is the minimum comfortable touch target. */
   --luma-hit-target-min: 44px;
 
-  /* --- Elevation --------------------------------------------------------- */
+  /* --- Elevation --------------------------------------------------------- *
+   * `shadow-md` is Luma's `shadow-soft` (`0 10px 40px rgba(0,0,0,0.08)`) with
+   * the neutral tinted warm; `shadow-hover` is its `shadow-hover`
+   * (`0 20px 50px rgba(0,0,0,0.12)`), the raised state of an elevated card.
+   * ----------------------------------------------------------------------- */
   --luma-shadow-sm: 0 4px 16px rgb(26 22 20 / 6%);
   --luma-shadow-md: 0 10px 40px rgb(26 22 20 / 8%);
+  --luma-shadow-hover: 0 20px 50px rgb(26 22 20 / 12%);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -217,6 +240,7 @@
 
     --luma-shadow-sm: 0 1px 2px rgb(0 0 0 / 45%);
     --luma-shadow-md: 0 2px 8px rgb(0 0 0 / 55%);
+    --luma-shadow-hover: 0 4px 16px rgb(0 0 0 / 65%);
   }
 }
 
@@ -270,4 +294,5 @@
 
   --luma-shadow-sm: 0 1px 2px rgb(0 0 0 / 45%);
   --luma-shadow-md: 0 2px 8px rgb(0 0 0 / 55%);
+  --luma-shadow-hover: 0 4px 16px rgb(0 0 0 / 65%);
 }

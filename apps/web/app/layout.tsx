@@ -4,9 +4,10 @@ import './globals.css';
 
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Poppins } from 'next/font/google';
-import { Cluster, SkipLink } from '@luma/ui';
+import { buttonClassName, Cluster, SkipLink } from '@luma/ui';
 import { privacyPolicyUrl } from '@/lib/legal';
 import { lumaUrl } from '@/lib/luma-links';
 import { SERVICE_NAME, SERVICE_TAGLINE } from '@/content/copy';
@@ -61,7 +62,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         <SkipLink />
         <SiteHeader />
-        <main id="hovedinnhold" className="app-shell py-xl">
+        {/* `site-main` centres each direct child at the shell width and lets one
+            opt out with `bleed` — see globals.css. The landmark and its id stay
+            exactly where they were, so the skip link still lands here. */}
+        <main id="hovedinnhold" className="site-main">
           {children}
         </main>
         <SiteFooter />
@@ -70,22 +74,57 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   );
 }
 
+/**
+ * The logo lockup.
+ *
+ * The mark is Luma Training's; the name beside it is this service's. Keeping
+ * both visible is the honest version of the relationship — the service is free
+ * and it is Luma's, and section 42 asks for that to be said plainly rather than
+ * implied by borrowed branding.
+ *
+ * The image is `alt=""` because the text beside it already carries the name;
+ * captioning it "Luma Training" as well would make the link announce the brand
+ * twice.
+ */
+function BrandLockup() {
+  return (
+    <Link href="/" className="site-brand">
+      <Image
+        src="/luma-logo-orange-transparent.png"
+        alt=""
+        width={273}
+        height={164}
+        className="site-brand__logo"
+        priority
+      />
+      {/* Name only. `SERVICE_TAGLINE` is the hero's eyebrow and the footer's
+          first sentence; a third copy in the chrome on every page reads as a
+          slogan rather than as the fact it is. */}
+      <span className="site-brand__name">{SERVICE_NAME}</span>
+    </Link>
+  );
+}
+
 function SiteHeader() {
   return (
-    <header className="border-b border-line bg-surface-raised">
+    <header className="site-header">
+      {/* Wraps to two rows on a narrow screen rather than collapsing into a
+          hamburger. Three destinations do not earn a disclosure widget, and a
+          menu that needs JavaScript to open is a menu that can fail to open. */}
       <div className="app-shell flex flex-wrap items-center justify-between gap-sm py-sm">
-        <Link href="/" className="site-nav-link">
-          <span className="flex flex-col">
-            <span className="text-lg font-semibold text-text">{SERVICE_NAME}</span>
-            <span className="text-xs text-text-muted">{SERVICE_TAGLINE}</span>
-          </span>
-        </Link>
+        <BrandLockup />
         <Cluster as="nav" gap="xs" aria-label="Hovedmeny">
           <Link href="/koble-til-ai" className="site-nav-link">
             Koble til AI
           </Link>
           <Link href="/logg-inn" className="site-nav-link">
             Logg inn
+          </Link>
+          <Link
+            href="/#registrering"
+            className={buttonClassName({ variant: 'secondary', size: 'sm' })}
+          >
+            Kom i gang
           </Link>
         </Cluster>
       </div>
@@ -95,17 +134,32 @@ function SiteHeader() {
 
 function SiteFooter() {
   return (
-    <footer className="mt-3xl border-t border-line bg-surface-raised py-xl">
-      <div className="app-shell flex flex-col gap-sm text-sm text-text-muted">
-        <p className="m-0">
-          {SERVICE_NAME} er {SERVICE_TAGLINE.toLowerCase()}. Kildedata kommer fra Doffin.
-        </p>
-        <Cluster as="nav" gap="md" aria-label="Bunnmeny">
-          <Link href="/personvern">Personvern</Link>
-          <Link href="/vilkar">Bruksvilkår</Link>
-          <a href={privacyPolicyUrl()}>Luma Trainings personvernerklæring</a>
-          <a href={lumaUrl('/', { medium: 'nettsted', content: 'bunnmeny' })}>Luma Training</a>
-        </Cluster>
+    <footer className="site-footer mt-3xl py-xl">
+      <div className="app-shell flex flex-col gap-lg">
+        <div className="flex flex-wrap items-start justify-between gap-lg">
+          <div className="flex flex-col gap-xs">
+            <Image
+              src="/luma-logo-orange-transparent.png"
+              alt="Luma Training"
+              width={273}
+              height={164}
+              className="site-brand__logo"
+            />
+            {/* Two sentences rather than one, because the previous wording
+                lower-cased `SERVICE_TAGLINE` to splice it into a clause and
+                printed the company as "luma training". */}
+            <p className="m-0 font-semibold">{SERVICE_NAME}</p>
+            <p className="prose-measure m-0 text-sm text-text-muted">
+              {SERVICE_TAGLINE}. Kildedata kommer fra Doffin.
+            </p>
+          </div>
+          <Cluster as="nav" gap="md" aria-label="Bunnmeny" className="text-sm">
+            <Link href="/personvern">Personvern</Link>
+            <Link href="/vilkar">Bruksvilkår</Link>
+            <a href={privacyPolicyUrl()}>Luma Trainings personvernerklæring</a>
+            <a href={lumaUrl('/', { medium: 'nettsted', content: 'bunnmeny' })}>Luma Training</a>
+          </Cluster>
+        </div>
       </div>
     </footer>
   );

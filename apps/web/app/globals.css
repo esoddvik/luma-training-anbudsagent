@@ -128,12 +128,47 @@
 
 @layer components {
   /* Page shell. Mobile-first: full-bleed with a comfortable gutter, capped on
-   * wide screens so lines never exceed a readable measure. */
-  .app-shell {
+   * wide screens so lines never exceed a readable measure.
+   *
+   * `.site-main > *` gets the same treatment so that a page can be a *sequence*
+   * of blocks rather than one boxed column: every direct child of the main
+   * landmark is centred at the shell width on its own, which is what lets a
+   * single block opt out with `.bleed` and run edge to edge. Both selectors
+   * share one declaration so the two widths cannot drift.
+   *
+   * A route group that renders one wrapper element (`(app)` and `(admin)` both
+   * do) is unaffected: its single child is the shell, exactly as before. */
+  .app-shell,
+  .site-main > * {
     width: 100%;
     max-width: 72rem;
     margin-inline: auto;
     padding-inline: var(--luma-space-md);
+  }
+
+  /* The main landmark. Vertical rhythm lives here rather than on each page, so
+   * a full-width band butts up against its neighbours predictably. */
+  .site-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--luma-space-2xl);
+    padding-block: var(--luma-space-xl);
+  }
+
+  /* Opt out of the shell: run the full width of the viewport and carry your own
+   * background. Content inside a bleed block gets `.app-shell` back so it stays
+   * aligned with everything above and below it. */
+  .site-main > .bleed {
+    max-width: none;
+    padding-inline: 0;
+  }
+
+  /* A band at the very top continues the gradient from the header instead of
+   * floating below it, so the chrome and the hero read as one surface. The
+   * negative margin cancels the main landmark's own top padding — no `:has()`
+   * needed, and nothing changes for pages that do not open with a band. */
+  .site-main > .bleed:first-child {
+    margin-block-start: calc(var(--luma-space-xl) * -1);
   }
 
   .prose-measure {
@@ -171,5 +206,111 @@
     color: var(--luma-color-primary);
     text-decoration: underline;
     text-underline-offset: 0.35em;
+  }
+
+  /* ===========================================================================
+   * Luma Training's layout language
+   * ===========================================================================
+   *
+   * luma-training.com does three things that make a page recognisably Luma's:
+   * a warm gradient bar behind the logo lockup, one large gradient hero, and
+   * cream panels behind supporting content. Reproduced here as gradients over
+   * *tokens* rather than the marketing site's literal `#FFE8DC`/`#FFF5E6`, for
+   * two reasons.
+   *
+   * The tokens carry a dark palette, so `--luma-color-primary-soft` becomes a
+   * deep warm brown under `prefers-color-scheme: dark` and every gradient below
+   * turns with it. A literal cream would stay cream and glow.
+   *
+   * And the marketing site's cream is `--luma-color-promotion-surface` here,
+   * which section 23.4 reserves for blocks that are Luma speaking rather than
+   * the service speaking. Spending it on site chrome would make the promotion
+   * block stop reading as separate — precisely what that token exists to
+   * prevent. The chrome uses the neutral warm surfaces instead.
+   *
+   * `--luma-color-brand` (#FF6B35) is 2.8:1 on white and cannot sit behind
+   * text. It appears once, as the footer's top rule, where it is a decorative
+   * 4px line and carries nothing.
+   * ------------------------------------------------------------------------ */
+  .site-header {
+    background-image: linear-gradient(
+      to right,
+      var(--luma-color-primary-soft),
+      var(--luma-color-surface-raised)
+    );
+  }
+
+  .site-header .site-nav-link:hover {
+    color: var(--luma-color-primary);
+  }
+
+  .site-footer {
+    background-image: linear-gradient(
+      to bottom,
+      var(--luma-color-surface-raised),
+      var(--luma-color-primary-soft)
+    );
+    border-block-start: var(--luma-border-width-heavy) solid var(--luma-color-brand);
+  }
+
+  .site-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--luma-space-sm);
+    min-height: var(--luma-hit-target-min);
+    color: var(--luma-color-text);
+    text-decoration: none;
+  }
+
+  .site-brand__logo {
+    height: 2.25rem;
+    width: auto;
+  }
+
+  .site-brand__name {
+    font-size: var(--luma-font-size-lg);
+    font-weight: var(--luma-font-weight-semibold);
+    line-height: var(--luma-line-height-tight);
+  }
+
+  .site-brand:hover .site-brand__name {
+    color: var(--luma-color-primary);
+  }
+
+  /* Hero. Diagonal so the warm corner sits under the logo and the page fades to
+   * the reading surface where the text ends. */
+  .luma-hero {
+    background-image: linear-gradient(
+      to bottom right,
+      var(--luma-color-primary-soft),
+      var(--luma-color-surface-raised) 55%,
+      var(--luma-color-surface)
+    );
+  }
+
+  /* Larger than `--luma-font-size-4xl` and fluid, because this is the one
+   * headline on the service that is allowed to be a headline. The upper bound
+   * is 4rem: the marketing site goes to `text-8xl`, but that page is selling a
+   * course and section 42 asks this one to be praktisk og ærlig. */
+  .hero-heading {
+    margin: 0;
+    font-size: clamp(var(--luma-font-size-3xl), 6vw, 4rem);
+    font-weight: var(--luma-font-weight-semibold);
+    letter-spacing: -0.02em;
+  }
+
+  /* Cream band for supporting content. Sunken rather than raised so the default
+   * cards that sit on it keep an edge. */
+  .luma-soft-band {
+    background: var(--luma-color-surface-sunken);
+  }
+
+  .eyebrow {
+    margin: 0;
+    font-size: var(--luma-font-size-sm);
+    font-weight: var(--luma-font-weight-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--luma-color-primary);
   }
 }

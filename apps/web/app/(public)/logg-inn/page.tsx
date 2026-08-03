@@ -55,7 +55,13 @@ export default async function Page({ searchParams }: PageProps) {
         </p>
       </Stack>
 
-      <Card as="section" heading="Få innloggingslenke" titleLevel={2} className="prose-measure">
+      <Card
+        as="section"
+        heading="Få innloggingslenke"
+        titleLevel={2}
+        tone="raised"
+        className="prose-measure"
+      >
         <form action={requestLoginLinkAction}>
           <Stack gap="md">
             {/*

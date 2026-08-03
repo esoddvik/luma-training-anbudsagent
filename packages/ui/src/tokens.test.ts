@@ -9,10 +9,12 @@ import {
   describeViolation,
   findContrastViolations,
   lightColors,
+  radii,
   themes,
   TOKEN_PREFIX,
   type ColorTokenName,
   type ContrastPair,
+  type RadiusTokenName,
   type ThemeName,
 } from './tokens.js';
 
@@ -88,8 +90,55 @@ describe('tokens.css is the single source of truth', () => {
       '--luma-radius-md',
       '--luma-focus-ring-width',
       '--luma-hit-target-min',
+      '--luma-shadow-hover',
     ]) {
       expect(lightBlock, `mangler ${name}`).toHaveProperty(name);
+    }
+  });
+
+  it('radius scale matches the TypeScript mirror exactly', () => {
+    const cssRadii = Object.fromEntries(
+      Object.entries(lightBlock).filter(([name]) => name.startsWith(`${TOKEN_PREFIX}radius-`)),
+    );
+    const mirrored = Object.fromEntries(
+      Object.entries(radii).map(([token, value]) => [cssVarName(token as RadiusTokenName), value]),
+    );
+    expect(cssRadii).toEqual(mirrored);
+  });
+
+  /**
+   * A scale that is out of order is not a typo in one place — it silently makes
+   * `sm` rounder than `md` on every button, input and card at once, and nothing
+   * else in the suite would notice.
+   */
+  it('keeps the radius scale ascending', () => {
+    const steps: RadiusTokenName[] = ['radius-xs', 'radius-sm', 'radius-md', 'radius-lg'];
+    const pixels = steps.map((token) => Number.parseFloat(radii[token]));
+
+    for (let index = 1; index < pixels.length; index += 1) {
+      expect(
+        pixels[index],
+        `${steps[index]} (${radii[steps[index]!]}) er ikke større enn ${steps[index - 1]} (${radii[steps[index - 1]!]})`,
+      ).toBeGreaterThan(pixels[index - 1]!);
+    }
+  });
+
+  /**
+   * The dark palette is written out twice, so a shadow added to `:root` alone
+   * resolves to nothing in dark mode — an unset custom property is not
+   * inherited from the light block, it is simply invalid.
+   */
+  it('defines every elevation token in all three theme blocks', () => {
+    const shadowNames = Object.keys(lightBlock).filter((name) =>
+      name.startsWith(`${TOKEN_PREFIX}shadow-`),
+    );
+    expect(shadowNames.length).toBeGreaterThanOrEqual(3);
+
+    for (const name of shadowNames) {
+      expect(darkMediaBlock, `mangler ${name} i prefers-color-scheme-blokken`).toHaveProperty(name);
+      expect(darkAttributeBlock, `mangler ${name} i [data-theme='dark']-blokken`).toHaveProperty(
+        name,
+      );
     }
   });
 
@@ -162,6 +211,64 @@ describe('tokens.css is the single source of truth', () => {
   });
 });
 
+/**
+ * Removes every `@media (prefers-reduced-motion: no-preference)` block, counting
+ * braces so a nested rule cannot end the block early. What is left is the CSS
+ * that applies to a reader who has asked their system for less motion.
+ */
+function stripMotionSafeBlocks(css: string): string {
+  const marker = '@media (prefers-reduced-motion: no-preference)';
+  let remaining = css;
+
+  for (;;) {
+    const start = remaining.indexOf(marker);
+    if (start === -1) {
+      return remaining;
+    }
+
+    const open = remaining.indexOf('{', start);
+    if (open === -1) {
+      throw new Error(`Fant ${marker} uten blokk`);
+    }
+
+    let depth = 0;
+    let index = open;
+    for (; index < remaining.length; index += 1) {
+      if (remaining[index] === '{') {
+        depth += 1;
+      } else if (remaining[index] === '}') {
+        depth -= 1;
+        if (depth === 0) {
+          break;
+        }
+      }
+    }
+    if (depth !== 0) {
+      throw new Error(`Ubalanserte klammer etter ${marker}`);
+    }
+
+    remaining = remaining.slice(0, start) + remaining.slice(index + 1);
+  }
+}
+
+/** Selectors of every `:hover` rule that moves the element with `transform`. */
+function hoverRulesWithTransform(css: string): string[] {
+  const selectors: string[] = [];
+  const pattern = /([^{}]+)\{([^{}]*)\}/g;
+
+  let match = pattern.exec(css);
+  while (match !== null) {
+    const selector = (match[1] ?? '').trim();
+    const body = match[2] ?? '';
+    if (selector.includes(':hover') && /(^|[\s;])transform\s*:/.test(body)) {
+      selectors.push(selector.replace(/\s+/g, ' '));
+    }
+    match = pattern.exec(css);
+  }
+
+  return selectors;
+}
+
 describe('styles.css only references tokens', () => {
   it('contains no literal hex colours', () => {
     const hexLiterals = componentStyles.match(/#[0-9a-f]{3,8}\b/gi) ?? [];
@@ -180,6 +287,53 @@ describe('styles.css only references tokens', () => {
       expect(componentStyles, `mangler fokusring for ${selector}`).toContain(selector);
     }
     expect(componentStyles).toContain('outline: var(--luma-focus-ring-width)');
+  });
+
+  /**
+   * Luma's hover lift is a `transform`, and a transform that ignores
+   * `prefers-reduced-motion` is an accessibility regression, not a flourish.
+   *
+   * The guard is written as `no-preference` rather than as an override inside a
+   * `reduce` block, so the check is "no hover rule outside the guard moves
+   * anything" — which also catches a lift added somewhere else in the file, not
+   * only the one on `.luma-button`. Transforms that are *not* on `:hover` are
+   * out of scope on purpose: `.luma-skip-link` parks itself off-screen with
+   * `translateY(-200%)` and must keep doing that at every motion setting.
+   */
+  it('declares no hover transform outside the reduced-motion guard', () => {
+    expect(hoverRulesWithTransform(stripMotionSafeBlocks(componentStyles))).toEqual([]);
+  });
+
+  /**
+   * Without this, deleting the lift entirely would make the test above pass by
+   * having nothing left to find.
+   */
+  /**
+   * Spec 23.4's separator used to be drawn with `--luma-radius-sm`, so widening
+   * the radius scale for the brand refresh silently thickened it. The strength
+   * of a compliance-driven rule must not be a side effect of how round the
+   * buttons are.
+   */
+  it('draws the promotion separator from a border token, not the radius scale', () => {
+    expect(componentStyles).toContain('border-top-width: var(--luma-border-width-heavy)');
+    expect(componentStyles).not.toContain('border-top-width: var(--luma-radius');
+  });
+
+  /**
+   * The supporting-panel card tone is the obvious place for someone to reach
+   * for the brand cream, which would put a second block on the promotion
+   * surface and dissolve the separation 23.4 asks for.
+   */
+  it('keeps the supporting-panel card off the promotion surface', () => {
+    const block = /\.luma-card--secondary\s*\{([^}]*)\}/.exec(componentStyles)?.[1];
+    expect(block, 'fant ikke .luma-card--secondary').toBeDefined();
+    expect(block).toContain('var(--luma-color-surface-sunken)');
+    expect(block).not.toContain('promotion');
+  });
+
+  it('still ships the hover lift inside that guard', () => {
+    const lifted = hoverRulesWithTransform(componentStyles);
+    expect(lifted.join(' ')).toContain('.luma-button--primary:hover');
   });
 });
 

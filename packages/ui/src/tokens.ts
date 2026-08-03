@@ -157,15 +157,37 @@ export const themes = {
 
 export type ThemeName = keyof typeof themes;
 
+export type RadiusTokenName =
+  'radius-xs' | 'radius-sm' | 'radius-md' | 'radius-lg' | 'radius-xl' | 'radius-pill';
+
+/**
+ * Mirror of the radius scale in `tokens.css`, widened to match Luma Training's
+ * own site — see the `--- Radii ---` comment there for where each step comes
+ * from. `tokens.test.ts` fails if this list and the stylesheet drift apart, and
+ * it also asserts the scale stays in ascending order, because a scale that is
+ * out of order silently makes `sm` rounder than `md` everywhere at once.
+ */
+export const radii: Readonly<Record<RadiusTokenName, string>> = {
+  'radius-xs': '4px',
+  'radius-sm': '6px',
+  'radius-md': '10px',
+  'radius-lg': '16px',
+  'radius-xl': '24px',
+  'radius-pill': '999px',
+};
+
+/** Any token with a `--luma-` custom property. */
+export type TokenName = ColorTokenName | RadiusTokenName;
+
 /** CSS custom property name for a token, e.g. `--luma-color-surface`. */
 export const TOKEN_PREFIX = '--luma-';
 
-export function cssVarName(token: ColorTokenName): string {
+export function cssVarName(token: TokenName): string {
   return `${TOKEN_PREFIX}${token}`;
 }
 
 /** `var(--luma-color-surface)`, for inline styles that need a token. */
-export function cssVar(token: ColorTokenName): string {
+export function cssVar(token: TokenName): string {
   return `var(${cssVarName(token)})`;
 }
 

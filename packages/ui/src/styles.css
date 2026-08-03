@@ -80,7 +80,9 @@
   transition:
     background-color 120ms ease,
     border-color 120ms ease,
-    color 120ms ease;
+    box-shadow 120ms ease,
+    color 120ms ease,
+    transform 120ms ease;
 }
 
 .luma-button:disabled,
@@ -102,10 +104,12 @@
 .luma-button--primary {
   background: var(--luma-color-primary);
   color: var(--luma-color-primary-on);
+  box-shadow: var(--luma-shadow-sm);
 }
 
 .luma-button--primary:hover:not(:disabled) {
   background: var(--luma-color-primary-hover);
+  box-shadow: var(--luma-shadow-md);
 }
 
 .luma-button--secondary {
@@ -130,13 +134,37 @@
 .luma-button--danger {
   background: var(--luma-color-danger);
   color: var(--luma-color-danger-on);
+  box-shadow: var(--luma-shadow-sm);
 }
 
 .luma-button--danger:hover:not(:disabled) {
   background: var(--luma-color-danger-hover);
+  box-shadow: var(--luma-shadow-md);
 }
 
-/* --- Card ------------------------------------------------------------------ */
+/* Luma's signature hover lift, from the primary call to action on
+ * luma-training.com (`transition-all transform hover:-translate-y-0.5`).
+ *
+ * It is declared inside `no-preference` rather than undone inside a `reduce`
+ * block on purpose: a reader who has asked for less motion never has the
+ * transform applied at all, and cannot lose the race between the two rules.
+ * Only the solid variants lift — the reference lifts its filled CTAs and
+ * leaves the outlined header button flat.
+ *
+ * Disabled buttons are excluded twice over because `Button` may render either
+ * a real `disabled` attribute or `aria-disabled` on a link-shaped element. */
+@media (prefers-reduced-motion: no-preference) {
+  .luma-button--primary:hover:not(:disabled):not([aria-disabled='true']),
+  .luma-button--danger:hover:not(:disabled):not([aria-disabled='true']) {
+    transform: translateY(-2px);
+  }
+}
+
+/* --- Card ------------------------------------------------------------------
+ * `radius-lg` is the `rounded-2xl` of Luma's own cards, and the soft wide
+ * shadow is its `shadow-soft`. The elevated variant follows the reference's
+ * `shadow-soft hover:shadow-hover transition-shadow` pair.
+ * --------------------------------------------------------------------------- */
 .luma-card {
   display: block;
   padding: var(--luma-space-lg);
@@ -144,6 +172,7 @@
   border-radius: var(--luma-radius-lg);
   background: var(--luma-color-surface-raised);
   color: var(--luma-color-text);
+  box-shadow: var(--luma-shadow-sm);
 }
 
 .luma-card--flat {
@@ -153,6 +182,21 @@
 
 .luma-card--raised {
   box-shadow: var(--luma-shadow-md);
+  transition: box-shadow 160ms ease;
+}
+
+.luma-card--raised:hover {
+  box-shadow: var(--luma-shadow-hover);
+}
+
+/* Supporting-information panel, after the `bg-secondary rounded-xl` groupings
+ * on luma-training.com: a tint instead of a rule, no elevation of its own.
+ * The tint is the sunken neutral, never the promotion cream — spec 23.4 keeps
+ * `--luma-color-promotion-surface` unique to the promotion block. */
+.luma-card--secondary {
+  background: var(--luma-color-surface-sunken);
+  border-color: transparent;
+  box-shadow: none;
 }
 
 .luma-card__title {
@@ -419,7 +463,7 @@
   margin-top: var(--luma-space-xl);
   padding: var(--luma-space-lg);
   border: var(--luma-border-width) solid var(--luma-color-promotion-border);
-  border-top-width: var(--luma-radius-sm);
+  border-top-width: var(--luma-border-width-heavy);
   border-radius: var(--luma-radius-lg);
   background: var(--luma-color-promotion-surface);
   color: var(--luma-color-promotion-text);
@@ -455,6 +499,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .luma-button,
+  .luma-card--raised,
   .luma-skip-link {
     transition: none;
   }

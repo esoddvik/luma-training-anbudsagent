@@ -175,6 +175,14 @@ const mcpSchema = z.object({
   ...baseShape,
   MCP_URL: httpUrl,
   MCP_TOKEN_PEPPER: secret('MCP_TOKEN_PEPPER'),
+  /**
+   * Extra hosts the MCP endpoint answers on, beyond `MCP_URL` (spec §40's
+   * host allowlist). Not in §48; see `docs/spec-deviations.md`. Optional
+   * because `MCP_URL` alone is correct for a single-domain deployment — this
+   * exists for the domains a platform adds without being asked, such as
+   * Railway's generated `*.up.railway.app` alongside a custom one.
+   */
+  MCP_ALLOWED_HOSTS: stringList,
 });
 
 export type CoreEnv = z.infer<typeof coreSchema>;

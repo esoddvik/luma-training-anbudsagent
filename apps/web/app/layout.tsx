@@ -5,10 +5,30 @@ import './globals.css';
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import Link from 'next/link';
+import { Poppins } from 'next/font/google';
 import { Cluster, SkipLink } from '@luma/ui';
 import { privacyPolicyUrl } from '@/lib/legal';
 import { lumaUrl } from '@/lib/luma-links';
 import { SERVICE_NAME, SERVICE_TAGLINE } from '@/content/copy';
+
+/**
+ * Poppins is Luma Training's typeface (luma-training.com loads 400/500/600/700).
+ *
+ * Loaded through `next/font` rather than the `@import url(fonts.googleapis.com)`
+ * the marketing site uses: that import is render-blocking, and it makes every
+ * visitor's browser contact Google on page load, which is a third-party request
+ * this service would have to account for under section 18. `next/font`
+ * self-hosts the files at build time, so neither applies.
+ *
+ * `display: swap` keeps text readable while the face loads, and the fallback
+ * chain in `--luma-font-sans` is what shows in that window.
+ */
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+  variable: '--luma-font-poppins',
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://anbudsvarsling.luma-training.com'),
@@ -37,7 +57,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="nb">
+    <html lang="nb" className={poppins.variable}>
       <body>
         <SkipLink />
         <SiteHeader />

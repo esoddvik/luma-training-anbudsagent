@@ -2,23 +2,32 @@
  * Luma Anbudsvarsling — design tokens
  * =============================================================================
  *
- * PLACEHOLDER BRAND VALUES.
+ * Derived from Luma Training's own brand, as used on luma-training.com and in
+ * `github.com/esoddvik/luma-training-web`: signature orange `#FF6B35`, cream
+ * `#FFF5E6`, Poppins, and the wide soft shadow.
  *
- * We do not have Luma Training's official brand hex codes, typography or logo
- * palette yet. Every colour below is a deliberately restrained, professional
- * stand-in chosen to satisfy two constraints from the specification:
+ * Two constraints shape how faithfully that palette can be applied.
  *
- *   - Section 42 (Merkevare): calm and professional, "praktisk og ærlig, null
- *     hype". Nothing here should read as an aggressive sales page.
- *   - Section 16 (Webgrensesnitt): god kontrast. Every foreground/background
- *     pair that the components actually render is asserted against WCAG 2.2 AA
- *     in `src/tokens.test.ts`.
+ * **`#FF6B35` cannot carry text.** White on it is 2.8:1 and black is 7.4:1, so
+ * it fails WCAG 2.2 AA for normal text against white and fails even the 3:1
+ * non-text threshold. It is kept exactly as-is in `--luma-color-brand`, for
+ * decorative and Luma-voice surfaces that pair it with `--luma-color-brand-on`.
+ * Anything rendering body text uses `--luma-color-primary`, the same hue
+ * darkened to `#b83d0a` — the lightest step that clears AA on every surface
+ * this app actually renders. Section 16 asks for god kontrast and section 42
+ * for "praktisk og ærlig, null hype"; a button nobody can read is neither.
  *
- * REPLACING THESE WITH LUMA'S REAL BRAND VALUES IS A ONE-FILE CHANGE.
+ * **The warmth belongs to Luma's voice, not to tender data.** Surfaces stay
+ * near-neutral and only faintly warm. The orange and the cream are spent on
+ * primary actions, chrome and the promotion block. That is section 3's trust
+ * contract made visible: tender content is not dressed in marketing colours,
+ * and section 23.4's promotion block reads as Luma's own rather than as one
+ * more card in the results list.
+ *
  * Components and app code never hardcode a colour; they only reference the
  * token names below. Update the hex values here and the mirrored values in
  * `src/tokens.ts` (the test fails if the two drift apart), then re-run
- * `pnpm --filter @luma/ui test` to confirm the new palette still meets AA.
+ * `pnpm --filter @luma/ui test` to confirm the palette still meets AA.
  *
  * Theming: light values live on `:root`. Dark values apply automatically via
  * `prefers-color-scheme: dark`, and can be forced either way with
@@ -35,20 +44,26 @@
 
   /* --- Neutrals ---------------------------------------------------------- */
   --luma-color-surface: #ffffff;
-  --luma-color-surface-raised: #f4f6fa;
-  --luma-color-surface-sunken: #e8ecf2;
-  --luma-color-text: #14181f;
-  --luma-color-text-muted: #4b5462;
-  --luma-color-border: #79828f;
-  --luma-color-border-strong: #5b6573;
-  --luma-color-focus-ring: #0f5fbf;
+  --luma-color-surface-raised: #faf7f4;
+  --luma-color-surface-sunken: #f0ebe5;
+  --luma-color-text: #1a1614;
+  --luma-color-text-muted: #57504b;
+  --luma-color-border: #8a817a;
+  --luma-color-border-strong: #6b635c;
+  --luma-color-focus-ring: #b83d0a;
 
   /* --- Primary accent ---------------------------------------------------- */
-  --luma-color-primary: #14507f;
-  --luma-color-primary-hover: #0f3f66;
+  --luma-color-primary: #b83d0a;
+  --luma-color-primary-hover: #8c2f08;
   --luma-color-primary-on: #ffffff;
-  --luma-color-primary-soft: #e6eef6;
-  --luma-color-primary-soft-text: #0f3f66;
+  --luma-color-primary-soft: #ffe8dc;
+  --luma-color-primary-soft-text: #8a2f08;
+
+  /* Luma Training's signature orange. Decorative and Luma-voice surfaces
+   * only: white text on it is 2.8:1 and fails AA, so it never carries body
+   * text. Pair it with --luma-color-brand-on. */
+  --luma-color-brand: #ff6b35;
+  --luma-color-brand-on: #26150c;
 
   /* --- Semantic ---------------------------------------------------------- */
   --luma-color-success: #1a6b3f;
@@ -71,20 +86,34 @@
 
   /* --- Promotion --------------------------------------------------------- *
    * Spec 23.4: Luma promotion must be visually separated from tender content
-   * and labelled as Luma content. This group is a warm, off-brand-neutral
-   * surface deliberately unlike every tender surface above, so a promotion
-   * block can never be mistaken for anbudsdata.
+   * and labelled as Luma content.
+   *
+   * This is the one place that wears the brand cream `#FFF5E6` outright. The
+   * separation is deliberate and runs the opposite way to the obvious design:
+   * tender surfaces are near-neutral and the *promotion* is unmistakably Luma's
+   * own. Colouring the tender cards in brand warmth instead would make the
+   * marketing recede into the product, which is precisely what section 3
+   * forbids.
+   *
+   * It must therefore stay distinct from every tender surface *and* from
+   * `--luma-color-primary-soft`, which is the other warm tint in the system.
+   * `tokens.test.ts` enforces a minimum perceptual distance rather than mere
+   * inequality, because two creams one hex apart would pass an equality check
+   * and be indistinguishable on a screen.
    * ----------------------------------------------------------------------- */
-  --luma-color-promotion-surface: #fbf6ec;
-  --luma-color-promotion-border: #9a7534;
-  --luma-color-promotion-text: #33291a;
-  --luma-color-promotion-muted: #57472c;
-  --luma-color-promotion-accent: #6e5218;
+  --luma-color-promotion-surface: #fff5e6;
+  --luma-color-promotion-border: #b83d0a;
+  --luma-color-promotion-text: #2b1d12;
+  --luma-color-promotion-muted: #5a4634;
+  --luma-color-promotion-accent: #8a3d0b;
 
   /* --- Typography -------------------------------------------------------- */
+  /* `--luma-font-poppins` is set by next/font in the web app's root layout.
+   * The literal 'Poppins' after it covers surfaces that never run next/font —
+   * email previews and any consumer of this package outside apps/web. */
   --luma-font-sans:
-    'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-    sans-serif;
+    var(--luma-font-poppins), 'Poppins', ui-sans-serif, system-ui, -apple-system,
+    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --luma-font-mono:
     ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
 
@@ -133,28 +162,34 @@
   --luma-hit-target-min: 44px;
 
   /* --- Elevation --------------------------------------------------------- */
-  --luma-shadow-sm: 0 1px 2px rgb(20 24 31 / 8%);
-  --luma-shadow-md: 0 2px 8px rgb(20 24 31 / 10%);
+  --luma-shadow-sm: 0 4px 16px rgb(26 22 20 / 6%);
+  --luma-shadow-md: 0 10px 40px rgb(26 22 20 / 8%);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     color-scheme: dark;
 
-    --luma-color-surface: #0e1218;
-    --luma-color-surface-raised: #161c25;
-    --luma-color-surface-sunken: #080b0f;
-    --luma-color-text: #e8edf4;
-    --luma-color-text-muted: #a3aebd;
-    --luma-color-border: #6c7684;
-    --luma-color-border-strong: #939dab;
-    --luma-color-focus-ring: #6aa9f0;
+    --luma-color-surface: #17120f;
+    --luma-color-surface-raised: #211a16;
+    --luma-color-surface-sunken: #0e0b09;
+    --luma-color-text: #f5efea;
+    --luma-color-text-muted: #b8ada4;
+    --luma-color-border: #7a6f66;
+    --luma-color-border-strong: #a2968c;
+    --luma-color-focus-ring: #ff9466;
 
-    --luma-color-primary: #7cb3ea;
-    --luma-color-primary-hover: #a3cbf3;
-    --luma-color-primary-on: #08121c;
-    --luma-color-primary-soft: #16283a;
-    --luma-color-primary-soft-text: #a9cdf0;
+    --luma-color-primary: #ff8a5c;
+    --luma-color-primary-hover: #ffa783;
+    --luma-color-primary-on: #2b1206;
+    --luma-color-primary-soft: #3a2115;
+    --luma-color-primary-soft-text: #ffb894;
+
+  /* Luma Training's signature orange. Decorative and Luma-voice surfaces
+   * only: white text on it is 2.8:1 and fails AA, so it never carries body
+   * text. Pair it with --luma-color-brand-on. */
+  --luma-color-brand: #ff6b35;
+  --luma-color-brand-on: #1a0c05;
 
     --luma-color-success: #62c48d;
     --luma-color-success-on: #04170d;
@@ -174,11 +209,11 @@
     --luma-color-info-soft: #10262e;
     --luma-color-info-soft-text: #94d3e8;
 
-    --luma-color-promotion-surface: #241d10;
-    --luma-color-promotion-border: #8a7038;
-    --luma-color-promotion-text: #f0e6d2;
-    --luma-color-promotion-muted: #c9b892;
-    --luma-color-promotion-accent: #e2c581;
+    --luma-color-promotion-surface: #2c2214;
+    --luma-color-promotion-border: #c98a45;
+    --luma-color-promotion-text: #f7eedf;
+    --luma-color-promotion-muted: #d3c2a6;
+    --luma-color-promotion-accent: #f0b978;
 
     --luma-shadow-sm: 0 1px 2px rgb(0 0 0 / 45%);
     --luma-shadow-md: 0 2px 8px rgb(0 0 0 / 55%);
@@ -188,20 +223,26 @@
 :root[data-theme='dark'] {
   color-scheme: dark;
 
-  --luma-color-surface: #0e1218;
-  --luma-color-surface-raised: #161c25;
-  --luma-color-surface-sunken: #080b0f;
-  --luma-color-text: #e8edf4;
-  --luma-color-text-muted: #a3aebd;
-  --luma-color-border: #6c7684;
-  --luma-color-border-strong: #939dab;
-  --luma-color-focus-ring: #6aa9f0;
+  --luma-color-surface: #17120f;
+  --luma-color-surface-raised: #211a16;
+  --luma-color-surface-sunken: #0e0b09;
+  --luma-color-text: #f5efea;
+  --luma-color-text-muted: #b8ada4;
+  --luma-color-border: #7a6f66;
+  --luma-color-border-strong: #a2968c;
+  --luma-color-focus-ring: #ff9466;
 
-  --luma-color-primary: #7cb3ea;
-  --luma-color-primary-hover: #a3cbf3;
-  --luma-color-primary-on: #08121c;
-  --luma-color-primary-soft: #16283a;
-  --luma-color-primary-soft-text: #a9cdf0;
+  --luma-color-primary: #ff8a5c;
+  --luma-color-primary-hover: #ffa783;
+  --luma-color-primary-on: #2b1206;
+  --luma-color-primary-soft: #3a2115;
+  --luma-color-primary-soft-text: #ffb894;
+
+  /* Luma Training's signature orange. Decorative and Luma-voice surfaces
+   * only: white text on it is 2.8:1 and fails AA, so it never carries body
+   * text. Pair it with --luma-color-brand-on. */
+  --luma-color-brand: #ff6b35;
+  --luma-color-brand-on: #1a0c05;
 
   --luma-color-success: #62c48d;
   --luma-color-success-on: #04170d;
@@ -221,11 +262,11 @@
   --luma-color-info-soft: #10262e;
   --luma-color-info-soft-text: #94d3e8;
 
-  --luma-color-promotion-surface: #241d10;
-  --luma-color-promotion-border: #8a7038;
-  --luma-color-promotion-text: #f0e6d2;
-  --luma-color-promotion-muted: #c9b892;
-  --luma-color-promotion-accent: #e2c581;
+  --luma-color-promotion-surface: #2c2214;
+  --luma-color-promotion-border: #c98a45;
+  --luma-color-promotion-text: #f7eedf;
+  --luma-color-promotion-muted: #d3c2a6;
+  --luma-color-promotion-accent: #f0b978;
 
   --luma-shadow-sm: 0 1px 2px rgb(0 0 0 / 45%);
   --luma-shadow-md: 0 2px 8px rgb(0 0 0 / 55%);

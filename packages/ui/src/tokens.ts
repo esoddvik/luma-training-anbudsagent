@@ -1,10 +1,10 @@
 /**
  * JavaScript mirror of `src/tokens.css`.
  *
- * PLACEHOLDER BRAND VALUES — see the comment block at the top of
- * `src/tokens.css`. These hex values are a restrained, accessible stand-in
- * until Luma Training's real brand palette is supplied. `tokens.test.ts`
- * asserts that this file and `tokens.css` never drift apart, so a brand swap
+ * Luma Training's brand palette — see the comment block at the top of
+ * `src/tokens.css` for why the signature orange appears twice, once verbatim
+ * as `color-brand` and once darkened as `color-primary`. `tokens.test.ts`
+ * asserts that this file and `tokens.css` never drift apart, so a brand change
  * means editing two colocated lists and nothing else.
  */
 
@@ -26,6 +26,9 @@ export type ColorTokenName =
   | 'color-primary-on'
   | 'color-primary-soft'
   | 'color-primary-soft-text'
+  // Signature brand orange, decorative and Luma-voice surfaces only
+  | 'color-brand'
+  | 'color-brand-on'
   // Semantic
   | 'color-success'
   | 'color-success-on'
@@ -55,19 +58,22 @@ export type ColorScale = Readonly<Record<ColorTokenName, string>>;
 
 export const lightColors: ColorScale = {
   'color-surface': '#ffffff',
-  'color-surface-raised': '#f4f6fa',
-  'color-surface-sunken': '#e8ecf2',
-  'color-text': '#14181f',
-  'color-text-muted': '#4b5462',
-  'color-border': '#79828f',
-  'color-border-strong': '#5b6573',
-  'color-focus-ring': '#0f5fbf',
+  'color-surface-raised': '#faf7f4',
+  'color-surface-sunken': '#f0ebe5',
+  'color-text': '#1a1614',
+  'color-text-muted': '#57504b',
+  'color-border': '#8a817a',
+  'color-border-strong': '#6b635c',
+  'color-focus-ring': '#b83d0a',
 
-  'color-primary': '#14507f',
-  'color-primary-hover': '#0f3f66',
+  'color-primary': '#b83d0a',
+  'color-primary-hover': '#8c2f08',
   'color-primary-on': '#ffffff',
-  'color-primary-soft': '#e6eef6',
-  'color-primary-soft-text': '#0f3f66',
+  'color-primary-soft': '#ffe8dc',
+  'color-primary-soft-text': '#8a2f08',
+
+  'color-brand': '#ff6b35',
+  'color-brand-on': '#26150c',
 
   'color-success': '#1a6b3f',
   'color-success-on': '#ffffff',
@@ -90,28 +96,31 @@ export const lightColors: ColorScale = {
   'color-info-soft': '#e2f0f5',
   'color-info-soft-text': '#0c4a61',
 
-  'color-promotion-surface': '#fbf6ec',
-  'color-promotion-border': '#9a7534',
-  'color-promotion-text': '#33291a',
-  'color-promotion-muted': '#57472c',
-  'color-promotion-accent': '#6e5218',
+  'color-promotion-surface': '#fff5e6',
+  'color-promotion-border': '#b83d0a',
+  'color-promotion-text': '#2b1d12',
+  'color-promotion-muted': '#5a4634',
+  'color-promotion-accent': '#8a3d0b',
 };
 
 export const darkColors: ColorScale = {
-  'color-surface': '#0e1218',
-  'color-surface-raised': '#161c25',
-  'color-surface-sunken': '#080b0f',
-  'color-text': '#e8edf4',
-  'color-text-muted': '#a3aebd',
-  'color-border': '#6c7684',
-  'color-border-strong': '#939dab',
-  'color-focus-ring': '#6aa9f0',
+  'color-surface': '#17120f',
+  'color-surface-raised': '#211a16',
+  'color-surface-sunken': '#0e0b09',
+  'color-text': '#f5efea',
+  'color-text-muted': '#b8ada4',
+  'color-border': '#7a6f66',
+  'color-border-strong': '#a2968c',
+  'color-focus-ring': '#ff9466',
 
-  'color-primary': '#7cb3ea',
-  'color-primary-hover': '#a3cbf3',
-  'color-primary-on': '#08121c',
-  'color-primary-soft': '#16283a',
-  'color-primary-soft-text': '#a9cdf0',
+  'color-primary': '#ff8a5c',
+  'color-primary-hover': '#ffa783',
+  'color-primary-on': '#2b1206',
+  'color-primary-soft': '#3a2115',
+  'color-primary-soft-text': '#ffb894',
+
+  'color-brand': '#ff6b35',
+  'color-brand-on': '#1a0c05',
 
   'color-success': '#62c48d',
   'color-success-on': '#04170d',
@@ -134,11 +143,11 @@ export const darkColors: ColorScale = {
   'color-info-soft': '#10262e',
   'color-info-soft-text': '#94d3e8',
 
-  'color-promotion-surface': '#241d10',
-  'color-promotion-border': '#8a7038',
-  'color-promotion-text': '#f0e6d2',
-  'color-promotion-muted': '#c9b892',
-  'color-promotion-accent': '#e2c581',
+  'color-promotion-surface': '#2c2214',
+  'color-promotion-border': '#c98a45',
+  'color-promotion-text': '#f7eedf',
+  'color-promotion-muted': '#d3c2a6',
+  'color-promotion-accent': '#f0b978',
 };
 
 export const themes = {
@@ -191,6 +200,12 @@ export const contrastPairs: readonly ContrastPair[] = [
   ...onEverySurface('color-focus-ring', 'non-text', 'Fokusring'),
   ...onEverySurface('color-primary', 'text', 'Lenker og tekstknapper'),
 
+  {
+    foreground: 'color-brand-on',
+    background: 'color-brand',
+    kind: 'text',
+    usage: 'Luma-merkede flater i signaturoransje',
+  },
   {
     foreground: 'color-primary-on',
     background: 'color-primary',

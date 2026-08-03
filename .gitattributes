@@ -1,6 +1,32 @@
+# Line endings are normalised on the way into the index and back out on
+# checkout. Everyone here works on Windows and `.prettierrc.json` sets
+# `endOfLine: "lf"`, so without this the repository would fill with CRLF.
+#
+# WHAT THIS DOES NOT DO, because it has already been proposed twice as a fix
+# for a problem it cannot solve: it does not stop `pnpm format:check` failing
+# on a file an editor has just written with CRLF. These rules act on the
+# index/worktree boundary — commit and checkout. Prettier reads the working
+# tree directly, where a freshly written CRLF file sits unconverted until it
+# has been committed and checked out again. A newly saved file is exactly the
+# case that never reaches this filter.
+#
+# The symptom is distinctive: prettier reports every line in the file as
+# changed while the content is byte-identical. If you see that, run
+# `pnpm format` — do not go looking for a semantic difference, and do not add
+# a `.gitattributes` rule, which is already here and already did its job.
 * text=auto eol=lf
+
 *.png binary
 *.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.woff binary
+*.woff2 binary
 *.pdf binary
 *.docx binary
+*.xlsx binary
+
 pnpm-lock.yaml -diff linguist-generated
+packages/db/drizzle/meta/** -diff linguist-generated

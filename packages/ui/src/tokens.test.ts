@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { contrastRatio, formatRatio, requiredRatio } from './contrast.js';
+import { contrastRatio, formatRatio, perceptualDistance, requiredRatio } from './contrast.js';
 import {
   contrastPairs,
   cssVar,
@@ -111,6 +111,50 @@ describe('tokens.css is the single source of truth', () => {
       darkColors['color-surface-raised'],
       darkColors['color-surface-sunken'],
     ]).not.toContain(darkColors['color-promotion-surface']);
+  });
+
+  /**
+   * Inequality is too weak a test for 23.4 now that the palette is warm.
+   *
+   * Two creams one hex apart are different strings and identical to the eye, so
+   * `not.toContain` keeps passing while the promotion block dissolves into the
+   * page.
+   *
+   * The metric is a perceptual distance, not a contrast ratio. Contrast ratio
+   * measures *legibility*: it compares luminance only, so a peach and a cream
+   * of the same lightness score about 1.0 while being obviously different to
+   * look at. Using it here would have forced the promotion surface darker to
+   * satisfy a number that never described the property in question.
+   *
+   * **What this threshold does and does not promise.** It is set below the
+   * subtlest step the design uses deliberately (white to `surface-raised`, a
+   * distance of about 24), because the promotion block is not carrying the
+   * separation on tint alone — it also has a heavy branded border and an
+   * explicit Luma label, which is what 23.4 actually asks for. So this guards
+   * against the surfaces collapsing into each other, not against subtlety.
+   * A promotion surface that passed this and still looked like a tender card
+   * would be a design failure the test cannot see.
+   */
+  it('keeps the promotion surface perceptibly distinct from tender surfaces', () => {
+    const MIN_DISTANCE = 18;
+
+    for (const [themeName, colors] of [
+      ['light', lightColors],
+      ['dark', darkColors],
+    ] as const) {
+      const promotion = colors['color-promotion-surface'];
+      for (const token of [
+        'color-surface',
+        'color-surface-raised',
+        'color-surface-sunken',
+      ] as const) {
+        const distance = perceptualDistance(promotion, colors[token]);
+        expect(
+          distance,
+          `${themeName}: promotion surface is ${distance.toFixed(1)} from ${token}, below ${MIN_DISTANCE} — it would not read as a separate block (spec 23.4)`,
+        ).toBeGreaterThanOrEqual(MIN_DISTANCE);
+      }
+    }
   });
 
   it('keeps the touch target at or above 44px', () => {

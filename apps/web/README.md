@@ -24,12 +24,14 @@ Colour, spacing, radius and elevation all come from `@luma/ui` tokens. Tailwind'
 
 **A CSS transition never advances when the Browser pane is not compositing frames.** Reading a transitioned property with `getComputedStyle` then returns its `t=0` value indefinitely — for `box-shadow` that is `rgba(0,0,0,0) 0 0 0 0`, which reads exactly like the rule not existing. `setTimeout` does not help; timers fire without frames being rendered.
 
-This has already produced one near-miss bug report against a feature that worked. Before measuring a hover or focus style:
+**It is not limited to `:hover`.** It fires on any mutation that feeds a transitioned property — including flipping `data-theme`, which is how it was first seen: `.luma-button` transitions `background-color`, so forcing light mode returned the *dark* palette's orange, while `.eyebrow` in the same block transitioned nothing and read correctly. That anomaly was rationalised as a recalculation artifact before the real mechanism was found, and separately it got another reader six probes into a false bug report against a feature that worked.
+
+So before measuring anything that could be mid-transition:
 
 ```js
 el.style.transition = 'none';
 ```
 
-Static measurements — colour, contrast, radius, geometry, hit-testing, heading order — are unaffected and trustworthy.
+Static measurements — colour read from a custom property, contrast, radius, geometry, hit-testing, heading order — are unaffected and trustworthy. The rule of thumb: if the declaration you are reading appears in a `transition` list anywhere in `@luma/ui/styles.css`, neutralise it first.
 
 The stronger version of the same warning: the tests in `@luma/ui` read CSS *text*. They prove a declaration exists and is scoped correctly. They cannot prove a transitioned property ever reaches its target in a real browser, and neither can a computed-style read taken here. Some of this app's visual behaviour is therefore verified by measurement and reasoning rather than by anyone having looked at it.

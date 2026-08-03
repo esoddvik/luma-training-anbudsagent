@@ -28,6 +28,38 @@ import { MIGRATIONS_FOLDER } from '../migrate.js';
 
 export const DATABASE_URL = process.env.DATABASE_URL;
 
+/**
+ * In CI, a missing database is a broken pipeline, not a reason to skip.
+ *
+ * Every integration suite in the repository skips itself when `DATABASE_URL`
+ * is absent, which is right on a laptop and dangerous in CI: the run would go
+ * green having verified nothing about cross-user isolation, the shared view,
+ * the consent trigger, or idempotent re-ingest — the tests most worth having.
+ * A gate that reports success while skipping its own subject is worse than no
+ * gate, because it is trusted.
+ *
+ * This throws at import time rather than failing one assertion, and it lives
+ * here rather than being copied into each suite, because every one of them
+ * imports this module. A new integration test added tomorrow is covered
+ * without its author having to remember anything.
+ */
+/**
+ * `CI` is read as a flag, not as a string, because `CI=false` is a real thing
+ * people export — it is the documented way to stop a Next.js or CRA build
+ * treating warnings as errors, and this repository has a Next app. Plain
+ * truthiness would read that as "we are in CI" and hard-fail a laptop run that
+ * was correct to skip.
+ */
+const isCi = !['', '0', 'false'].includes((process.env.CI ?? '').toLowerCase());
+
+if (isCi && !DATABASE_URL) {
+  throw new Error(
+    'DATABASE_URL is not set, but CI is. Integration tests would silently skip and the ' +
+      'run would report success having verified nothing. Set DATABASE_URL on the test job ' +
+      '(see the postgres service in .github/workflows/ci.yml), or unset CI to run locally.',
+  );
+}
+
 /** Integration suites are skipped without a database. See the README. */
 export const hasDatabase = Boolean(DATABASE_URL);
 

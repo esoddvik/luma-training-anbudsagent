@@ -4,7 +4,7 @@ Spec §51 lists fourteen conditions that must be met before the service can be l
 
 **Status as of 2026-08-03: not launchable.** Several blockers are legal rather than technical and cannot be closed by engineering at all.
 
-**The single largest functional gap is not in this table: nobody can sign in.** The web app reads the database directly in server components, and the API implements the whole magic-link flow, but nothing joins them — `apps/web` does not call `/api/v1` anywhere. Every authenticated screen is built and tested and currently unreachable by a real person. See `spec-deviations.md`, "Known gaps".
+**Login works end to end as of 2026-08-03**, with one half still missing: an issued magic link redeems correctly and establishes a session, but the form on `/logg-inn` does not yet ask the API to send one. The API side of that is complete and tested. See `spec-deviations.md`, "Known gaps", for that and the others.
 
 Legend: **done** — implemented and covered by a test that would fail if it regressed. **partial** — the mechanism exists but is not yet joined to the running system. **open** — not started. **external** — not ours to close.
 

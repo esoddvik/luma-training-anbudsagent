@@ -11,6 +11,10 @@
     "./schema": {
       "types": "./dist/schema/index.d.ts",
       "default": "./dist/schema/index.js"
+    },
+    "./testing": {
+      "types": "./dist/testing/harness.d.ts",
+      "default": "./dist/testing/harness.js"
     }
   },
   "main": "./dist/index.js",

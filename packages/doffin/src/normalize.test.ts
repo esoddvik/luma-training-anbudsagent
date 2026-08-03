@@ -162,6 +162,31 @@ describe('normalizeSearchHit', () => {
     expect(tender.noticeId).toBe('9fa89bc7-d855-46a0-9c48-7bbd7e1065c9');
   });
 
+  it('strips a CPV check digit, which would not fit the storage column', () => {
+    // Every code in a 1000-notice sample was bare eight digits, but the CPV
+    // standard allows `45000000-7`, which is ten characters against a
+    // varchar(8) column and would fail the whole row rather than one code.
+    const hit = { ...baseHit, cpvCodes: ['45000000-7', '45213316-1'] };
+    expect(normalizeSearchHit(hit, { now }).tender.cpvCodes).toEqual(['45000000', '45213316']);
+  });
+
+  it('deduplicates codes that differ only by check digit', () => {
+    const hit = { ...baseHit, cpvCodes: ['45000000', '45000000-7'] };
+    expect(normalizeSearchHit(hit, { now }).tender.cpvCodes).toEqual(['45000000']);
+  });
+
+  it('drops a malformed CPV code with a warning rather than failing the notice', () => {
+    // Losing one code costs some match precision. Failing the row loses the
+    // tender entirely and holds back the ingest checkpoint.
+    const { tender, warnings } = normalizeSearchHit(
+      { ...baseHit, cpvCodes: ['45000000', 'NOT-A-CODE'] },
+      { now },
+    );
+    expect(tender.cpvCodes).toEqual(['45000000']);
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0]?.message).toContain('NOT-A-CODE');
+  });
+
   it('warns but still normalises an unknown notice type', () => {
     const { tender, warnings } = normalizeSearchHit({ ...baseHit, type: 'BRAND_NEW' }, { now });
     expect(tender.noticeCategory).toBe('other');

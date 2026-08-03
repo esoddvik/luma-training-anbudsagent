@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import type { JsonValue, Tender } from '@luma/domain';
+import { normalizeCpv, type JsonValue, type Tender } from '@luma/domain';
 import { deriveNoticeCategory, deriveStatus, type DerivationWarning } from './notice-type.js';
 import type { DoffinSearchHit } from './source-notice.js';
 
@@ -106,6 +106,42 @@ export function partitionLocations(locations: readonly string[] | null | undefin
   };
 }
 
+/**
+ * Normalises the CPV codes on a notice, dropping any that are malformed.
+ *
+ * Every code in a 1000-notice sample was a bare eight digits, but the CPV
+ * standard also allows a check-digit suffix (`45000000-7`), which is ten
+ * characters and does not fit the storage column. Rather than trusting the
+ * sample, the check digit is stripped here so a notice that does carry one is
+ * stored correctly instead of failing the whole row.
+ *
+ * A code that is not a CPV code at all is dropped with a warning rather than
+ * failing the notice: losing one code costs some match precision, whereas
+ * failing the row loses the tender entirely and holds back the checkpoint.
+ */
+export function normalizeCpvCodes(codes: readonly string[]): {
+  codes: string[];
+  warnings: DerivationWarning[];
+} {
+  const normalized: string[] = [];
+  const warnings: DerivationWarning[] = [];
+
+  for (const code of codes) {
+    const digits = normalizeCpv(code);
+    if (digits) {
+      if (!normalized.includes(digits)) normalized.push(digits);
+    } else {
+      warnings.push({
+        field: 'noticeType',
+        value: code,
+        message: `Ignored malformed CPV code "${code}".`,
+      });
+    }
+  }
+
+  return { codes: normalized, warnings };
+}
+
 export interface NormalizeOptions {
   now: Date;
   /** From the eForms XML, when it was fetched. */
@@ -125,6 +161,9 @@ export function normalizeSearchHit(
   const status = deriveStatus({ type: hit.type, status: hit.status });
   if (status.warning) warnings.push(status.warning);
 
+  const cpv = normalizeCpvCodes(hit.cpvCodes);
+  warnings.push(...cpv.warnings);
+
   const { regions, isNationwide } = partitionLocations(hit.locationId);
   const publishedAt = parsePublicationDate(hit.publicationDate);
 
@@ -143,7 +182,7 @@ export function normalizeSearchHit(
     title: hit.heading,
     buyerName: buyer?.name ?? 'Ukjent oppdragsgiver',
 
-    cpvCodes: hit.cpvCodes,
+    cpvCodes: cpv.codes,
     // A nationwide notice is recorded as nationwide rather than as a region
     // list containing a fake code. The matching engine reads the flag.
     regions: isNationwide ? [NATIONWIDE_LOCATION, ...regions] : regions,

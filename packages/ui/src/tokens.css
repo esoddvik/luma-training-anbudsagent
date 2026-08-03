@@ -112,8 +112,8 @@
    * The literal 'Poppins' after it covers surfaces that never run next/font —
    * email previews and any consumer of this package outside apps/web. */
   --luma-font-sans:
-    var(--luma-font-poppins), 'Poppins', ui-sans-serif, system-ui, -apple-system,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    var(--luma-font-poppins), 'Poppins', ui-sans-serif, system-ui, -apple-system, 'Segoe UI',
+    Roboto, 'Helvetica Neue', Arial, sans-serif;
   --luma-font-mono:
     ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
 
@@ -185,11 +185,11 @@
     --luma-color-primary-soft: #3a2115;
     --luma-color-primary-soft-text: #ffb894;
 
-  /* Luma Training's signature orange. Decorative and Luma-voice surfaces
+    /* Luma Training's signature orange. Decorative and Luma-voice surfaces
    * only: white text on it is 2.8:1 and fails AA, so it never carries body
    * text. Pair it with --luma-color-brand-on. */
-  --luma-color-brand: #ff6b35;
-  --luma-color-brand-on: #1a0c05;
+    --luma-color-brand: #ff6b35;
+    --luma-color-brand-on: #1a0c05;
 
     --luma-color-success: #62c48d;
     --luma-color-success-on: #04170d;

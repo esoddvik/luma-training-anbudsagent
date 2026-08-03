@@ -21,8 +21,8 @@ import type { ApiContext } from '../services/context.js';
  * genuinely a transport concern is setting the cookie.
  */
 
-const requestLinkSchema = z.object({ email: z.string().min(3).max(320) });
-const redeemSchema = z.object({ token: z.string().min(20).max(200) });
+export const requestLinkSchema = z.object({ email: z.string().min(3).max(320) });
+export const redeemSchema = z.object({ token: z.string().min(20).max(200) });
 
 export function registerAuthRoutes(app: ApiInstance, ctx: ApiContext): void {
   app.post(

@@ -10,6 +10,7 @@ import { registerPostmarkRoutes } from './postmark.js';
 import { registerShareRoutes } from './shares.js';
 import { registerTenderRoutes } from './tenders.js';
 import { checkCsrf } from './guards.js';
+import { buildOpenApiDocument, type RouteRef } from './openapi.js';
 import type { ApiInstance } from './types.js';
 import type { ApiContext } from '../services/context.js';
 import './types.js';
@@ -53,6 +54,28 @@ export async function registerApiRoutes(
         const actor = await resolveActor(ctx, cookie);
         if (actor) request.actor = actor;
       });
+
+      // The document is built from this list, not from a hand-written one, so
+      // a route that exists is a route that is described. `onRoute` fires for
+      // every registration in this scope including the `/openapi.json` route
+      // itself, and the handler reads the array at request time, by which
+      // point registration has finished.
+      const registered: RouteRef[] = [];
+      api.addHook('onRoute', (route) => {
+        const methods = Array.isArray(route.method) ? route.method : [route.method];
+        for (const method of methods) {
+          // HEAD is synthesised by Fastify for every GET and is not a separate
+          // operation as far as OpenAPI is concerned.
+          if (method === 'HEAD') continue;
+          registered.push({ method, url: route.url });
+        }
+      });
+
+      // Public and unauthenticated: it documents a public API surface and
+      // contains no secrets. A GET, so the CSRF hook above ignores it.
+      api.get('/openapi.json', async (_request, reply) =>
+        reply.header('Cache-Control', 'no-store').send(buildOpenApiDocument(registered)),
+      );
 
       registerAuthRoutes(api, ctx);
       registerAccountRoutes(api, ctx);

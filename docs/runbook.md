@@ -56,18 +56,23 @@ The scheduler ticks every fifteen minutes and sends to each profile at its own l
 
 **A crash between claiming and sending loses one digest.** This is the intended trade: the alternative is sending two. The tenders stay unsent and appear in the next digest, so nothing is lost permanently.
 
-## Queue depth, and why you must not alert on it
+## Queue depth, and what it is safe to alert on
 
-The admin dashboard shows ready, active and failed counts per queue. **Do not build the stalled-queue alert on those numbers.** They are read from cached columns on pg-boss's own `queue` table, and that cache is written by a monitor loop that runs only on an instance configured as a worker.
+> **This section previously said the opposite.** It told you not to build the stalled-queue alert on the queue counts, because they came from a cache that a stopped worker also stops refreshing. That was true of the old read and is no longer true of the code. The reversal is left visible rather than quietly rewritten, because an operator who remembers the old advice deserves to know why it changed.
 
-The consequence is precise and bad. If no instance is running as a worker, the counts stop updating and keep whatever value they last had. A queue that was never monitored reads as all zeros, which is indistinguishable from a queue that is empty and healthy. So the failure that the alert exists to catch — no worker processing anything — is the same failure that stops the metric moving. An alert anchored on it would sit quiet through exactly the outage it was written for.
+The admin dashboard shows ready, active and failed counts per queue, and they are safe to alert on. `queueStatus` asks pg-boss per queue with `force`, which recomputes from the job table whenever the cached figure is older than about a minute — and always when the queue has never been monitored at all. So the counts keep moving even when no instance is running as a worker, which is precisely the outage the §47 alert exists to catch.
 
-Two further traps in the same area:
+**Rising `ready` with `active` at zero is the signal.** Work is arriving and nothing is picking it up.
 
-- `updatedOn` on a queue record looks like a freshness stamp and is not. It records when the queue's *configuration* last changed, so it will happily render a recent-looking timestamp beside counts that are hours stale. The real statistics timestamp is `monitor_on`, which the API used here does not return.
-- The numbers are a shared-database property, not a per-process one, so a producer-only replica reports the same values as a worker. That is correct and deliberate — the caveat above is about staleness, not about which instance is asking.
+State the guarantee precisely, because it is easy to over-read: this is a **bound on staleness, not freshness**. The numbers are never more than roughly sixty seconds old, with or without a worker. They are not live.
 
-**Anchor the alert on evidence the work itself produces**, not on a metric about the work: `ingestion_runs` gaining a row on schedule, `notification_deliveries` being written when a digest hour passes, the newest tender's `last_synced_at` advancing. Those come from the jobs actually running, so they cannot go quiet and healthy at the same time. They are also what the sections above already tell you to check by hand.
+Three traps in the same area:
+
+- **Do not switch to `getQueues`.** It is the obvious-looking cheaper call and it is the wrong one — it reads monitor-maintained columns, so with no worker anywhere the counts freeze, and a queue that was never monitored reads as all zeros, indistinguishable from empty and healthy. There is a test pinning the divergence: at the same instant on a worker-free instance, `getQueues` reports zero ready jobs and `queueStatus` reports one.
+- **`updatedOn` is not a freshness stamp.** It records when a queue's *configuration* last changed, so it will render a recent-looking time beside stale counts. The statistics timestamp is `monitor_on`.
+- The counts are a property of the shared database, not of the process asking, so a producer-only replica reports the same values as a worker. That is correct and deliberate.
+
+Even so, **the strongest evidence is what the work itself produces**: `ingestion_runs` gaining a row on schedule, `notification_deliveries` being written when a digest hour passes, the newest tender's `last_synced_at` advancing. Those cannot go quiet and healthy at the same time under any mechanism, and they are what the sections above already tell you to check by hand.
 
 ## Email
 

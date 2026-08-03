@@ -191,6 +191,30 @@ const QUEUE_STATUS_TIMEOUT_MS = 5_000;
  * rate-limited path. That would be the wrong trade on a customer route and is
  * the right one here.
  *
+ * **What this can and cannot detect, for spec §47.** Because the read
+ * recomputes rather than waiting on a monitor, these counts are a usable alert
+ * input — a rising `ready` with `active` stuck at zero means work is arriving
+ * and nothing is consuming it. That is the consumer-side stall: handlers
+ * wedged or throwing while the process is otherwise alive.
+ *
+ * It does **not** detect the loss of every worker, and the reason is worth
+ * spelling out because the metric looks healthy throughout. Cron is gated on
+ * the same flag as the handlers — `schedule: worker` above, and pg-boss starts
+ * the timekeeper only when `schedule` is true. The three scheduled jobs in
+ * `register.ts` are the only producers of `doffin.sync`,
+ * `notification.digest.prepare` and `share.cleanup`. So an estate with no
+ * worker anywhere enqueues nothing and consumes nothing: `ready` and `active`
+ * both sit at zero, now *correctly* computed rather than frozen, and a
+ * depth-based alert stays quiet while the entire system is idle. `/ready` does
+ * not help either — `checkQueueHealth` is `isInstalled()`, which a
+ * producer-only replica passes.
+ *
+ * So §47 needs both signals, and they are not interchangeable: queue depth for
+ * a consumer-side stall, and evidence the work itself produces —
+ * `ingestion_runs` advancing, `tenders.last_synced_at` moving — for "nothing
+ * is running at all". Only the second can distinguish a quiet queue from a
+ * dead estate, because only the second stops when production stops.
+ *
  * Bounded rather than left to hang: a caller rendering "unavailable" is more
  * use to an operator than a dashboard that never paints. It throws on a
  * missing queue too, which means registration did not run — worth surfacing,

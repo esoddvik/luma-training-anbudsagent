@@ -71,27 +71,25 @@ graph TB
 
 ## 3. Where things live
 
-`/packages` boundaries follow spec §35 exactly, even though three apps consume them rather than five. Keeping the boundaries intact is what makes a later split into separate `api`, `worker` and `jobs` deployments mechanical.
+A package exists where code is shared between deployments or where a boundary is load-bearing. Where neither is true, the code is a service module inside `apps/core` instead — see the note below the table, which records where this departs from spec §35.
 
 | Package | Responsibility | Notable constraint |
 | --- | --- | --- |
-| `packages/db` | Drizzle schema, migrations, connection pooling, query helpers | Single owner of the schema. `drizzle-kit` migrations are the only way the schema changes |
-| `packages/domain` | Core types (`Tender`, `AlertProfile`, `MatchResult`), business rules, `noticeCategory` derivation, editorial recommendation selection | No I/O. Types here are the vocabulary everything else speaks |
-| `packages/doffin` | `TenderSourceAdapter` interface, `DoffinApiAdapter`, `FixtureTenderSourceAdapter`, normalization | The only place that knows Doffin field names (ADR-0007) |
-| `packages/matching` | Deterministic, versioned matching and explanation generation | Pure function. No import edge to `attribution` or the editorial module (ADR-0004, ADR-0006) |
-| `packages/email` | Postmark client, template registry, stream mapping, digest composition | Owns the template-to-stream mapping. Callers name a template, never a stream (ADR-0005) |
-| `packages/auth` | Magic-link issuance and redemption, opaque database-backed sessions, `validateSession`, admin role | Single owner of the sessions and magic-link tables (ADR-0016) |
-| `packages/billing` | `BillingProvider` interface, `ManualInvoiceBillingProvider`, order state machine | Only writer of `order_requests` (ADR-0010) |
-| `packages/consent` | Append-only `consent_events`, derived current status, consent text versions | Only writer of `consent_events`. No `UPDATE`, ever (ADR-0009) |
-| `packages/legal` | Legal documents, immutable versions, acceptance history, launch-blocking checks | Versions are immutable; acceptances are insert-only (ADR-0011) |
-| `packages/sharing` | Share token generation, validation, revocation, expiry, shared-view projection | Produces the privacy-stripped projection the shared view renders (ADR-0015) |
-| `packages/attribution` | Attribution events, UTM construction, reporting queries | Write-and-report only. Nothing in the matching path reads it (ADR-0006) |
-| `packages/mcp-tools` | MCP tool, resource and prompt definitions with Zod schemas | Transport-agnostic. `apps/mcp` is a thin shell around it (ADR-0002) |
-| `packages/ui` | Luma design tokens, shared React components, Norwegian string modules | All customer copy is Norwegian bokmål (ADR-0012) |
-| `packages/config` | Zod-validated environment schema, feature configuration, `LUMA_PRIVACY_POLICY_URL` | Startup fails loudly on invalid configuration. The privacy URL is read only from here (ADR-0011) |
-| `packages/observability` | pino logger with redaction, correlation IDs, metrics, health checks | Never logs MCP tokens, magic links or share tokens in clear (spec §47) |
+| `packages/domain` | Core types (`Tender`, `AlertProfile`, `MatchResult`), Norwegian text folding, CPV hierarchy, consent derivation, editorial eligibility | No I/O, one dependency (Zod). The bottom of the graph, and the vocabulary everything else speaks |
+| `packages/db` | Drizzle schema, migrations, connection pooling, test harness | Single owner of the schema. `drizzle-kit` migrations are the only way it changes |
+| `packages/doffin` | `TenderSourceAdapter`, `DoffinApiAdapter`, `FixtureTenderSourceAdapter`, normalisation, the incremental sync | The only place that knows Doffin field names (ADR-0007) |
+| `packages/matching` | Deterministic, versioned matching and explanation | Pure. An automated scan asserts no import edge to anything commercial (ADR-0004, ADR-0006) |
+| `packages/email` | Postmark client, the nine templates, stream mapping, promotion placement | Callers name a template, never a stream. Marketing sends require a consent proof object (ADR-0005) |
+| `packages/auth` | Magic-link issuance and redemption, opaque database-backed sessions, role and ownership checks | Pure logic behind two persistence ports, so all three runtimes validate identically (ADR-0016) |
+| `packages/mcp-tools` | The nine MCP tools, resources, prompts, and the repository ports they read through | Imports no database client. `apps/mcp` supplies the adapter (ADR-0002) |
+| `packages/content` | The five industry templates and the editorial recommendation seeds | Editorial content, quality-assured by Luma before launch (spec §11.2) |
+| `packages/ui` | Design tokens and accessible React primitives | Tokens are the only colour source, enforced by a WCAG contrast test |
+| `packages/config` | Zod-validated environment, per service | Errors name the failing key and the rule, never the received value (spec §47) |
+| `packages/observability` | pino logging with two layers of redaction, correlation IDs, health and readiness | Never logs a token, magic link or share token in clear (spec §47) |
 
-Rule: nothing under `packages/` may import from `apps/`.
+**Where this departs from spec §35.** The spec lists `billing`, `consent`, `legal`, `sharing` and `attribution` as packages. They are implemented as service modules under `apps/core/src/services/` instead, because each is used by exactly one deployment and a package boundary would buy nothing but indirection. The constraints they carry are unchanged and still enforced: `consent_events` is append-only at the database level, `order_requests` moves only through the `BillingProvider` seam, the shared view is built from a schema that strips undeclared fields, and nothing in the matching path reads attribution. If any of them is later needed by a second deployment, promoting it to a package is a move, not a rewrite.
+
+Rule: nothing under `packages/` may import from `apps/`. This is why the MCP auth helpers and resource content live in `packages/mcp-tools` with thin re-export barrels in `apps/mcp`, rather than the other way round.
 
 ## 4. Data flow
 

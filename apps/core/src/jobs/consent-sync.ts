@@ -24,14 +24,25 @@ import type { Logger } from '@luma/observability';
  * suppression leaves the transactional and tender-notification streams alone.
  * Nothing here may widen the stream argument.
  *
- * **Why push at all, given a withdrawn user is already safe.** This system
- * cannot mail them regardless: a marketing send needs a
- * `MarketingConsentProof`, only `verifyMarketingConsent` mints one, and it
- * mints one only from a log whose latest marketing event is active. The push
- * exists for the two cases that guard cannot reach — a campaign sent from
- * Postmark's own interface, and being able to show a regulator that the
- * withdrawal propagated to the processor rather than living only in our
- * database.
+ * **The push is required, not merely prudent.** §21 states it outright:
+ * «Tilbaketrekking skal påvirke Postmark» — a withdrawal shall affect
+ * Postmark. This comment previously argued the case on engineering grounds
+ * alone, which understated it: someone weighing the cost of the extra API call
+ * could reasonably have dropped it, not knowing a requirement was behind it.
+ *
+ * The engineering reasons still hold and are worth keeping, because they say
+ * *why* the requirement is not redundant. This system cannot mail a withdrawn
+ * user regardless: a marketing send needs a `MarketingConsentProof`, only
+ * `verifyMarketingConsent` mints one, and it mints one only from a log whose
+ * latest marketing event is active. So the push earns its place on the two
+ * cases that guard cannot reach — a campaign sent from Postmark's own
+ * interface, and being able to show a regulator that the withdrawal reached
+ * the processor rather than living only in our database.
+ *
+ * §21 also fixes the two rules this job must not break, in the same list:
+ * «Tilbaketrekking skal ikke deaktivere anbudsvarsling» and «Avmelding fra
+ * anbudsvarsler skal ikke automatisk fjerne markedsføringssamtykke». Both are
+ * why the stream below is a constant.
  *
  * **Re-asserted every tick, deliberately.** Postmark treats a repeat
  * suppression as a no-op, so there is no read-before-write and no "have I done

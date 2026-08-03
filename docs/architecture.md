@@ -82,7 +82,7 @@ A package exists where code is shared between deployments or where a boundary is
 | `packages/email` | Postmark client, the nine templates, stream mapping, promotion placement | Callers name a template, never a stream. Marketing sends require a consent proof object (ADR-0005) |
 | `packages/auth` | Magic-link issuance and redemption, opaque database-backed sessions, role and ownership checks | Pure logic behind two persistence ports, so all three runtimes validate identically (ADR-0016) |
 | `packages/mcp-tools` | The nine MCP tools, resources, prompts, and the repository ports they read through | Imports no database client. `apps/mcp` supplies the adapter (ADR-0002) |
-| `packages/content` | The five industry templates and the editorial recommendation seeds | Editorial content, quality-assured by Luma before launch (spec §11.2) |
+| `packages/content` | The eight service templates, the service category list and the editorial recommendation seeds | Editorial content, quality-assured by Luma before launch (spec §11.2) |
 | `packages/ui` | Design tokens and accessible React primitives | Tokens are the only colour source, enforced by a WCAG contrast test |
 | `packages/config` | Zod-validated environment, per service | Errors name the failing key and the rule, never the received value (spec §47) |
 | `packages/observability` | pino logging with two layers of redaction, correlation IDs, health and readiness | Never logs a token, magic link or share token in clear (spec §47) |
@@ -135,7 +135,7 @@ sequenceDiagram
     Digest->>DB: find users whose local digest hour is now
     Digest->>DB: collect unsent matches, group by profile
     Digest->>Digest: rank, split planned procurements<br/>into their own section
-    Digest->>Digest: selectRecommendation(placement, geography,<br/>industryTemplateId, ladderState)
+    Digest->>Digest: selectRecommendation(placement, geography,<br/>serviceTemplateId, ladderState)
     Note over Digest: recommendation chosen AFTER ranking,<br/>never influences order (ADR-0006)
     Digest->>DB: create notification_deliveries +<br/>notification_delivery_items (unique)
     Digest->>DB: enqueue email.send
@@ -208,7 +208,7 @@ Concretely:
 
 - `packages/matching` has no import edge, direct or transitive, to `packages/attribution` or the editorial module. A test walks the dependency graph and fails the build on any such edge.
 - `MatchResult` has exactly the eight fields in spec §14. There is no `sponsored`, no `campaignId`, no `commercialValue`.
-- Ranking happens first; the editorial recommendation is chosen afterwards, from placement, profile geography, industry template and ladder state. It never sees the match list.
+- Ranking happens first; the editorial recommendation is chosen afterwards, from placement, profile geography, service template and ladder state. It never sees the match list.
 - `attribution_events` has no foreign key into the match tables beyond `tenderId` for reporting (spec §37).
 - Two users with identical profiles and wildly different commercial histories get byte-identical `MatchResult` values. That is a test, not an aspiration.
 - Turning off promotion changes email content and nothing about which tenders are sent or their order.
@@ -265,7 +265,7 @@ Spec §50 defines eight phases. Phases 0 through 6 reach launch; 7 and 8 follow.
 | 0 | Monorepo, CI, environment validation, architecture docs, all ADRs, Vercel and Railway skeletons | All apps build, health endpoints respond |
 | 1 | Schema, migrations, adapter interface, fixture adapter, sync job, normalization | Idempotent re-ingest, correct `noticeCategory`, safe checkpoint. **Also: verify whether real award notices expose supplier name and contract duration, and update ADR-0013** |
 | 2 | Passwordless auth, legal versioning, consent model | Signup without marketing consent; withdrawal creates a new event |
-| 3 | Alert profiles, industry templates, matching, dashboard | Deterministic and explainable; exclusions override; no commercial signal in ranking |
+| 3 | Alert profiles, service templates, matching, dashboard | Deterministic and explainable; exclusions override; no commercial signal in ranking |
 | 4 | Postmark, digests, promotion, sharing, attribution | No duplicate emails; promotion after tenders and switchable off; shared view leaks nothing |
 | 5 | MCP server, tokens, slim tool surface, resources, prompts | Connects in ChatGPT and Claude; user isolation; five-minute demo runs stably |
 | 6 | Security review, accessibility, legal content, backup, monitoring, order flow | The 14 launch blockers in spec §51 |

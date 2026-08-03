@@ -69,7 +69,7 @@ const profileForm = z
     frequency: alertFrequencySchema,
     digestHourLocal: z.coerce.number().int().min(0).max(23),
     minimumMatchScore: z.coerce.number().min(0).max(100),
-    industryTemplateId: z.uuid().optional(),
+    serviceTemplateId: z.uuid().optional(),
   })
   .refine(
     (value) =>
@@ -105,8 +105,8 @@ function readProfileForm(formData: FormData): ProfileForm | null {
     frequency: value('frequency') ?? 'daily',
     digestHourLocal: value('digestHourLocal') ?? '7',
     minimumMatchScore: value('minimumMatchScore') ?? '0',
-    ...(value('industryTemplateId') && value('industryTemplateId')!.length > 0
-      ? { industryTemplateId: value('industryTemplateId') }
+    ...(value('serviceTemplateId') && value('serviceTemplateId')!.length > 0
+      ? { serviceTemplateId: value('serviceTemplateId') }
       : {}),
   });
   return parsed.success ? parsed.data : null;
@@ -130,7 +130,7 @@ export async function createProfileAction(formData: FormData): Promise<void> {
         // (step 13), so activating on creation would send the first digest
         // from criteria nobody has looked at yet.
         active: false,
-        industryTemplateId: form.industryTemplateId ?? null,
+        serviceTemplateId: form.serviceTemplateId ?? null,
         includePlannedProcurements: form.includePlannedProcurements === 'on',
         estimatedValueMinNok: form.estimatedValueMinNok ?? null,
         estimatedValueMaxNok: form.estimatedValueMaxNok ?? null,

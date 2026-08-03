@@ -300,7 +300,7 @@ export function createProfileReadPort(db: Database): ProfileReadPort {
       };
 
       if (row.description) profile.description = row.description;
-      if (row.industryTemplateId) profile.industryTemplateId = row.industryTemplateId;
+      if (row.serviceTemplateId) profile.serviceTemplateId = row.serviceTemplateId;
       if (row.estimatedValueMinNok !== null) {
         profile.estimatedValueMinNok = row.estimatedValueMinNok;
       }

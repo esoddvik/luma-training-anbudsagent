@@ -59,6 +59,15 @@ export const tenderChangeKindEnum = pgEnum('tender_change_kind', [
 /** `alertFrequencySchema` */
 export const alertFrequencyEnum = pgEnum('alert_frequency', ['immediate', 'daily', 'weekly']);
 
+/**
+ * `supplierFormSchema`
+ *
+ * How a supplier's demand is shaped (ADR-17). It weights onboarding and groups
+ * analysis, and it must never reach the matching engine — a column, not a
+ * signal.
+ */
+export const supplierFormEnum = pgEnum('supplier_form', ['sector_bound', 'cross_sector']);
+
 /** `matchReasonTypeSchema` */
 export const matchReasonTypeEnum = pgEnum('match_reason_type', [
   'cpv',

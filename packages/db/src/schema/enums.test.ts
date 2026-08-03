@@ -18,7 +18,7 @@ describe('pgEnum parity with @luma/domain', () => {
 
   it('has a case for every domain-backed enum declared in enums.ts', () => {
     // A guard against the pair list quietly falling behind the enum file.
-    expect(DOMAIN_ENUM_PAIRS).toHaveLength(21);
+    expect(DOMAIN_ENUM_PAIRS).toHaveLength(22);
     expect(new Set(DOMAIN_ENUM_PAIRS.map((pair) => pair.name)).size).toBe(DOMAIN_ENUM_PAIRS.length);
   });
 

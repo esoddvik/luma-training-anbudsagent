@@ -14,6 +14,7 @@ import {
   profileSuggestionSchema,
   promotionPlacementSchema,
   regionScopeSchema,
+  supplierFormSchema,
   tenderChangeKindSchema,
   tenderSourceSchema,
   tenderStatusSchema,
@@ -32,6 +33,7 @@ import {
   type OrderStatus,
   type PromotionPlacement,
   type RegionScope,
+  type SupplierForm,
   type TenderChangeKind,
   type TenderSource,
   type TenderStatus,
@@ -55,6 +57,7 @@ import {
   profileSuggestionStatusEnum,
   promotionPlacementEnum,
   regionScopeEnum,
+  supplierFormEnum,
   tenderChangeKindEnum,
   tenderSourceEnum,
   tenderStatusEnum,
@@ -122,6 +125,7 @@ assertEqual<(typeof attributionEventTypeEnum.enumValues)[number], AttributionEve
 assertEqual<(typeof promotionPlacementEnum.enumValues)[number], PromotionPlacement>(true);
 assertEqual<(typeof marketingCategoryEnum.enumValues)[number], MarketingCategory>(true);
 assertEqual<(typeof regionScopeEnum.enumValues)[number], RegionScope>(true);
+assertEqual<(typeof supplierFormEnum.enumValues)[number], SupplierForm>(true);
 assertEqual<(typeof utmMediumEnum.enumValues)[number], UtmMedium>(true);
 assertEqual<(typeof profileSuggestionFieldEnum.enumValues)[number], ProfileSuggestion['field']>(
   true,
@@ -199,6 +203,7 @@ export const DOMAIN_ENUM_PAIRS: readonly DomainEnumPair[] = [
     zod: marketingCategorySchema.options,
   },
   { name: 'region_scope', pg: regionScopeEnum.enumValues, zod: regionScopeSchema.options },
+  { name: 'supplier_form', pg: supplierFormEnum.enumValues, zod: supplierFormSchema.options },
   { name: 'utm_medium', pg: utmMediumEnum.enumValues, zod: utmMediumSchema.options },
   {
     name: 'profile_suggestion_field',

@@ -215,7 +215,7 @@ export const OPERATIONS: Readonly<Record<string, Operation>> = {
     errors: [400, 404],
   },
 
-  'GET /api/v1/industry-templates': {
+  'GET /api/v1/service-templates': {
     summary: 'Editorial onboarding templates. Public; identical for everyone.',
     tag: 'alert-profiles',
     authenticated: false,

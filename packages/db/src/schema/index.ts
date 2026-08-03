@@ -13,7 +13,7 @@
  * | ----------------- | ------------------------------------------------------------------------------------------------------------------------ |
  * | `auth.ts`         | users, sessions, magic_link_tokens, companies, company_memberships                                                        |
  * | `tenders.ts`      | tenders, tender_cpv_codes, tender_regions, tender_municipalities, tender_revisions, tender_change_events                  |
- * | `profiles.ts`     | industry_templates, alert_profiles, alert_profile_cpv_codes, alert_profile_keywords, alert_profile_geographies, alert_profile_buyers |
+ * | `profiles.ts`     | service_templates, alert_profiles, alert_profile_cpv_codes, alert_profile_keywords, alert_profile_geographies, alert_profile_buyers, alert_profile_template_remaps |
  * | `matching.ts`     | tender_matches, tender_match_reasons, user_tender_states, relevance_feedback, profile_suggestions                         |
  * | `sharing.ts`      | tender_shares                                                                                                             |
  * | `notifications.ts`| notification_preferences, notification_deliveries, notification_delivery_items, notification_category_unsubscribes, email_events, email_suppressions |

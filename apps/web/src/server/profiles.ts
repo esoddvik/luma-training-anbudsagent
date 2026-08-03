@@ -136,7 +136,7 @@ export async function loadProfile(
     name: row.name,
     ...(row.description ? { description: row.description } : {}),
     active: row.active,
-    ...(row.industryTemplateId ? { industryTemplateId: row.industryTemplateId } : {}),
+    ...(row.serviceTemplateId ? { serviceTemplateId: row.serviceTemplateId } : {}),
     cpvInclude: pick(cpv, 'include'),
     cpvExclude: pick(cpv, 'exclude'),
     keywordsInclude: pick(keywords, 'include'),
@@ -340,37 +340,42 @@ export async function previewMatches(
   };
 }
 
-export interface IndustryTemplateOption {
+export interface ServiceTemplateOption {
   readonly id: string;
   readonly slug: string;
   readonly name: string;
   readonly description: string;
+  /**
+   * The onboarding sentence written for this template's supplier form
+   * (ADR-17). Nullable, because a template created in admin may not have one
+   * yet — the page shows nothing rather than inventing generic advice.
+   */
+  readonly onboardingHint: string | null;
   readonly cpvInclude: readonly string[];
   readonly keywordsInclude: readonly string[];
 }
 
 /**
- * The industry templates offered during onboarding (spec section 11.2).
+ * The service templates offered during onboarding (spec section 11.2).
  *
  * Read from the database, because the templates are editorial content that
- * admin maintains without a deploy. `INDUSTRY_TEMPLATE_SEEDS` in
+ * admin maintains without a deploy. `SERVICE_TEMPLATE_SEEDS` in
  * `@luma/content` is the seed for an empty database, not the source of truth,
  * so the onboarding page falls back to it only when nothing has been seeded.
  */
-export async function listIndustryTemplates(db: Database): Promise<IndustryTemplateOption[]> {
+export async function listServiceTemplates(db: Database): Promise<ServiceTemplateOption[]> {
   const rows = await db
     .select({
-      id: schema.industryTemplates.id,
-      slug: schema.industryTemplates.slug,
-      name: schema.industryTemplates.name,
-      description: schema.industryTemplates.description,
-      cpvInclude: schema.industryTemplates.cpvInclude,
-      keywordsInclude: schema.industryTemplates.keywordsInclude,
+      id: schema.serviceTemplates.id,
+      slug: schema.serviceTemplates.slug,
+      name: schema.serviceTemplates.name,
+      description: schema.serviceTemplates.description,
+      onboardingHint: schema.serviceTemplates.onboardingHint,
+      cpvInclude: schema.serviceTemplates.cpvInclude,
+      keywordsInclude: schema.serviceTemplates.keywordsInclude,
     })
-    .from(schema.industryTemplates)
-    .where(
-      and(eq(schema.industryTemplates.active, true), isNull(schema.industryTemplates.deletedAt)),
-    )
-    .orderBy(schema.industryTemplates.sortOrder);
+    .from(schema.serviceTemplates)
+    .where(and(eq(schema.serviceTemplates.active, true), isNull(schema.serviceTemplates.deletedAt)))
+    .orderBy(schema.serviceTemplates.sortOrder);
   return rows;
 }

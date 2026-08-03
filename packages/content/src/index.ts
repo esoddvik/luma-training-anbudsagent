@@ -1,9 +1,16 @@
 export {
-  findIndustryTemplate,
-  industryTemplateSeedSchema,
-  INDUSTRY_TEMPLATE_SEEDS,
-  type IndustryTemplateSeed,
-} from './industry-templates.js';
+  findServiceTemplate,
+  serviceTemplateSeedSchema,
+  SERVICE_TEMPLATE_SEEDS,
+  type ServiceTemplateSeed,
+} from './service-templates.js';
+export {
+  findServiceCategory,
+  serviceCategorySchema,
+  SERVICE_CATEGORIES,
+  SERVICE_CATEGORY_KEYS,
+  type ServiceCategory,
+} from './service-categories.js';
 export {
   EDITORIAL_SEEDS,
   FORBIDDEN_PROMOTION_PHRASES,

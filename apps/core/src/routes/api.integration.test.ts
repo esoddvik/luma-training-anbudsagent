@@ -10,7 +10,7 @@ import {
   consentTextVersions,
   emailEvents,
   emailSuppressions,
-  industryTemplates,
+  serviceTemplates,
   legalDocumentVersions,
   legalDocuments,
   notificationCategoryUnsubscribes,
@@ -189,7 +189,7 @@ describeDb('HTTP API', () => {
     // `users` does not reach them, and a company's unique organisation number
     // would collide across tests.
     await db.execute(
-      sql`truncate table ${users}, ${tenders}, ${industryTemplates}, ${consentTextVersions},
+      sql`truncate table ${users}, ${tenders}, ${serviceTemplates}, ${consentTextVersions},
           ${legalDocuments}, ${legalDocumentVersions}, ${companies}, ${emailSuppressions}
           restart identity cascade`,
     );

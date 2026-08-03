@@ -164,7 +164,7 @@ export default function LandingPage() {
           <ul className="grid list-none grid-cols-1 gap-md p-0 sm:grid-cols-3">
             <Card as="li" heading="1. Sett opp varslingsprofilen" tone="flat">
               <p className="m-0 text-sm">
-                Velg bransjemal, geografi, CPV-koder og terskelverdier. Du kan justere kriteriene
+                Velg tjenestemal, geografi, CPV-koder og terskelverdier. Du kan justere kriteriene
                 når som helst.
               </p>
             </Card>

@@ -1,26 +1,26 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Badge, buttonClassName, Card, Cluster, Stack } from '@luma/ui';
-import { INDUSTRY_TEMPLATE_SEEDS } from '@luma/content';
+import { SERVICE_TEMPLATE_SEEDS } from '@luma/content';
 import { ActionMessage } from '@/components/action-message';
 import { ProfileForm } from '@/components/profile-form';
 import { createProfileAction } from '@/server/actions/profile-actions';
 import { getWebDb } from '@/server/db';
-import { listIndustryTemplates, type IndustryTemplateOption } from '@/server/profiles';
+import { listServiceTemplates, type ServiceTemplateOption } from '@/server/profiles';
 import { requireUser } from '@/server/session';
 import { PageHeader } from '../../_components/page-header';
 
 export const metadata: Metadata = {
   title: 'Ny varslingsprofil',
   description:
-    'Velg en bransjemal eller start blankt, og sett opp hvilke oppdrag du vil få varsel om.',
+    'Velg en tjenestemal eller start blankt, og sett opp hvilke oppdrag du vil få varsel om.',
 };
 
 /**
  * Onboarding: creating the first alert profile (spec sections 9.1 and 11.2).
  *
  * Section 9.1 sets an acceptance criterion — the whole journey under five
- * minutes — and section 11.2 names the industry template as the way to reach
+ * minutes — and section 11.2 names the service template as the way to reach
  * it. So the templates come first on the page, and picking one is a link that
  * reloads the same form with the fields already filled in. That keeps the flow
  * to one form submission and works without JavaScript.
@@ -40,7 +40,7 @@ export default async function Page({ searchParams }: PageProps) {
   const params = await searchParams;
   await requireUser();
 
-  const templates = await listIndustryTemplates(getWebDb());
+  const templates = await listServiceTemplates(getWebDb());
   const options = templates.length > 0 ? templates : seedFallback();
 
   const selectedSlug = typeof params['mal'] === 'string' ? params['mal'] : undefined;
@@ -53,7 +53,7 @@ export default async function Page({ searchParams }: PageProps) {
         title="Ny varslingsprofil"
         lede={
           <p className="m-0">
-            Velg bransjemalen som ligner mest på virksomheten din, så fyller vi ut CPV-koder og
+            Velg tjenestemalen som ligner mest på virksomheten din, så fyller vi ut CPV-koder og
             søkeord for deg. Du kan endre alt etterpå. Vil du heller starte blankt, hopper du rett
             ned til skjemaet.
           </p>
@@ -65,7 +65,7 @@ export default async function Page({ searchParams }: PageProps) {
       <section aria-labelledby="maler-overskrift">
         <Stack gap="md">
           <h2 id="maler-overskrift" className="section-heading">
-            Bransjemaler
+            Tjenestemaler
           </h2>
           {/* A grid rather than a column: these are options to compare, and six
               full-width bands make the reader scroll past the choice instead of
@@ -117,11 +117,11 @@ export default async function Page({ searchParams }: PageProps) {
           </ul>
           {selectedSlug !== undefined && selected === undefined ? (
             <p className="m-0 text-sm text-text-muted">
-              Fant ikke bransjemalen du ba om. Skjemaet under er tomt, og du kan fylle det ut selv.
+              Fant ikke tjenestemalen du ba om. Skjemaet under er tomt, og du kan fylle det ut selv.
             </p>
           ) : null}
           <p className="m-0 text-sm text-text-muted">
-            Bransjemalene er redaksjonelt innhold fra Luma Training. De påvirker ingenting utover
+            Tjenestemalene er redaksjonelt innhold fra Luma Training. De påvirker ingenting utover
             verdiene de fyller inn i profilen din.
           </p>
         </Stack>
@@ -132,6 +132,13 @@ export default async function Page({ searchParams }: PageProps) {
           <h2 id="skjema-overskrift" className="section-heading">
             Kriteriene dine
           </h2>
+          {/* The hint is the only place the supplier form is visible to the
+              user, and for a cross-sector template it is the whole point: it
+              says «sett geografi, la kjøperfeltene stå tomme», which is the
+              choice the product refuses to make on their behalf (ADR-17). */}
+          {selected?.onboardingHint ? (
+            <p className="prose-measure m-0 text-sm">{selected.onboardingHint}</p>
+          ) : null}
           <p className="prose-measure m-0 text-sm text-text-muted">
             Profilen opprettes på pause. Du får se en forhåndsvisning av treffene før du aktiverer
             varslingen, slik at ingen sender deg noe du ikke har sett på.
@@ -146,7 +153,7 @@ export default async function Page({ searchParams }: PageProps) {
                     cpvInclude: selected.cpvInclude,
                     keywordsInclude: selected.keywordsInclude,
                     ...('id' in selected && isUuid(selected.id)
-                      ? { industryTemplateId: selected.id }
+                      ? { serviceTemplateId: selected.id }
                       : {}),
                   },
                 }
@@ -166,17 +173,18 @@ function isUuid(value: string): boolean {
 /**
  * The seed content, shown when nothing has been seeded into the database yet.
  *
- * The ids are the slugs rather than uuids, so `industryTemplateId` is left off
+ * The ids are the slugs rather than uuids, so `serviceTemplateId` is left off
  * the created profile: a foreign key to a template row that does not exist
  * would fail the insert, and recording an id we made up would be worse than
  * recording nothing.
  */
-function seedFallback(): IndustryTemplateOption[] {
-  return INDUSTRY_TEMPLATE_SEEDS.map((seed) => ({
+function seedFallback(): ServiceTemplateOption[] {
+  return SERVICE_TEMPLATE_SEEDS.map((seed) => ({
     id: seed.slug,
     slug: seed.slug,
     name: seed.name,
     description: seed.description,
+    onboardingHint: seed.onboardingHint,
     cpvInclude: seed.cpvInclude,
     keywordsInclude: seed.keywordsInclude,
   }));

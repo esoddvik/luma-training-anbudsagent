@@ -5,7 +5,7 @@ import {
   alertProfileGeographies,
   alertProfileKeywords,
   alertProfiles,
-  industryTemplates,
+  serviceTemplates,
   type Database,
 } from '@luma/db';
 import {
@@ -41,7 +41,7 @@ const PREVIEW_TENDER_LIMIT = 300;
 const PREVIEW_RESULT_LIMIT = 25;
 
 export interface AlertProfileView extends AlertProfile {
-  readonly industryTemplateSlug?: string;
+  readonly serviceTemplateSlug?: string;
 }
 
 /** Assembles the domain object from a profile row and its child rows. */
@@ -98,7 +98,7 @@ function assembleProfile(
   };
 
   if (row.description) profile.description = row.description;
-  if (row.industryTemplateId) profile.industryTemplateId = row.industryTemplateId;
+  if (row.serviceTemplateId) profile.serviceTemplateId = row.serviceTemplateId;
   if (row.estimatedValueMinNok !== null) profile.estimatedValueMinNok = row.estimatedValueMinNok;
   if (row.estimatedValueMaxNok !== null) profile.estimatedValueMaxNok = row.estimatedValueMaxNok;
   if (row.deadlineMinimumDays !== null) profile.deadlineMinimumDays = row.deadlineMinimumDays;
@@ -277,15 +277,15 @@ async function writeCriteria(
   if (buyerRows.length > 0) await tx.insert(alertProfileBuyers).values(buyerRows);
 }
 
-/** Rejects an `industryTemplateId` that does not exist, before the FK does. */
+/** Rejects an `serviceTemplateId` that does not exist, before the FK does. */
 async function assertTemplateExists(ctx: ApiContext, templateId: string | undefined) {
   if (!templateId) return;
   const rows = await ctx.db
-    .select({ id: industryTemplates.id })
-    .from(industryTemplates)
-    .where(and(eq(industryTemplates.id, templateId), isNull(industryTemplates.deletedAt)))
+    .select({ id: serviceTemplates.id })
+    .from(serviceTemplates)
+    .where(and(eq(serviceTemplates.id, templateId), isNull(serviceTemplates.deletedAt)))
     .limit(1);
-  if (rows.length === 0) throw notFound('Bransjemalen finnes ikke.');
+  if (rows.length === 0) throw notFound('Tjenestemalen finnes ikke.');
 }
 
 export async function createAlertProfile(
@@ -294,7 +294,7 @@ export async function createAlertProfile(
   body: unknown,
 ): Promise<AlertProfile> {
   const input = parseOrThrow(alertProfileInputSchema, body);
-  await assertTemplateExists(ctx, input.industryTemplateId);
+  await assertTemplateExists(ctx, input.serviceTemplateId);
   const now = ctx.now();
 
   const profileId = await ctx.db.transaction(async (tx) => {
@@ -305,7 +305,7 @@ export async function createAlertProfile(
         name: input.name,
         description: input.description ?? null,
         active: input.active,
-        industryTemplateId: input.industryTemplateId ?? null,
+        serviceTemplateId: input.serviceTemplateId ?? null,
         noticeTypes: input.noticeTypes,
         procedureTypes: input.procedureTypes,
         includePlannedProcurements: input.includePlannedProcurements,
@@ -345,7 +345,7 @@ export async function updateAlertProfile(
   // rejected on create — a value floor above its ceiling, for instance.
   const merged = { ...toInput(existing), ...(body as Record<string, unknown>) };
   const input = parseOrThrow(alertProfileInputSchema, merged);
-  await assertTemplateExists(ctx, input.industryTemplateId);
+  await assertTemplateExists(ctx, input.serviceTemplateId);
 
   await ctx.db.transaction(async (tx) => {
     await tx
@@ -354,7 +354,7 @@ export async function updateAlertProfile(
         name: input.name,
         description: input.description ?? null,
         active: input.active,
-        industryTemplateId: input.industryTemplateId ?? null,
+        serviceTemplateId: input.serviceTemplateId ?? null,
         noticeTypes: input.noticeTypes,
         procedureTypes: input.procedureTypes,
         includePlannedProcurements: input.includePlannedProcurements,

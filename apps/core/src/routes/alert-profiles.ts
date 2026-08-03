@@ -7,7 +7,7 @@ import {
   previewAlertProfile,
   updateAlertProfile,
 } from '../services/alert-profiles.js';
-import { listIndustryTemplates } from '../services/industry-templates.js';
+import { listServiceTemplates } from '../services/service-templates.js';
 import { paginationQuerySchema } from '../services/pagination.js';
 import { actorOf } from './guards.js';
 import { parseOrThrow, rateLimitError } from './errors.js';
@@ -15,7 +15,7 @@ import type { ApiInstance } from './types.js';
 import type { ApiContext } from '../services/context.js';
 
 /**
- * `/api/v1/alert-profiles` and `/api/v1/industry-templates` (spec §11).
+ * `/api/v1/alert-profiles` and `/api/v1/service-templates` (spec §11).
  *
  * Ownership is not checked here. Every handler hands the actor to the service,
  * which is where `requireOwnership` runs (spec §39) — so a route added later
@@ -78,5 +78,5 @@ export function registerAlertProfileRoutes(app: ApiInstance, ctx: ApiContext): v
 
   // Public. Editorial onboarding content, identical for everyone, and needed
   // on the signup page before an account exists (spec §11.2).
-  app.get('/industry-templates', async () => ({ items: await listIndustryTemplates(ctx) }));
+  app.get('/service-templates', async () => ({ items: await listServiceTemplates(ctx) }));
 }

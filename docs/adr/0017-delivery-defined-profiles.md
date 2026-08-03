@@ -67,6 +67,13 @@ Three invariants, each shown to fail before being trusted:
 - `packages/matching/src/no-sector-assumptions.test.ts` — the engine's source contains no identifier naming a supplier identity or buyer sector; a tender scores identically whoever the buyer is when the user named none; and a buyer exclusion the user *did* state still takes effect. Proved by leaking `buyerSector` into the engine, and by adding a three-point nudge for buyers whose name contains "Helse", which failed this test and ten others including the golden set.
 - The existing `no-commercial-influence.test.ts` is unchanged and still guards the marketing boundary. This ADR adds a second, orthogonal boundary: not just "commerce must not influence ranking", but "identity must not influence ranking".
 
+Two more arrived with the rename itself, and were shown to fail before being trusted:
+
+- `packages/content/src/service-categories.test.ts` pins the twenty category keys. A key is the grouping column for every time series in the product, so renaming one ends a series and starts another with nothing anywhere marking the break. Proved by renaming `renhold-og-facility-management` to `renhold-og-fm`, which failed five tests across two files, three of them naming the key.
+- `packages/db/drizzle/0004_service_templates_and_remap_evidence.sql` refuses to remap a template slug it does not recognise, and aborts the migration naming the slug rather than choosing a category for it. Proved by adding an `anleggsgartnere` template to a copy of the seeded database: the migration failed with the slug in the message and rolled back whole, leaving `industry_templates` intact and the journal at four entries.
+
+The remap itself is data, not a comment. `alert_profile_template_remaps` holds one row per affected profile with the name it carried before, and `needs_review` marks the two mappings no data in the system can settle: `drift-renhold-og-fm`, which splits in two and whose profiles were all sent to the cleaning side, and `tekniske-tjenester`, which has no real successor. The three exact renames are recorded too, so the log can be used to check its own coverage.
+
 ## Alternatives considered
 
 **Keep "bransjemal" and add cross-sector templates alongside.** Rejected. The word is the defect. A template set that says "industry" while meaning "service" will drift back toward buyer assumptions the first time someone adds a template without reading this document.

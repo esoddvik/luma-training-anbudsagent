@@ -336,7 +336,7 @@ function NoProfilesEmptyState({ promotion }: { readonly promotion: boolean }) {
             geografi, CPV-koder og søkeord. Uten en profil har vi ingenting å matche mot.
           </p>
           <p className="m-0">
-            Velg en bransjemal, så er de fleste feltene fylt ut på forhånd. Du kan endre alt
+            Velg en tjenestemal, så er de fleste feltene fylt ut på forhånd. Du kan endre alt
             etterpå.
           </p>
           <p className="m-0">

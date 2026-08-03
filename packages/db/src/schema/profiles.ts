@@ -15,10 +15,15 @@ import {
 } from 'drizzle-orm/pg-core';
 import { users } from './auth.js';
 import { createdAt, primaryId, timestamptz, updatedAt } from './columns.js';
-import { alertFrequencyEnum, criterionModeEnum, geographyKindEnum } from './enums.js';
+import {
+  alertFrequencyEnum,
+  criterionModeEnum,
+  geographyKindEnum,
+  supplierFormEnum,
+} from './enums.js';
 
 /**
- * Alert profiles and industry templates (spec section 11).
+ * Alert profiles and service templates (spec section 11, ADR-17).
  *
  * A profile is the *only* user-supplied input to matching. Nothing commercial
  * appears in this file, and nothing here may be written by the editorial or
@@ -29,6 +34,12 @@ import { alertFrequencyEnum, criterionModeEnum, geographyKindEnum } from './enum
  * Editorial content that pre-fills a profile during onboarding
  * (spec section 11.2). Maintained in admin without a deploy.
  *
+ * **A template describes what is delivered, never who buys it** (ADR-17).
+ * There is deliberately no buyer-side column here and there must never be one:
+ * a cleaning company sells to hospitals, schools, transit operators and the
+ * armed forces, and a template that guessed at the buyer would remove most of
+ * its own market without saying so.
+ *
  * The criteria are array columns rather than child tables: spec section 37
  * names no child tables for templates, a template is edited as a whole
  * document in one admin form, and nothing queries it by individual code.
@@ -36,17 +47,34 @@ import { alertFrequencyEnum, criterionModeEnum, geographyKindEnum } from './enum
  * **Soft delete.** Profiles reference the template they were created from for
  * analytics; deleting a retired template would rewrite that history.
  */
-export const industryTemplates = pgTable(
-  'industry_templates',
+export const serviceTemplates = pgTable(
+  'service_templates',
   {
     id: primaryId(),
-    /** Stable machine key, e.g. `bygg-og-anlegg`. */
+    /** Stable machine key, e.g. `bygg-og-anlegg-utforende`. */
     slug: text('slug').notNull(),
     /** Norwegian display name shown during onboarding. */
     name: text('name').notNull(),
     description: text('description').notNull(),
     sortOrder: integer('sort_order').notNull().default(0),
     active: boolean('active').notNull().default(true),
+
+    /**
+     * The one segmentation key (ADR-17 consequence 3). Plain text rather than
+     * an enum: the list is editorial and grows, and an enum would turn adding
+     * a category into a migration — while the thing that actually needs
+     * protecting, the stability of the *existing* keys, is pinned by a test in
+     * `@luma/content` rather than by the column type.
+     */
+    serviceCategory: text('service_category').notNull(),
+    /**
+     * Weights onboarding and groups analysis. Never read by the matcher —
+     * `packages/matching/src/no-sector-assumptions.test.ts` fails if the
+     * engine so much as names it.
+     */
+    supplierForm: supplierFormEnum('supplier_form').notNull(),
+    /** One sentence of onboarding guidance. Nullable: admin may not have written one. */
+    onboardingHint: text('onboarding_hint'),
 
     cpvInclude: varchar('cpv_include', { length: 8 }).array().notNull().default([]),
     cpvExclude: varchar('cpv_exclude', { length: 8 }).array().notNull().default([]),
@@ -58,9 +86,12 @@ export const industryTemplates = pgTable(
     deletedAt: timestamptz('deleted_at'),
   },
   (table) => [
-    uniqueIndex('industry_templates_slug_key').on(table.slug),
-    index('industry_templates_active_sort_idx').on(table.active, table.sortOrder),
-    check('industry_templates_slug_format', sql`${table.slug} ~ '^[a-z0-9-]+$'`),
+    uniqueIndex('service_templates_slug_key').on(table.slug),
+    index('service_templates_active_sort_idx').on(table.active, table.sortOrder),
+    // Reporting reads by category far more often than by id, and the demand
+    // map per category is the whole point of having the column.
+    index('service_templates_category_idx').on(table.serviceCategory),
+    check('service_templates_slug_format', sql`${table.slug} ~ '^[a-z0-9-]+$'`),
   ],
 );
 
@@ -91,7 +122,7 @@ export const alertProfiles = pgTable(
      * not influence matching beyond the values it pre-filled, so the matcher
      * never reads this column.
      */
-    industryTemplateId: uuid('industry_template_id').references(() => industryTemplates.id, {
+    serviceTemplateId: uuid('service_template_id').references(() => serviceTemplates.id, {
       // set null: retiring a template must not delete the users' profiles.
       onDelete: 'set null',
     }),
@@ -242,16 +273,90 @@ export const alertProfileBuyers = pgTable(
   ],
 );
 
-export const industryTemplatesRelations = relations(industryTemplates, ({ many }) => ({
+/**
+ * What happened to a profile when the industry templates became service
+ * templates (ADR-17).
+ *
+ * The five old templates map onto the eight new ones, and the map is lossy in
+ * two places that no data in the system can settle. `drift-renhold-og-fm`
+ * splits into cleaning and property operations, and existing profiles were all
+ * sent to the cleaning side. `tekniske-tjenester` has no real successor and
+ * was sent to `drift-og-vedlikehold-av-eiendom`. Both are editorial calls made
+ * on the user's behalf, without asking them.
+ *
+ * So the migration does not quietly rewrite the pointer and move on. Every
+ * profile it touched is recorded here with the name it was carrying before, so
+ * that "which of our users are now filed under a category we guessed at" is a
+ * query rather than an archaeology exercise. `needs_review` marks the two
+ * judgement calls; the other three are exact renames and are recorded too,
+ * because a remap log that only lists the *suspect* rows cannot be used to
+ * check its own coverage.
+ *
+ * **Append-only in intent.** Nothing writes to this table except the
+ * migration; a later reclassification is a new row on a new migration, not an
+ * update of this one.
+ */
+export const alertProfileTemplateRemaps = pgTable(
+  'alert_profile_template_remaps',
+  {
+    id: primaryId(),
+    alertProfileId: uuid('alert_profile_id')
+      .notNull()
+      // cascade: the record exists to explain a profile. Without the profile
+      // it explains nothing, and it names that profile's owner by reference.
+      .references(() => alertProfiles.id, { onDelete: 'cascade' }),
+    /**
+     * The template row as it stands now. Nullable and `set null`, because the
+     * evidence must outlive the template — a retired successor is exactly when
+     * someone will need to read this.
+     */
+    serviceTemplateId: uuid('service_template_id').references(() => serviceTemplates.id, {
+      onDelete: 'set null',
+    }),
+    /** Text, not a foreign key: the old row no longer exists under this name. */
+    fromSlug: text('from_slug').notNull(),
+    fromName: text('from_name').notNull(),
+    toSlug: text('to_slug').notNull(),
+    toName: text('to_name').notNull(),
+    /** True where no data decided the destination and an editor must confirm it. */
+    needsReview: boolean('needs_review').notNull().default(false),
+    /** Why this destination, in the words an editor will need to argue with. */
+    rationale: text('rationale').notNull(),
+    remappedAt: timestamptz('remapped_at').notNull().defaultNow(),
+  },
+  (table) => [
+    index('alert_profile_template_remaps_profile_idx').on(table.alertProfileId),
+    // The working query: "what still needs a human?"
+    index('alert_profile_template_remaps_review_idx').on(table.needsReview, table.remappedAt),
+  ],
+);
+
+export const serviceTemplatesRelations = relations(serviceTemplates, ({ many }) => ({
   profiles: many(alertProfiles),
+  remaps: many(alertProfileTemplateRemaps),
 }));
+
+export const alertProfileTemplateRemapsRelations = relations(
+  alertProfileTemplateRemaps,
+  ({ one }) => ({
+    profile: one(alertProfiles, {
+      fields: [alertProfileTemplateRemaps.alertProfileId],
+      references: [alertProfiles.id],
+    }),
+    template: one(serviceTemplates, {
+      fields: [alertProfileTemplateRemaps.serviceTemplateId],
+      references: [serviceTemplates.id],
+    }),
+  }),
+);
 
 export const alertProfilesRelations = relations(alertProfiles, ({ one, many }) => ({
   user: one(users, { fields: [alertProfiles.userId], references: [users.id] }),
-  industryTemplate: one(industryTemplates, {
-    fields: [alertProfiles.industryTemplateId],
-    references: [industryTemplates.id],
+  serviceTemplate: one(serviceTemplates, {
+    fields: [alertProfiles.serviceTemplateId],
+    references: [serviceTemplates.id],
   }),
+  templateRemaps: many(alertProfileTemplateRemaps),
   cpvCodes: many(alertProfileCpvCodes),
   keywords: many(alertProfileKeywords),
   geographies: many(alertProfileGeographies),
@@ -288,4 +393,5 @@ export const alertProfileBuyersRelations = relations(alertProfileBuyers, ({ one 
 
 export type AlertProfileRow = typeof alertProfiles.$inferSelect;
 export type NewAlertProfileRow = typeof alertProfiles.$inferInsert;
-export type IndustryTemplateRow = typeof industryTemplates.$inferSelect;
+export type ServiceTemplateRow = typeof serviceTemplates.$inferSelect;
+export type AlertProfileTemplateRemapRow = typeof alertProfileTemplateRemaps.$inferSelect;

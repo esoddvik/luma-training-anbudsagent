@@ -19,14 +19,14 @@ import { ALERT_FREQUENCY_LABEL_NB } from '@/server/format';
 export interface ProfileFormProps {
   /** Absent when creating. */
   readonly profile?: AlertProfile | null;
-  /** Pre-filled values from an industry template, used on the new-profile page. */
+  /** Pre-filled values from an service template, used on the new-profile page. */
   readonly prefill?: {
     readonly name?: string;
     readonly cpvInclude?: readonly string[];
     readonly cpvExclude?: readonly string[];
     readonly keywordsInclude?: readonly string[];
     readonly keywordsExclude?: readonly string[];
-    readonly industryTemplateId?: string;
+    readonly serviceTemplateId?: string;
   };
   readonly action: (formData: FormData) => Promise<void>;
   readonly submitLabel: string;
@@ -42,8 +42,8 @@ export function ProfileForm({ profile, prefill, action, submitLabel }: ProfileFo
     <form action={action}>
       <Stack gap="lg">
         {profile ? <input type="hidden" name="profileId" value={profile.id} /> : null}
-        {prefill?.industryTemplateId ? (
-          <input type="hidden" name="industryTemplateId" value={prefill.industryTemplateId} />
+        {prefill?.serviceTemplateId ? (
+          <input type="hidden" name="serviceTemplateId" value={prefill.serviceTemplateId} />
         ) : null}
 
         <Card as="section" heading="Navn og beskrivelse" titleLevel={2} tone="flat">

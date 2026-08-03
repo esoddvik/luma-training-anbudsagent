@@ -2,7 +2,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { industryTemplateSeedSchema, INDUSTRY_TEMPLATE_SEEDS } from './industry-templates.js';
+import { serviceTemplateSeedSchema, SERVICE_TEMPLATE_SEEDS } from './service-templates.js';
 
 /**
  * The core rule of the service model, made into a property of the build.
@@ -19,12 +19,12 @@ import { industryTemplateSeedSchema, INDUSTRY_TEMPLATE_SEEDS } from './industry-
  * exist on `AlertProfile`; they are the user's own explicit choice and start
  * empty.
  *
- * **Why this test rather than a comment.** The rule currently holds for a weak
- * reason: `industryTemplateSeedSchema` happens not to declare buyer-side
- * fields, so nobody could set one. That is an accident of the shape, not a
- * guarantee — the moment the seed type grows (and the service-template model
- * adds `serviceCategory`, `supplierForm` and `onboardingHint` to it), a
- * `buyerInclude` could be added alongside them and nothing would object. This
+ * **Why this test rather than a comment.** The rule used to hold for a weak
+ * reason: `serviceTemplateSeedSchema` happened not to declare buyer-side
+ * fields, so nobody could set one. That was an accident of the shape, not a
+ * guarantee — and the shape has since grown, exactly as predicted, by
+ * `serviceCategory`, `supplierForm` and `onboardingHint`. A `buyerInclude`
+ * could have gone in alongside them and nothing else would have objected. This
  * test objects.
  *
  * It checks the schema, the seed data and the source text, because each covers
@@ -55,7 +55,7 @@ const BUYER_SIDE_FIELDS = [
 
 describe('service templates never narrow the buyer side', () => {
   it('the seed schema declares no buyer-side field', () => {
-    const declared = Object.keys(industryTemplateSeedSchema.shape);
+    const declared = Object.keys(serviceTemplateSeedSchema.shape);
     expect(declared.filter((field) => BUYER_SIDE_FIELDS.includes(field))).toEqual([]);
   });
 
@@ -64,14 +64,14 @@ describe('service templates never narrow the buyer side', () => {
     // `buyerInclude` to a seed and see no error, while the value silently
     // vanished. Failing loudly is what makes the first assertion meaningful.
     const withBuyerFilter = {
-      ...INDUSTRY_TEMPLATE_SEEDS[0],
+      ...SERVICE_TEMPLATE_SEEDS[0],
       buyerInclude: ['Helse Bergen HF'],
     };
-    expect(industryTemplateSeedSchema.strict().safeParse(withBuyerFilter).success).toBe(false);
+    expect(serviceTemplateSeedSchema.strict().safeParse(withBuyerFilter).success).toBe(false);
   });
 
   it('no seeded template carries a buyer-side value', () => {
-    for (const seed of INDUSTRY_TEMPLATE_SEEDS) {
+    for (const seed of SERVICE_TEMPLATE_SEEDS) {
       const present = Object.keys(seed).filter((field) => BUYER_SIDE_FIELDS.includes(field));
       expect(present, `${seed.slug} narrows the buyer side`).toEqual([]);
     }
@@ -88,7 +88,7 @@ describe('service templates never narrow the buyer side', () => {
    */
   it('no template includes a CPV division that names a buyer sector', () => {
     const BUYER_SECTOR_DIVISIONS = ['75', '80', '85'];
-    for (const seed of INDUSTRY_TEMPLATE_SEEDS) {
+    for (const seed of SERVICE_TEMPLATE_SEEDS) {
       for (const code of seed.cpvInclude) {
         const division = code.slice(0, 2);
         expect(

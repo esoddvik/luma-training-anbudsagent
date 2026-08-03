@@ -31,7 +31,7 @@ const NAV_ITEMS = [
   { href: '/admin/matching', label: 'Matching' },
   { href: '/admin/email', label: 'E-post' },
   { href: '/admin/redaksjonelt', label: 'Redaksjonelt' },
-  { href: '/admin/bransjemaler', label: 'Bransjemaler' },
+  { href: '/admin/tjenestemaler', label: 'Tjenestemaler' },
   { href: '/admin/samtykker', label: 'Samtykker' },
   { href: '/admin/bestillinger', label: 'Bestillinger' },
   { href: '/admin/attribusjon', label: 'Attribusjon' },

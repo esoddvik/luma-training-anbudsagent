@@ -64,7 +64,7 @@ export default async function Page({ searchParams }: PageProps) {
               Uten en profil har vi ingenting å matche kunngjøringene mot, så du får ingen varsler.
             </p>
             <p className="m-0">
-              Start med en bransjemal. Da er CPV-koder og søkeord fylt ut på forhånd, og du kan
+              Start med en tjenestemal. Da er CPV-koder og søkeord fylt ut på forhånd, og du kan
               endre alt etterpå.
             </p>
             <p className="m-0">

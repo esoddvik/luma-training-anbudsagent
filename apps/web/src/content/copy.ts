@@ -47,7 +47,7 @@ export const PROMOTION_LABEL = 'Fra Luma Training';
 export const SIGNUP_HEADING = 'Kom i gang';
 
 export const SIGNUP_INTRO =
-  'Skriv inn e-postadressen din, så sender vi deg en lenke for å sette opp varslingsprofilen. Du velger selv bransjemal og kriterier i neste steg.';
+  'Skriv inn e-postadressen din, så sender vi deg en lenke for å sette opp varslingsprofilen. Du velger selv tjenestemal og kriterier i neste steg.';
 
 export const SIGNUP_EMAIL_LABEL = 'E-postadresse';
 

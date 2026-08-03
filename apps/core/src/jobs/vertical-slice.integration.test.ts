@@ -10,7 +10,7 @@ import {
   alertProfiles,
   ingestionCheckpoints,
   ingestionRuns,
-  industryTemplates,
+  serviceTemplates,
   tenderMatchReasons,
   tenderMatches,
   tenders,
@@ -18,7 +18,7 @@ import {
 } from '@luma/db';
 import { createTestDatabase, hasDatabase, type TestDatabase } from '@luma/db/testing';
 import { FixtureTenderSourceAdapter, type DoffinSearchHit } from '@luma/doffin';
-import { INDUSTRY_TEMPLATE_SEEDS } from '@luma/content';
+import { SERVICE_TEMPLATE_SEEDS } from '@luma/content';
 import { createLogger } from '@luma/observability';
 import { runIngest } from './ingest.js';
 import { runMatching } from './match.js';
@@ -29,7 +29,7 @@ import { runMatching } from './match.js';
  *
  * This is the test that says the product works. Everything else verifies a
  * part; this one runs the whole path — real captured Doffin payloads, real
- * ingest, a real industry template, the real matching engine, a real
+ * ingest, a real service template, the real matching engine, a real
  * database — and asserts on what a user would actually be shown.
  */
 
@@ -119,24 +119,27 @@ describeDb('the first milestone: criteria to explainable matches', () => {
 
   beforeEach(async () => {
     await db.execute(
-      sql`truncate table ${tenders}, ${users}, ${industryTemplates}, ${ingestionRuns}, ${ingestionCheckpoints} restart identity cascade`,
+      sql`truncate table ${tenders}, ${users}, ${serviceTemplates}, ${ingestionRuns}, ${ingestionCheckpoints} restart identity cascade`,
     );
 
-    // A user picks the construction industry template during onboarding, which
+    // A user picks the construction service template during onboarding, which
     // is what makes the under-five-minutes signup in spec §9.1 possible.
-    const template = INDUSTRY_TEMPLATE_SEEDS.find((t) => t.slug === 'bygg-og-anlegg');
-    if (!template) throw new Error('the bygg-og-anlegg template is missing');
+    const template = SERVICE_TEMPLATE_SEEDS.find((t) => t.slug === 'bygg-og-anlegg-utforende');
+    if (!template) throw new Error('the bygg-og-anlegg-utforende template is missing');
 
     const templateRows = await db
-      .insert(industryTemplates)
+      .insert(serviceTemplates)
       .values({
         slug: template.slug,
         name: template.name,
         description: template.description,
         sortOrder: template.sortOrder,
+        serviceCategory: template.serviceCategory,
+        supplierForm: template.supplierForm,
+        onboardingHint: template.onboardingHint,
         active: true,
       })
-      .returning({ id: industryTemplates.id });
+      .returning({ id: serviceTemplates.id });
 
     const userRows = await db
       .insert(users)
@@ -150,7 +153,7 @@ describeDb('the first milestone: criteria to explainable matches', () => {
         userId,
         name: 'Bygg og rehabilitering',
         active: true,
-        industryTemplateId: templateRows[0]!.id,
+        serviceTemplateId: templateRows[0]!.id,
         includePlannedProcurements: true,
         frequency: 'daily',
         digestHourLocal: 7,

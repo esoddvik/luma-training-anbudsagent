@@ -33,7 +33,7 @@ const alertProfileShape = z.object({
   description: z.string().max(2000).optional(),
   active: z.boolean(),
   /** Recorded for analytics only; it must not influence matching (spec 11.2). */
-  industryTemplateId: z.uuid().optional(),
+  serviceTemplateId: z.uuid().optional(),
 
   cpvInclude: z.array(cpvCodeSchema).max(LIMITS.maxCpvCodes),
   cpvExclude: z.array(cpvCodeSchema).max(LIMITS.maxCpvCodes),
@@ -90,19 +90,44 @@ export const alertProfileInputSchema = alertProfileShape
 export type AlertProfileInput = z.infer<typeof alertProfileInputSchema>;
 
 /**
- * Industry templates (spec section 11.2): editorial content that pre-fills a
- * profile during onboarding. Maintained in admin without a deploy, and
- * quality-assured by Luma before launch.
+ * How a supplier's demand is shaped (ADR-17).
+ *
+ * `sector_bound` — demand clusters in particular buyer domains, so narrowing
+ * on buyer type is useful *as the user's own choice*. `cross_sector` — the
+ * service is the identity and the buyer can be anyone, so geography is the
+ * load-bearing second axis and any buyer-side narrowing destroys the profile.
+ *
+ * It weights onboarding and it groups analysis. It never reaches matching;
+ * `packages/matching/src/no-sector-assumptions.test.ts` is what keeps that
+ * true rather than this sentence.
  */
-export const industryTemplateSchema = z.object({
+export const supplierFormSchema = z.enum(['sector_bound', 'cross_sector']);
+export type SupplierForm = z.infer<typeof supplierFormSchema>;
+
+/**
+ * Service templates (spec section 11.2, ADR-17): editorial content that
+ * pre-fills a profile during onboarding. Maintained in admin without a deploy,
+ * and quality-assured by Luma before launch.
+ *
+ * A template narrows the **service** side only. There is no buyer-side field
+ * here and there must never be one — see ADR-17 and the two invariant tests it
+ * names.
+ */
+export const serviceTemplateSchema = z.object({
   id: z.uuid(),
-  /** Stable machine key, e.g. `bygg-og-anlegg`. */
+  /** Stable machine key, e.g. `bygg-og-anlegg-utforende`. */
   slug: z.string().regex(/^[a-z0-9-]+$/),
   /** Norwegian display name shown during onboarding. */
   name: z.string().min(1),
   description: z.string().min(1),
   sortOrder: z.number().int(),
   active: z.boolean(),
+
+  /** The only segmentation key for analysis and reporting (ADR-17). */
+  serviceCategory: z.string().min(1),
+  supplierForm: supplierFormSchema,
+  /** One sentence of onboarding guidance, weighted by `supplierForm`. */
+  onboardingHint: z.string().min(1).optional(),
 
   cpvInclude: z.array(cpvCodeSchema),
   cpvExclude: z.array(cpvCodeSchema),
@@ -113,4 +138,4 @@ export const industryTemplateSchema = z.object({
   updatedAt: z.date(),
 });
 
-export type IndustryTemplate = z.infer<typeof industryTemplateSchema>;
+export type ServiceTemplate = z.infer<typeof serviceTemplateSchema>;

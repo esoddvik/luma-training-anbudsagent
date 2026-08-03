@@ -38,7 +38,7 @@ The ladder governs editorial choice and default rotation. It is explicitly **not
 selectRecommendation(input: {
   placement: "digest_footer" | "tender_detail" | "empty_state" | "mcp_resource";
   profileGeography: string[];
-  industryTemplateId?: string;
+  serviceTemplateId?: string;
   ladderState: LadderState;
   now: Date;
 }): EditorialRecommendation | null
@@ -59,7 +59,7 @@ It receives no match list, no tender scores and no attribution history. Returnin
 - New users meet free content first, which is what the trust contract implies in practice.
 - Recommendations are data, editable in admin without a deploy (§45), so campaign changes are an editorial act rather than an engineering ticket.
 - Regional routing based on declared profile geography is both more accurate than IP inference and better for privacy, and it needs no tracking infrastructure.
-- Because selection is a pure function of placement, geography, industry template, ladder state and time, its behaviour is fully testable and its reasoning is auditable.
+- Because selection is a pure function of placement, geography, service template, ladder state and time, its behaviour is fully testable and its reasoning is auditable.
 - Turning promotion off is a genuine off switch with a provable no-op on tender content.
 
 ### Negative / trade-offs
@@ -67,7 +67,7 @@ It receives no match list, no tender scores and no attribution history. Returnin
 - Ladder progression is coarse. Without behavioural signals, it is driven by account age, placement and rotation rather than by demonstrated interest. Deliberate: behavioural personalization would require reading interaction data, which is the first step toward the coupling ADR-0006 forbids.
 - The Oslo region list is a configured list of codes and will be wrong at the margins, for example a user in Østfold who would happily travel. Accepted; the list is configurable and can be tuned from data.
 - A user whose profile covers all of Norway matches the Oslo scope, so a national contractor may see the full-day course. Acceptable, and arguably correct.
-- Recommendation relevance cannot use match reasons, so a tender about ventilation cannot pull a ventilation-specific guide. `relevanceTags` matched against the industry template is the deliberate, weaker substitute.
+- Recommendation relevance cannot use match reasons, so a tender about ventilation cannot pull a ventilation-specific guide. `relevanceTags` matched against the service template is the deliberate, weaker substitute.
 
 ## Alternatives considered
 

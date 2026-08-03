@@ -94,7 +94,7 @@ Which file owns which tables. Spec §37 is the source of the inventory.
 | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `schema/auth.ts`         | `users`, `sessions`, `magic_link_tokens`, `companies`, `company_memberships`                                                                          |
 | `schema/tenders.ts`      | `tenders`, `tender_cpv_codes`, `tender_regions`, `tender_municipalities`, `tender_revisions`, `tender_change_events`                                  |
-| `schema/profiles.ts`     | `industry_templates`, `alert_profiles`, `alert_profile_cpv_codes`, `alert_profile_keywords`, `alert_profile_geographies`, `alert_profile_buyers`      |
+| `schema/profiles.ts`     | `service_templates`, `alert_profiles`, `alert_profile_cpv_codes`, `alert_profile_keywords`, `alert_profile_geographies`, `alert_profile_buyers`, `alert_profile_template_remaps` |
 | `schema/matching.ts`     | `tender_matches`, `tender_match_reasons`, `user_tender_states`, `relevance_feedback`, `profile_suggestions`                                            |
 | `schema/sharing.ts`      | `tender_shares`                                                                                                                                       |
 | `schema/notifications.ts`| `notification_preferences`, `notification_deliveries`, `notification_delivery_items`, `notification_category_unsubscribes`, `email_events`, `email_suppressions` |
@@ -206,7 +206,7 @@ foreign key; the shape of it:
 | `RESTRICT`                    | *(none reference `users`)*                                                                                              | A restricted reference would make account deletion fail — §40 forbids it. |
 
 `users` itself is **hard-deleted**. A soft-deleted user row is still personal
-data. `companies`, `alert_profiles`, `industry_templates` and
+data. `companies`, `alert_profiles`, `service_templates` and
 `editorial_recommendations` are soft-deleted, because they are shared or
 referenced state where an accidental deletion should be recoverable and no
 personal data is at stake. `tenders` are never deleted; an invalid notice is

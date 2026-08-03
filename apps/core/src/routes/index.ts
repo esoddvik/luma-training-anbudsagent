@@ -4,7 +4,9 @@ import { registerAccountRoutes } from './account.js';
 import { registerAdminRoutes } from './admin.js';
 import { registerAlertProfileRoutes } from './alert-profiles.js';
 import { registerAuthRoutes } from './auth.js';
+import { registerCompanyRoutes } from './company.js';
 import { registerOrderRequestRoutes } from './order-requests.js';
+import { registerPostmarkRoutes } from './postmark.js';
 import { registerShareRoutes } from './shares.js';
 import { registerTenderRoutes } from './tenders.js';
 import { checkCsrf } from './guards.js';
@@ -54,10 +56,14 @@ export async function registerApiRoutes(
 
       registerAuthRoutes(api, ctx);
       registerAccountRoutes(api, ctx);
+      registerCompanyRoutes(api, ctx);
       registerAlertProfileRoutes(api, ctx);
       registerTenderRoutes(api, ctx);
       registerShareRoutes(api, ctx);
       registerOrderRequestRoutes(api, ctx);
+      // No session, no CSRF header: Postmark carries its own credentials
+      // (§27). The exemption is in `guards.ts`; this is the route it exists for.
+      registerPostmarkRoutes(api, ctx);
       registerAdminRoutes(api, ctx);
     },
     { prefix: API_PREFIX },

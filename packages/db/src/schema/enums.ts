@@ -127,12 +127,21 @@ export const orderStatusEnum = pgEnum('order_status', [
   'cancelled',
 ]);
 
-/** `attributionEventTypeSchema` */
+/**
+ * `attributionEventTypeSchema`
+ *
+ * `share_created` and `share_viewed` are appended rather than inserted next to
+ * `share_to_signup`, because PostgreSQL enums are ordered and adding a value in
+ * the middle of an existing type means rewriting it. Appending is what
+ * `ALTER TYPE … ADD VALUE` does, which is what the migration emits.
+ */
 export const attributionEventTypeEnum = pgEnum('attribution_event_type', [
   'tool_to_paafyll',
   'tool_to_webinar',
   'tool_to_course_seat',
   'share_to_signup',
+  'share_created',
+  'share_viewed',
 ]);
 
 /** `promotionPlacementSchema` */

@@ -7,7 +7,11 @@ import {
   type OrderRequest,
   type OrderStatus,
 } from '@luma/domain';
-import { renderOrderReceived, renderPaidAccessActivated } from '@luma/email';
+import {
+  renderOrderAdminNotification,
+  renderOrderReceived,
+  renderPaidAccessActivated,
+} from '@luma/email';
 import { z } from 'zod';
 import { notFound, parseOrThrow } from '../routes/errors.js';
 import { requireOwnershipAudited, writeAuditEvent } from './audit.js';
@@ -29,6 +33,20 @@ import type { Actor, ApiContext } from './context.js';
  * nå" anywhere near this surface; the copy lives in `INVOICE_COPY_NB` in the
  * domain and the email package asserts against `FORBIDDEN_PAYMENT_TERMS`.
  */
+
+/**
+ * Where the billing administrator lands from the notification email.
+ *
+ * `/admin/bestillinger`, taken from what `apps/web` actually mounts rather than
+ * from spec §16's route list: the web app drops the `/anbudsvarsling` prefix
+ * because it deploys to its own subdomain, so the path in §16 — and in the
+ * doc comment on `OrderAdminNotificationContext` — would 404.
+ *
+ * There is no per-order page to deep-link to; the queue is one screen.
+ */
+function adminOrderUrl(ctx: ApiContext): string {
+  return `${ctx.config.appUrl.replace(/\/$/, '')}/admin/bestillinger`;
+}
 
 export const adminOrderUpdateSchema = z.object({
   status: orderStatusSchema,
@@ -58,15 +76,26 @@ export async function createOrderRequest(
     metadata: { orderRequestId: order.id, productCode: order.productCode },
   });
 
-  // Step 2: the billing administrator is notified. There is no separate admin
-  // template in spec §25's nine, and inventing one in `@luma/email` for this
-  // would put an untested template on the transactional stream. The
-  // administrator receives the same confirmation the customer does, which
-  // carries every field they need to raise the invoice.
-  await ctx.email.sendTransactional(rendered, {
-    to: ctx.config.billingAdminEmail,
-    metadata: { orderRequestId: order.id, productCode: order.productCode, copy: 'billing-admin' },
-  });
+  // Step 2: the billing administrator is notified, with their own template.
+  //
+  // It used to be a second copy of the customer's confirmation, addressed to
+  // the customer and sent to the billing mailbox. That carried the invoicing
+  // fields but read as a receipt, and it silently dropped every optional field
+  // the customer had left blank — which an administrator cannot tell from a
+  // field the template forgot.
+  await ctx.email.sendTransactional(
+    renderOrderAdminNotification({
+      ...baseEmailContext(ctx, ctx.config.billingAdminEmail),
+      order: input,
+      orderId: order.id,
+      status: order.status,
+      adminOrderUrl: adminOrderUrl(ctx),
+    }),
+    {
+      to: ctx.config.billingAdminEmail,
+      metadata: { orderRequestId: order.id, productCode: order.productCode, copy: 'billing-admin' },
+    },
+  );
 
   ctx.logger.info(
     { orderRequestId: order.id, productCode: order.productCode },

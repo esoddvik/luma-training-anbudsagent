@@ -1,7 +1,7 @@
 import type { Database } from '@luma/db';
 import type { Role } from '@luma/auth';
 import type { BillingProvider, OrderRequest, OrderStatus } from '@luma/domain';
-import type { EmailClient } from '@luma/email';
+import type { EmailClient, SenderIdentity } from '@luma/email';
 import type { Logger } from '@luma/observability';
 
 /**
@@ -27,11 +27,27 @@ export interface ApiConfig {
   readonly shareDefaultTtlDays: number;
   /** `ADMIN_EMAIL_ALLOWLIST`, lowercased. The only source of admin rights. */
   readonly adminEmails: readonly string[];
+  /** The verified Postmark sender signature. Usually a no-reply address. */
   readonly authEmailFrom: string;
+  /**
+   * The footer's sender identity (spec §25): name, postal address and a
+   * contact address a recipient can actually write to. Distinct from
+   * `authEmailFrom` on purpose — see `senderIdentityFromEnv` in `@luma/email`.
+   */
+  readonly sender: SenderIdentity;
   readonly billingAdminEmail: string;
   readonly currentPrivacyPolicyVersion: string;
   readonly currentTermsVersion: string;
   readonly currentMarketingConsentTextVersion: string;
+  /**
+   * `POSTMARK_WEBHOOK_USERNAME` / `POSTMARK_WEBHOOK_PASSWORD` (spec §27, §48).
+   *
+   * The Postmark webhook is a public endpoint that writes to our database, and
+   * these are the only thing standing in front of it. Compared in constant
+   * time by `authenticateWebhook` in `@luma/email`.
+   */
+  readonly postmarkWebhookUsername: string;
+  readonly postmarkWebhookPassword: string;
   /** Controls the `Secure` attribute on the session cookie. */
   readonly isProduction: boolean;
 }
@@ -71,6 +87,60 @@ export interface JobRunner {
   }): Promise<{ tendersConsidered: number; profilesConsidered: number; matchesWritten: number }>;
 }
 
+/**
+ * Follow-up work a request wants done later, not now.
+ *
+ * Spec §27 requires the Postmark webhook to answer fast and queue the slow
+ * part. `apps/core` does have a queue — pg-boss, per ADR-8 — but it is owned by
+ * the runtime layer and is being wired up separately, and the route layer
+ * deliberately holds no handle to it: an HTTP surface that imports the queue
+ * module cannot be integration-tested without one running.
+ *
+ * So this is the seam. It is intentionally as narrow as the requirement: one
+ * method, a closed union of payloads, no job options, no scheduling, no
+ * cancellation. When pg-boss is available, `main.ts` passes an implementation
+ * that calls `boss.send('postmark.webhook.process', work)`; until then the
+ * default logs, which is the correct behaviour for work whose only current
+ * consumer is an administrator reading the log.
+ *
+ * Nothing a *user* depends on may go through here. Everything the webhook must
+ * not lose — the event row, the suppression, the consent withdrawal — is
+ * written synchronously inside the request, before Postmark is answered.
+ */
+export type DeferredWork =
+  /**
+   * An operational alert derived from a webhook (spec §27, ADR-5): a hard
+   * bounce on the transactional stream, a spam complaint, or a suppression
+   * that appeared on transactional mail. Sending it involves Postmark, which
+   * is exactly the kind of latency a webhook handler must not take on.
+   */
+  {
+    readonly kind: 'postmark.admin_alert';
+    readonly severity: 'warning' | 'critical';
+    readonly reason: string;
+    readonly stream: string;
+    /** Recipient address. Redacted before it reaches a log line. */
+    readonly recipient: string;
+    readonly detail?: string;
+  };
+
+export interface DeferredWorkQueue {
+  enqueue(work: DeferredWork): Promise<void>;
+}
+
+/**
+ * Queue depth for the admin dashboard (spec §45 "køstatus", §38).
+ *
+ * A read-only port, not the `PgBoss` handle. Handing the HTTP layer the real
+ * client would also hand it `send`, `deleteQueue` and `purge` — an admin
+ * *dashboard* has no business being able to drain a queue, and the narrow
+ * shape means an integration test of `/admin/ingest-status` needs no running
+ * pg-boss. Same reasoning as `JobRunner` above.
+ */
+export interface QueueStatusReader {
+  status(): Promise<readonly { name: string; ready: number; active: number; failed: number }[]>;
+}
+
 export interface ApiContext {
   readonly db: Database;
   readonly email: EmailClient;
@@ -80,6 +150,15 @@ export interface ApiContext {
   readonly config: ApiConfig;
   readonly billing: BillingProvider & OrderStatusWriter;
   readonly jobs: JobRunner;
+  /** See `DeferredWork`. Defaults to a logging no-op. */
+  readonly deferred: DeferredWorkQueue;
+  /**
+   * Absent when this process runs no worker (`WORKER_ENABLED=false`), in which
+   * case the dashboard reports queue status as unavailable rather than as
+   * empty. "No queues" and "not asked" must not render identically — the first
+   * is a healthy idle system and the second is a blind spot.
+   */
+  readonly queue?: QueueStatusReader;
 }
 
 /**

@@ -11,6 +11,7 @@ import { createEmailClientFromEnv } from '@luma/email';
 import { createLogger } from '@luma/observability';
 import { runIngest } from './jobs/ingest.js';
 import { runMatching } from './jobs/match.js';
+import { queueDependencyCheck, queueStatus, registerJobs, startQueue } from './queue/index.js';
 import { apiConfigFromEnv, buildApiContext } from './services/api-context.js';
 import { buildServer } from './server.js';
 import { installShutdownHandlers } from './shutdown.js';
@@ -36,11 +37,42 @@ async function main(): Promise<void> {
     subscriptionKey: env.DOFFIN_SUBSCRIPTION_KEY,
   });
 
+  // The queue starts after the database because pg-boss migrates its own
+  // schema into the same database on start (ADR-8), and before the HTTP
+  // listener because `/ready` probes it.
+  const queue = await startQueue({
+    connectionString: env.DATABASE_URL,
+    logger,
+    worker: env.WORKER_ENABLED,
+  });
+
+  await registerJobs({
+    boss: queue.boss,
+    db: database.db,
+    adapter,
+    emailClient: email,
+    logger,
+    worker: queue.worker,
+    config: {
+      appUrl: env.APP_URL,
+      privacyUrl: env.LUMA_PRIVACY_POLICY_URL,
+      termsUrl: env.TENDER_SERVICE_TERMS_URL,
+      senderName: env.SENDER_NAME,
+      senderPostalAddress: env.SENDER_POSTAL_ADDRESS,
+      senderContactEmail: env.SENDER_CONTACT_EMAIL,
+      osloRegionCodes: env.OSLO_REGION_CODES,
+    },
+  });
+
   const api = buildApiContext({
     db: database.db,
     email,
     logger,
     config: apiConfigFromEnv(env),
+    // A read-only view of queue depth for the admin dashboard (§45). The
+    // `PgBoss` handle deliberately does not cross into `ApiContext`: the HTTP
+    // layer should be able to observe the queue, not drain it.
+    queue: { status: () => queueStatus(queue.boss) },
     jobs: {
       runIngest: async ({ adminUserId }) =>
         runIngest({
@@ -64,7 +96,7 @@ async function main(): Promise<void> {
   const app = await buildServer({
     logger,
     allowedOrigins: [env.APP_URL],
-    readinessChecks: [databaseDependencyCheck(database.db)],
+    readinessChecks: [databaseDependencyCheck(database.db), queueDependencyCheck(queue.boss)],
     api,
   });
 
@@ -79,7 +111,10 @@ async function main(): Promise<void> {
     // database. Reversing this would abandon in-flight work.
     close: [
       { name: 'http', close: () => app.close() },
-      // The queue handle is registered here as it is wired in.
+      // Between HTTP and the database, and it has to be exactly here: closing
+      // the pool first would fail every in-flight handler, and at-least-once
+      // delivery would then retry work that may already have sent an email.
+      { name: 'queue', close: () => queue.close() },
       { name: 'database', close: () => database.close() },
     ],
   });

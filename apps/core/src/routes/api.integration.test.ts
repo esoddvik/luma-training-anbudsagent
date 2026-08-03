@@ -3,11 +3,17 @@ import { eq, sql } from 'drizzle-orm';
 import { issueSession, SESSION_COOKIE_NAME, type Role } from '@luma/auth';
 import {
   alertProfiles,
+  attributionEvents,
+  companies,
+  companyMemberships,
   consentEvents,
   consentTextVersions,
+  emailEvents,
+  emailSuppressions,
   industryTemplates,
   legalDocumentVersions,
   legalDocuments,
+  notificationCategoryUnsubscribes,
   notificationPreferences,
   orderRequests,
   sessions,
@@ -17,14 +23,20 @@ import {
   tenders,
   users,
 } from '@luma/db';
-import { createTestDatabase, hasDatabase, isCi, type TestDatabase } from '@luma/db/testing';
+import {
+  createTestDatabase,
+  expectRejection,
+  hasDatabase,
+  isCi,
+  type TestDatabase,
+} from '@luma/db/testing';
 import { FORBIDDEN_SHARE_FIELDS, MARKETING_CONSENT_TEXT_NB } from '@luma/domain';
-import { FakePostmarkClient } from '@luma/email';
+import { basicAuthHeader, FakePostmarkClient } from '@luma/email';
 import { MATCHING_VERSION } from '@luma/matching';
 import { createLogger } from '@luma/observability';
 import { buildApiContext } from '../services/api-context.js';
 import { buildServer } from '../server.js';
-import type { ApiConfig, JobRunner } from '../services/context.js';
+import type { ApiConfig, ApiContext, DeferredWork, JobRunner } from '../services/context.js';
 
 /**
  * The HTTP API end to end, against a real PostgreSQL database (spec §46).
@@ -104,12 +116,27 @@ const CONFIG: ApiConfig = {
   shareDefaultTtlDays: 30,
   adminEmails: [ADMIN_EMAIL],
   authEmailFrom: 'anbudsvarsling@luma-training.com',
+  sender: {
+    name: 'Luma Training',
+    postalAddress: 'Luma Training AS, Storgata 1, 0155 Oslo',
+    // Deliberately different from `authEmailFrom`: the footer's contact
+    // address is a mailbox somebody reads, not the no-reply signature.
+    contactEmail: 'post@luma-training.com',
+  },
   billingAdminEmail: 'faktura@luma-training.com',
   currentPrivacyPolicyVersion: '2026-01',
   currentTermsVersion: '2026-01',
   currentMarketingConsentTextVersion: 'v1',
+  postmarkWebhookUsername: 'postmark-hook',
+  postmarkWebhookPassword: 'et-langt-og-tilfeldig-passord',
   isProduction: false,
 };
+
+/** The header Postmark would be configured with. Built, never hard-coded. */
+const WEBHOOK_AUTH = basicAuthHeader({
+  username: CONFIG.postmarkWebhookUsername,
+  password: CONFIG.postmarkWebhookPassword,
+});
 
 const logger = createLogger({ service: 'core', silent: true });
 
@@ -120,6 +147,8 @@ describeDb('HTTP API', () => {
   let email: FakePostmarkClient;
   let clock: Date;
   let jobCalls: { ingest: number; matching: number };
+  /** Everything the request handlers handed to the deferred-work seam. */
+  let deferredWork: DeferredWork[];
 
   const jobs: JobRunner = {
     runIngest: async () => {
@@ -153,10 +182,16 @@ describeDb('HTTP API', () => {
     clock = new Date('2026-08-10T09:00:00Z');
     email = new FakePostmarkClient({ now: () => clock });
     jobCalls = { ingest: 0, matching: 0 };
+    deferredWork = [];
 
+    // `companies` and `email_suppressions` are named explicitly rather than
+    // left to the cascade: neither has a foreign key to `users`, so truncating
+    // `users` does not reach them, and a company's unique organisation number
+    // would collide across tests.
     await db.execute(
       sql`truncate table ${users}, ${tenders}, ${industryTemplates}, ${consentTextVersions},
-          ${legalDocuments}, ${legalDocumentVersions} restart identity cascade`,
+          ${legalDocuments}, ${legalDocumentVersions}, ${companies}, ${emailSuppressions}
+          restart identity cascade`,
     );
 
     await db.insert(consentTextVersions).values({
@@ -188,6 +223,11 @@ describeDb('HTTP API', () => {
       config: CONFIG,
       jobs,
       now: () => clock,
+      deferred: {
+        enqueue: async (work) => {
+          deferredWork.push(work);
+        },
+      },
     });
 
     app = await buildServer({
@@ -1356,6 +1396,67 @@ describeDb('HTTP API', () => {
       expect(response.json().lastRun).toBeNull();
     });
 
+    /**
+     * Spec §45 lists "køstatus" on the dashboard. The distinction the three
+     * cases below protect is that an idle queue and an unobservable one must
+     * not render the same: `[]` is "nothing waiting", `null` is "we did not
+     * find out".
+     */
+    describe('queue status', () => {
+      async function adminWith(queue: ApiContext['queue']) {
+        await app.close();
+        app = await buildServer({
+          logger,
+          allowedOrigins: [APP_URL],
+          api: buildApiContext({
+            db,
+            email,
+            logger,
+            config: CONFIG,
+            jobs,
+            now: () => clock,
+            ...(queue ? { queue } : {}),
+          }),
+        });
+        return signIn(ADMIN_EMAIL);
+      }
+
+      it('reports depth per queue when a worker is attached', async () => {
+        const admin = await adminWith({
+          status: async () => [{ name: 'tender.match', ready: 2, active: 1, failed: 0 }],
+        });
+
+        const response = await call('GET', '/api/v1/admin/ingest-status', { as: admin });
+        expect(response.json().queues).toEqual([
+          { name: 'tender.match', ready: 2, active: 1, failed: 0 },
+        ]);
+      });
+
+      it('reports null, not an empty list, when this process runs no worker', async () => {
+        const admin = await adminWith(undefined);
+        expect(
+          (await call('GET', '/api/v1/admin/ingest-status', { as: admin })).json().queues,
+        ).toBe(null);
+      });
+
+      it('still serves the rest of the dashboard when the queue read fails', async () => {
+        // During an incident the ingest figures beside it are the reason an
+        // operator opened this page, and they come from a database that is
+        // evidently reachable.
+        const admin = await adminWith({
+          status: async () => {
+            throw new Error('pg-boss unreachable');
+          },
+        });
+        await seedTender();
+
+        const response = await call('GET', '/api/v1/admin/ingest-status', { as: admin });
+        expect(response.statusCode).toBe(200);
+        expect(response.json().queues).toBe(null);
+        expect(response.json().counts.tenders).toBe(1);
+      });
+    });
+
     it('re-runs ingest and matching, auditing both', async () => {
       const admin = await signIn(ADMIN_EMAIL);
 
@@ -1465,6 +1566,623 @@ describeDb('HTTP API', () => {
 
       const audit = await call('GET', '/api/v1/admin/audit-events', { as: admin });
       expect(audit.json().items).toHaveLength(0);
+    });
+  });
+
+  // --- the company profile -------------------------------------------------
+
+  describe('/api/v1/company', () => {
+    /** A valid MOD-11 organisation number. Luma Training's own, from §42. */
+    const ORG_NUMBER = '923609016';
+
+    it('reports no company for an account that has not filled one in', async () => {
+      const user = await signIn('ny@entreprenor.no');
+      const response = await call('GET', '/api/v1/company', { as: user });
+
+      // Not a 404: having no company yet is the ordinary state during §9.1
+      // onboarding, and the web app should not have to treat it as an error.
+      expect(response.statusCode).toBe(200);
+      expect(response.json().company).toBeNull();
+    });
+
+    it('creates the profile on first PATCH and reads it back', async () => {
+      const user = await signIn('profil@entreprenor.no');
+
+      const created = await call('PATCH', '/api/v1/company', {
+        as: user,
+        body: {
+          name: 'Sandvika Entreprenør AS',
+          organizationNumber: ORG_NUMBER,
+          industryDescription: 'Bygg og anlegg i Viken.',
+          servicesOffered: 'Rehabilitering av skolebygg, tak og fasade.',
+        },
+      });
+      expect(created.statusCode).toBe(200);
+      expect(created.json().company).toMatchObject({
+        name: 'Sandvika Entreprenør AS',
+        organizationNumber: ORG_NUMBER,
+        industryDescription: 'Bygg og anlegg i Viken.',
+        servicesOffered: 'Rehabilitering av skolebygg, tak og fasade.',
+        role: 'owner',
+      });
+
+      const read = await call('GET', '/api/v1/company', { as: user });
+      expect(read.json().company.id).toBe(created.json().company.id);
+
+      // The creator is the owner, so a later PATCH is theirs to make.
+      const memberships = await db
+        .select()
+        .from(companyMemberships)
+        .where(eq(companyMemberships.userId, user.userId));
+      expect(memberships).toHaveLength(1);
+      expect(memberships[0]?.role).toBe('owner');
+    });
+
+    it('accepts a profile without an organisation number (§9.1: optional)', async () => {
+      const user = await signIn('uten-orgnr@entreprenor.no');
+      const response = await call('PATCH', '/api/v1/company', {
+        as: user,
+        body: { name: 'Nystartet AS', industryDescription: 'Vet ikke helt ennå.' },
+      });
+
+      expect(response.statusCode).toBe(200);
+      expect(response.json().company.organizationNumber).toBeNull();
+    });
+
+    it('rejects an organisation number that fails the control digit', async () => {
+      const user = await signIn('feil-orgnr@entreprenor.no');
+      const response = await call('PATCH', '/api/v1/company', {
+        as: user,
+        // Two digits transposed from a valid number: nine digits, wrong MOD-11.
+        body: { name: 'Slurv AS', organizationNumber: '923609061' },
+      });
+
+      expect(response.statusCode).toBe(400);
+      expect(response.json().error.code).toBe('organization_number_invalid');
+      expect(await db.$count(companies)).toBe(0);
+    });
+
+    it('refuses a plain member the right to rewrite the profile', async () => {
+      const owner = await signIn('eier@entreprenor.no');
+      const colleague = await signIn('ansatt@entreprenor.no');
+
+      const created = await call('PATCH', '/api/v1/company', {
+        as: owner,
+        body: { name: 'Felles AS' },
+      });
+      const companyId = created.json().company.id;
+      await db
+        .insert(companyMemberships)
+        .values({ companyId, userId: colleague.userId, role: 'member' });
+
+      // Reading is fine: the colleague's alert profiles hang off this company.
+      const read = await call('GET', '/api/v1/company', { as: colleague });
+      expect(read.json().company).toMatchObject({ name: 'Felles AS', role: 'member' });
+
+      const write = await call('PATCH', '/api/v1/company', {
+        as: colleague,
+        body: { name: 'Mitt AS' },
+      });
+      expect(write.statusCode).toBe(403);
+
+      const rows = await db.select().from(companies).where(eq(companies.id, companyId));
+      expect(rows[0]?.name).toBe('Felles AS');
+    });
+
+    it('never shows one account another account’s company', async () => {
+      const first = await signIn('en@entreprenor.no');
+      const second = await signIn('to@entreprenor.no');
+      await call('PATCH', '/api/v1/company', { as: first, body: { name: 'Første AS' } });
+
+      const response = await call('GET', '/api/v1/company', { as: second });
+      expect(response.json().company).toBeNull();
+    });
+
+    it('refuses an organisation number already registered elsewhere', async () => {
+      const first = await signIn('opptatt-en@entreprenor.no');
+      const second = await signIn('opptatt-to@entreprenor.no');
+      await call('PATCH', '/api/v1/company', {
+        as: first,
+        body: { name: 'Først AS', organizationNumber: ORG_NUMBER },
+      });
+
+      const response = await call('PATCH', '/api/v1/company', {
+        as: second,
+        body: { name: 'Etterpå AS', organizationNumber: ORG_NUMBER },
+      });
+
+      expect(response.statusCode).toBe(409);
+      expect(response.json().error.code).toBe('organization_number_taken');
+      // The constraint name never reaches the caller (§39).
+      expect(response.body).not.toMatch(/companies_organization_number|unique|constraint/i);
+    });
+
+    it('requires a session', async () => {
+      expect((await call('GET', '/api/v1/company')).statusCode).toBe(401);
+      expect((await call('PATCH', '/api/v1/company', { body: { name: 'X' } })).statusCode).toBe(
+        401,
+      );
+    });
+  });
+
+  // --- the Postmark webhook ------------------------------------------------
+
+  describe('/api/v1/postmark/webhooks/:stream', () => {
+    /**
+     * Posts as Postmark would: basic credentials, **no** `x-luma-csrf` and no
+     * `Origin`. That omission is the assertion, not an oversight — the route is
+     * exempt from the CSRF guard precisely because Postmark is not a browser
+     * (§27), and a helper that quietly added the header would make every test
+     * below pass without ever exercising the exemption.
+     */
+    function postWebhook(stream: string, body: unknown, authorization = WEBHOOK_AUTH) {
+      return app.inject({
+        method: 'POST',
+        url: `/api/v1/postmark/webhooks/${stream}`,
+        headers: { authorization, 'content-type': 'application/json' },
+        payload: JSON.stringify(body),
+      });
+    }
+
+    const delivery = (overrides: Record<string, unknown> = {}) => ({
+      RecordType: 'Delivery',
+      MessageID: 'b7bc2f4a-e38e-4336-af7d-e6c392c2f817',
+      Recipient: 'mottaker@entreprenor.no',
+      DeliveredAt: '2026-08-10T08:55:00Z',
+      MessageStream: 'transactional',
+      ...overrides,
+    });
+
+    const unsubscribe = (overrides: Record<string, unknown> = {}) => ({
+      RecordType: 'SubscriptionChange',
+      MessageID: 'ab1c2d3e-0000-4000-8000-000000000001',
+      Recipient: 'avmeldt@entreprenor.no',
+      ChangedAt: '2026-08-10T08:57:00Z',
+      Origin: 'Recipient',
+      SuppressSending: true,
+      SuppressionReason: null,
+      ...overrides,
+    });
+
+    it('refuses a request with the wrong credentials, and writes nothing', async () => {
+      const response = await postWebhook(
+        'transactional',
+        delivery(),
+        basicAuthHeader({ username: 'postmark-hook', password: 'feil-passord' }),
+      );
+
+      expect(response.statusCode).toBe(401);
+      expect(response.json()).toEqual({ outcome: 'unauthorized' });
+      // Not a word about which half was wrong.
+      expect(response.body).not.toMatch(/passord|password|username|brukernavn/i);
+      expect(await db.$count(emailEvents)).toBe(0);
+    });
+
+    it('refuses a request with no Authorization header at all', async () => {
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/v1/postmark/webhooks/transactional',
+        headers: { 'content-type': 'application/json' },
+        payload: JSON.stringify(delivery()),
+      });
+      expect(response.statusCode).toBe(401);
+    });
+
+    it('accepts a delivery without a CSRF header and records it', async () => {
+      const user = await signIn('mottaker@entreprenor.no');
+
+      const response = await postWebhook('transactional', delivery());
+      expect(response.statusCode).toBe(200);
+      expect(response.json()).toEqual({ outcome: 'accepted' });
+
+      const rows = await db.select().from(emailEvents);
+      expect(rows).toHaveLength(1);
+      expect(rows[0]).toMatchObject({
+        eventType: 'delivery',
+        messageStream: 'transactional',
+        recipientEmail: 'mottaker@entreprenor.no',
+        userId: user.userId,
+      });
+      expect(rows[0]?.occurredAt.toISOString()).toBe('2026-08-10T08:55:00.000Z');
+    });
+
+    it('is idempotent: the same delivery twice produces one row', async () => {
+      const first = await postWebhook('transactional', delivery());
+      const second = await postWebhook('transactional', delivery());
+
+      expect(first.json()).toEqual({ outcome: 'accepted' });
+      expect(second.statusCode).toBe(200);
+      expect(second.json()).toEqual({ outcome: 'duplicate' });
+      expect(await db.$count(emailEvents)).toBe(1);
+    });
+
+    it('deduplicates even when the payload timestamp moves between retries', async () => {
+      // The reason `occurred_at` was dropped from the unique key: a redelivery
+      // whose timestamp differed would otherwise have inserted a second row and
+      // re-run every side effect hanging off it.
+      await postWebhook('transactional', delivery());
+      const retry = await postWebhook(
+        'transactional',
+        delivery({ DeliveredAt: '2026-08-10T08:55:01Z' }),
+      );
+
+      expect(retry.json()).toEqual({ outcome: 'duplicate' });
+      expect(await db.$count(emailEvents)).toBe(1);
+    });
+
+    it('counts a bounce and a delivery for the same message separately', async () => {
+      // The key is MessageID *plus* event type, so two different things that
+      // happened to one message are two rows.
+      await postWebhook('transactional', delivery());
+      const bounced = await postWebhook('transactional', {
+        RecordType: 'Bounce',
+        MessageID: delivery().MessageID,
+        Type: 'HardBounce',
+        Email: 'mottaker@entreprenor.no',
+        BouncedAt: '2026-08-10T08:56:00Z',
+        Description: 'The server was unable to deliver.',
+      });
+
+      expect(bounced.json()).toEqual({ outcome: 'accepted' });
+      expect(await db.$count(emailEvents)).toBe(2);
+    });
+
+    it('answers an unknown stream with 404, but only once authenticated', async () => {
+      const unauthenticated = await postWebhook(
+        'finnes-ikke',
+        delivery(),
+        basicAuthHeader({ username: 'postmark-hook', password: 'feil' }),
+      );
+      // 401, not 404: the pair would otherwise enumerate the stream names.
+      expect(unauthenticated.statusCode).toBe(401);
+
+      const authenticated = await postWebhook('finnes-ikke', delivery());
+      expect(authenticated.statusCode).toBe(404);
+    });
+
+    it('rejects a payload it cannot understand', async () => {
+      const response = await postWebhook('transactional', { RecordType: 'Teleport' });
+      expect(response.statusCode).toBe(400);
+      expect(response.json().outcome).toBe('invalid_payload');
+    });
+
+    /**
+     * The failure this whole file exists to prevent.
+     *
+     * A marketing unsubscribe suppressing the transactional stream would stop
+     * magic links reaching the user, silently, with no error anywhere and no
+     * complaint from the person affected — they simply could not log in.
+     */
+    it('a marketing unsubscribe leaves transactional sending intact', async () => {
+      const user = await signIn('avmeldt@entreprenor.no');
+      await db.insert(consentEvents).values({
+        userId: user.userId,
+        consentType: 'marketing_email',
+        status: 'granted',
+        source: 'signup',
+        consentTextVersion: 'v1',
+        occurredAt: new Date('2026-08-01T10:00:00Z'),
+      });
+
+      const response = await postWebhook('luma-marketing', unsubscribe());
+      expect(response.json()).toEqual({ outcome: 'accepted' });
+
+      const suppressions = await db.select().from(emailSuppressions);
+      const streams = suppressions.map((row) => row.messageStream);
+
+      // The assertion that matters, stated first so that a regression reports
+      // *the harm* — "transactional was suppressed" — rather than an
+      // off-by-two row count that a reader has to interpret.
+      expect(streams).not.toContain('transactional');
+      expect(streams).not.toContain('tender_notifications');
+      expect(streams).toEqual(['luma_marketing']);
+
+      expect(suppressions[0]).toMatchObject({
+        email: 'avmeldt@entreprenor.no',
+        messageStream: 'luma_marketing',
+        reason: 'unsubscribe',
+      });
+
+      // And the switches that are not marketing are untouched: tender alerts
+      // still on, no category unsubscribe (§21).
+      const preferences = await db
+        .select()
+        .from(notificationPreferences)
+        .where(eq(notificationPreferences.userId, user.userId));
+      expect(preferences[0]?.tenderAlertsEnabled).toBe(true);
+      expect(await db.$count(notificationCategoryUnsubscribes)).toBe(0);
+
+      // What it *should* have done: withdrawn marketing consent, as a new row.
+      const consents = await call('GET', '/api/v1/consents', { as: user });
+      expect(consents.json().current.marketing_email).toBe(false);
+      expect(await db.$count(consentEvents)).toBe(2);
+    });
+
+    it('a tender-alert unsubscribe does not withdraw marketing consent', async () => {
+      const user = await signIn('avmeldt@entreprenor.no');
+      await db.insert(consentEvents).values({
+        userId: user.userId,
+        consentType: 'marketing_email',
+        status: 'granted',
+        source: 'signup',
+        consentTextVersion: 'v1',
+        occurredAt: new Date('2026-08-01T10:00:00Z'),
+      });
+
+      await postWebhook('tender-notifications', unsubscribe());
+
+      const preferences = await db
+        .select()
+        .from(notificationPreferences)
+        .where(eq(notificationPreferences.userId, user.userId));
+      expect(preferences[0]?.tenderAlertsEnabled).toBe(false);
+
+      const consents = await call('GET', '/api/v1/consents', { as: user });
+      expect(consents.json().current.marketing_email).toBe(true);
+      // No second consent event: the two switches stay independent (§21).
+      expect(await db.$count(consentEvents)).toBe(1);
+
+      const suppressions = await db.select().from(emailSuppressions);
+      expect(suppressions).toHaveLength(1);
+      expect(suppressions[0]?.messageStream).toBe('tender_notifications');
+    });
+
+    it('suppresses a hard bounce on its own stream and defers the admin alert', async () => {
+      const response = await postWebhook('transactional', {
+        RecordType: 'Bounce',
+        MessageID: 'cc1c2d3e-0000-4000-8000-000000000002',
+        Type: 'HardBounce',
+        Email: 'finnes-ikke@entreprenor.no',
+        BouncedAt: '2026-08-10T08:58:00Z',
+        Description: 'The server was unable to deliver.',
+      });
+      expect(response.json()).toEqual({ outcome: 'accepted' });
+
+      const suppressions = await db.select().from(emailSuppressions);
+      expect(suppressions).toHaveLength(1);
+      expect(suppressions[0]).toMatchObject({
+        messageStream: 'transactional',
+        reason: 'hard_bounce',
+      });
+
+      // Notifying an administrator means another Postmark round trip, which is
+      // exactly the slow work §27 says to queue rather than do inline.
+      expect(deferredWork).toEqual([
+        {
+          kind: 'postmark.admin_alert',
+          severity: 'critical',
+          reason: 'transactional_delivery_failure',
+          stream: 'transactional',
+          recipient: 'finnes-ikke@entreprenor.no',
+          detail: 'The server was unable to deliver.',
+        },
+      ]);
+    });
+
+    it('does not suppress a soft bounce', async () => {
+      await postWebhook('tender-notifications', {
+        RecordType: 'Bounce',
+        MessageID: 'dd1c2d3e-0000-4000-8000-000000000003',
+        Type: 'SoftBounce',
+        Email: 'full-innboks@entreprenor.no',
+        BouncedAt: '2026-08-10T08:59:00Z',
+      });
+
+      expect(await db.$count(emailEvents)).toBe(1);
+      expect(await db.$count(emailSuppressions)).toBe(0);
+    });
+
+    it('reactivates an address when Postmark says sending resumed', async () => {
+      await postWebhook('luma-marketing', unsubscribe());
+      await postWebhook(
+        'luma-marketing',
+        unsubscribe({
+          MessageID: 'ee1c2d3e-0000-4000-8000-000000000004',
+          SuppressSending: false,
+        }),
+      );
+
+      const rows = await db.select().from(emailSuppressions);
+      expect(rows).toHaveLength(1);
+      expect(rows[0]?.reactivatedAt).not.toBeNull();
+    });
+
+    it('takes the stream from the path, never from the payload', async () => {
+      // A body claiming to be transactional, delivered to the marketing
+      // endpoint, must not reach the transactional stream.
+      await postWebhook(
+        'luma-marketing',
+        unsubscribe({ MessageStream: 'transactional', SuppressionReason: 'ManualSuppression' }),
+      );
+
+      const rows = await db.select().from(emailSuppressions);
+      expect(rows.map((row) => row.messageStream)).toEqual(['luma_marketing']);
+      const events = await db.select().from(emailEvents);
+      expect(events[0]?.messageStream).toBe('luma_marketing');
+    });
+  });
+
+  // --- share attribution ---------------------------------------------------
+
+  describe('share attribution events (§44.1)', () => {
+    it('records share_created against the person who made the link', async () => {
+      const user = await signIn('deler@entreprenor.no');
+      const tenderId = await seedTender();
+      const profileId = await seedProfile(user);
+      await seedMatch(profileId, tenderId);
+
+      const created = await call('POST', `/api/v1/tenders/${tenderId}/share`, { as: user });
+      expect(created.statusCode).toBe(201);
+
+      const rows = await db
+        .select()
+        .from(attributionEvents)
+        .where(eq(attributionEvents.type, 'share_created'));
+      expect(rows).toHaveLength(1);
+      expect(rows[0]).toMatchObject({
+        userId: user.userId,
+        tenderId,
+        shareId: created.json().id,
+        utmSource: 'anbudsvarsling',
+      });
+    });
+
+    /**
+     * ADR-15's privacy boundary, on the attribution side.
+     *
+     * The shared view is public, so the person opening it never agreed to
+     * anything. A `share_viewed` row that carried who they were would move the
+     * leak from the page — which is tested elsewhere — into the analytics
+     * table, where nobody would look for it.
+     */
+    it('records share_viewed with no trace of who viewed it', async () => {
+      const sharer = await signIn('kilde@entreprenor.no');
+      const viewer = await signIn('nysgjerrig@annet-firma.no');
+      const tenderId = await seedTender();
+      const profileId = await seedProfile(sharer);
+      await seedMatch(profileId, tenderId);
+
+      const created = await call('POST', `/api/v1/tenders/${tenderId}/share`, { as: sharer });
+      const token = String(created.json().url).split('/').pop();
+
+      // Opened by a *different, signed-in* user, from a distinctive address
+      // with a distinctive agent. Every one of those is a viewer identity that
+      // could have been captured, so every one of them is checked for below.
+      const view = await app.inject({
+        method: 'GET',
+        url: `/api/v1/shared/${token}`,
+        headers: {
+          'user-agent': 'Mozilla/5.0 KjennetegnendeNettleser/9.9',
+          'x-forwarded-for': '203.0.113.77',
+        },
+        cookies: { [SESSION_COOKIE_NAME]: viewer.cookie },
+      });
+      expect(view.statusCode).toBe(200);
+
+      const rows = await db
+        .select()
+        .from(attributionEvents)
+        .where(eq(attributionEvents.type, 'share_viewed'));
+      expect(rows).toHaveLength(1);
+
+      const row = rows[0]!;
+      expect(row.userId).toBeNull();
+      expect(row.tenderId).toBe(tenderId);
+      expect(row.shareId).toBe(created.json().id);
+
+      // Nothing about the viewer anywhere on the row, in any column.
+      const serialized = JSON.stringify(row);
+      for (const trace of [
+        viewer.userId,
+        viewer.email,
+        'nysgjerrig',
+        'KjennetegnendeNettleser',
+        '203.0.113.77',
+      ]) {
+        expect(serialized).not.toContain(trace);
+      }
+    });
+
+    it('keeps attribution out of matching (ADR-6): only tender_id crosses over', async () => {
+      const user = await signIn('grense@entreprenor.no');
+      const tenderId = await seedTender();
+      const profileId = await seedProfile(user);
+      const matchId = await seedMatch(profileId, tenderId);
+
+      await call('POST', `/api/v1/tenders/${tenderId}/share`, { as: user });
+
+      const rows = await db.select().from(attributionEvents);
+      const serialized = JSON.stringify(rows);
+      // No match id and no profile id on the row. The schema has no column to
+      // hold either; this is the run-time half of that claim.
+      expect(serialized).not.toContain(matchId);
+      expect(serialized).not.toContain(profileId);
+    });
+  });
+
+  // --- terms acceptance in the consent log ---------------------------------
+
+  describe('legal acceptance mirrors into the consent log (§21)', () => {
+    it('reports terms_acceptance as true once the terms are accepted', async () => {
+      const user = await signIn('vilkar@entreprenor.no');
+
+      const before = await call('GET', '/api/v1/consents', { as: user });
+      expect(before.json().current.terms_acceptance).toBe(false);
+
+      const accepted = await call('POST', '/api/v1/legal-acceptances', {
+        as: user,
+        body: { kind: 'terms' },
+      });
+      expect(accepted.statusCode).toBe(201);
+
+      const after = await call('GET', '/api/v1/consents', { as: user });
+      expect(after.json().current.terms_acceptance).toBe(true);
+      expect(after.json().history[0]).toMatchObject({
+        consentType: 'terms_acceptance',
+        status: 'accepted',
+        consentTextVersion: '2026-01',
+      });
+    });
+
+    it('mirrors the privacy acknowledgement too', async () => {
+      const user = await signIn('personvern@entreprenor.no');
+      await call('POST', '/api/v1/legal-acceptances', { as: user, body: { kind: 'privacy' } });
+
+      const state = await call('GET', '/api/v1/consents', { as: user });
+      expect(state.json().current.privacy_acknowledgement).toBe(true);
+    });
+
+    /** §20.1: accepting the terms is not marketing consent. Ever. */
+    it('accepting the terms grants no marketing consent', async () => {
+      const user = await signIn('ikke-markedsforing@entreprenor.no');
+      await call('POST', '/api/v1/legal-acceptances', { as: user, body: { kind: 'terms' } });
+      await call('POST', '/api/v1/legal-acceptances', { as: user, body: { kind: 'privacy' } });
+
+      const state = await call('GET', '/api/v1/consents', { as: user });
+      expect(state.json().current.marketing_email).toBe(false);
+
+      const rows = await db.select().from(consentEvents);
+      expect(rows.map((row) => row.consentType).sort()).toEqual([
+        'privacy_acknowledgement',
+        'terms_acceptance',
+      ]);
+    });
+
+    it('accepting the same version twice appends one event, not two', async () => {
+      const user = await signIn('dobbeltklikk@entreprenor.no');
+      await call('POST', '/api/v1/legal-acceptances', { as: user, body: { kind: 'terms' } });
+      await call('POST', '/api/v1/legal-acceptances', { as: user, body: { kind: 'terms' } });
+
+      expect(await db.$count(consentEvents)).toBe(1);
+    });
+
+    /**
+     * ADR-9's database-level guard, exercised through the row this endpoint
+     * now creates.
+     *
+     * The rejection *is* the correct behaviour: a consent record whose status
+     * could be edited afterwards is not evidence of anything. Withdrawal is a
+     * new row.
+     */
+    it('cannot be edited afterwards: the append-only trigger rejects the update', async () => {
+      const user = await signIn('uforanderlig@entreprenor.no');
+      await call('POST', '/api/v1/legal-acceptances', { as: user, body: { kind: 'terms' } });
+
+      const rows = await db.select().from(consentEvents);
+      const id = rows[0]!.id;
+
+      // `expectRejection` rather than `rejects.toThrow`: Drizzle wraps the
+      // driver error, so the trigger's own message is in `cause` and a plain
+      // `toThrow(/append-only/)` matches only "Failed query: update …" — it
+      // would fail while the trigger worked, and pass if someone replaced the
+      // trigger with any other error at all.
+      await expectRejection(
+        db.update(consentEvents).set({ status: 'withdrawn' }).where(eq(consentEvents.id, id)),
+        /append-only/i,
+      );
+
+      const after = await db.select().from(consentEvents).where(eq(consentEvents.id, id));
+      expect(after[0]?.status).toBe('accepted');
     });
   });
 

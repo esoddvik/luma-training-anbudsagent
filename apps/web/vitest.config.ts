@@ -16,5 +16,22 @@ export default defineConfig({
     name: 'web',
     environment: 'node',
     include: ['src/**/*.test.ts'],
+    /**
+     * Longer than the 10-second default, for the same reason as `apps/core`.
+     *
+     * Each integration suite creates its own PostgreSQL database and runs the
+     * full migration set into it. Run alone that is fast; run alongside every
+     * other package's suites against one local Postgres, it is not, and the
+     * hooks that never set a timeout are the ones that lose.
+     *
+     * This matters more than an ordinary flake. The harness deliberately
+     * hard-fails CI when `DATABASE_URL` is missing, so that a green run means
+     * something. A suite that goes red at random defeats that from the other
+     * direction: after two false alarms the habit becomes "just re-run it",
+     * and at that point a real failure is indistinguishable from noise.
+     *
+     * Set at project level so a suite added later inherits it.
+     */
+    hookTimeout: 60_000,
   },
 });

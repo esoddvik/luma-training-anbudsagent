@@ -38,6 +38,14 @@ export interface IngestStatusReport {
   } | null;
   readonly lastSuccessfulRunAt: Date | null;
   readonly checkpoint: { lastPublicationDate: string | null; overlapDays: number } | null;
+  /**
+   * Queue depth per job (spec §45 "køstatus", §38). `null` — not `[]` — when
+   * this process runs no worker, so the dashboard can say "unavailable"
+   * instead of drawing an all-zero chart that looks like a healthy idle
+   * system.
+   */
+  readonly queues:
+    readonly { name: string; ready: number; active: number; failed: number }[] | null;
   readonly counts: {
     tenders: number;
     suppressedTenders: number;
@@ -83,6 +91,19 @@ export async function getIngestStatus(ctx: ApiContext, actor: Actor): Promise<In
   const lastRun = runs[0];
   const checkpoint = checkpoints[0];
 
+  // A queue read failure must not take the whole dashboard down with it: the
+  // ingest figures next to it are what an operator opens this page for during
+  // an incident, and those come from the database, which is evidently up.
+  let queues: IngestStatusReport['queues'] = null;
+  if (ctx.queue) {
+    try {
+      queues = await ctx.queue.status();
+    } catch (error) {
+      ctx.logger.error({ err: error }, 'kunne ikke lese køstatus');
+      queues = null;
+    }
+  }
+
   return {
     lastRun: lastRun
       ? {
@@ -105,6 +126,7 @@ export async function getIngestStatus(ctx: ApiContext, actor: Actor): Promise<In
           overlapDays: checkpoint.overlapDays,
         }
       : null,
+    queues,
     counts: {
       tenders: tenderCount,
       suppressedTenders: suppressedCount,

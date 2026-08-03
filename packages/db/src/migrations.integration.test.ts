@@ -1,3 +1,5 @@
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import { sql } from 'drizzle-orm';
 import { migrate } from 'drizzle-orm/postgres-js/migrator';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -148,12 +150,24 @@ describe.skipIf(!hasDatabase)('migrations', () => {
       return Number(row?.count);
     };
 
-    // Two migrations: the generated schema and the hand-written guard.
-    expect(await count()).toBe(2);
+    // Read from the journal rather than hard-coded.
+    //
+    // This assertion used to say `toBe(2)` with a comment naming the two
+    // migrations, and the next migration added to the folder broke it — a
+    // failure that says nothing about idempotency, which is what the test is
+    // for. Counting the journal keeps the *interesting* half of the assertion
+    // (the second run applies nothing) while making the first half maintain
+    // itself.
+    const journal = JSON.parse(
+      await readFile(join(MIGRATIONS_FOLDER, 'meta', '_journal.json'), 'utf8'),
+    ) as { entries: readonly unknown[] };
+    const expected = journal.entries.length;
+    expect(expected).toBeGreaterThan(0);
+    expect(await count()).toBe(expected);
 
     // A redeploy runs the migrator against an already-migrated database on
     // every boot, so this is the ordinary case rather than an edge one.
     await migrate(harness.db, { migrationsFolder: MIGRATIONS_FOLDER });
-    expect(await count()).toBe(2);
+    expect(await count()).toBe(expected);
   });
 });

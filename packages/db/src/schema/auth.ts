@@ -139,13 +139,29 @@ export const companies = pgTable(
   {
     id: primaryId(),
     name: text('name').notNull(),
-    /** Norwegian organisation number: nine digits. */
+    /**
+     * Norwegian organisation number: nine digits, MOD-11 checked.
+     *
+     * Nullable, and that is a product requirement rather than laziness: spec
+     * section 9.1 step 6 makes it explicitly optional in the first step of
+     * signup, because demanding it there is the kind of friction that ends a
+     * five-minute onboarding journey.
+     */
     organizationNumber: text('organization_number'),
+    /** «Bransjebeskrivelse» from spec section 9.1. Free text, Norwegian. */
+    industryDescription: text('industry_description'),
+    /** «Tjenester virksomheten leverer», same journey step. */
+    servicesOffered: text('services_offered'),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
     deletedAt: timestamptz('deleted_at'),
   },
-  (table) => [uniqueIndex('companies_organization_number_key').on(table.organizationNumber)],
+  (table) => [
+    // NULLs stay distinct in PostgreSQL, so this permits any number of
+    // companies without an organisation number while still refusing two
+    // companies claiming the same one.
+    uniqueIndex('companies_organization_number_key').on(table.organizationNumber),
+  ],
 );
 
 export const companyMemberships = pgTable(

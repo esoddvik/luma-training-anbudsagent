@@ -251,13 +251,22 @@ describeDb('requestLoginLink', () => {
   });
 
   it('sets the link to expire within the configured lifetime', async () => {
+    // Bracketed rather than compared against a single instant. The token is
+    // issued at some point *during* the call, so measuring from `before` alone
+    // always overshoots the TTL by however long the call took — which made the
+    // old `<= TTL` assertion fail whenever that was more than a rounding
+    // error. Expiry must land TTL minutes after an issue time somewhere inside
+    // the bracket, which is exact and cannot flake.
     const before = Date.now();
     await requestLoginLink({ email: KNOWN });
+    const after = Date.now();
 
     const [row] = await db.select().from(schema.magicLinkTokens);
-    const lifetimeMinutes = (row!.expiresAt.getTime() - before) / 60_000;
-    expect(lifetimeMinutes).toBeGreaterThan(0);
-    expect(lifetimeMinutes).toBeLessThanOrEqual(MAGIC_LINK_TTL_MINUTES);
+    const expiresAt = row!.expiresAt.getTime();
+    const ttlMs = MAGIC_LINK_TTL_MINUTES * 60_000;
+
+    expect(expiresAt).toBeGreaterThanOrEqual(before + ttlMs);
+    expect(expiresAt).toBeLessThanOrEqual(after + ttlMs);
   });
 
   it('carries a safe return path through to the emailed link', async () => {

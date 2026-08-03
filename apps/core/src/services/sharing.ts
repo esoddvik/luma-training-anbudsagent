@@ -11,6 +11,7 @@ import {
 } from '@luma/domain';
 import { z } from 'zod';
 import { gone, notFound, parseOrThrow } from '../routes/errors.js';
+import { recordShareCreated, recordShareViewed } from './attribution.js';
 import { requireOwnershipAudited } from './audit.js';
 import { decodeCursor, toPage, type Page, type PaginationQuery } from './pagination.js';
 import { assertTenderAccess, reasonTypesForMatches } from './tenders.js';
@@ -80,6 +81,11 @@ export async function createShare(
 
   const id = inserted[0]?.id;
   if (!id) throw new Error('insert returned no share id');
+
+  // Spec §44.1. The URL is not recorded anywhere, here or in the log line
+  // above: it is the credential, and an attribution table is not a place to
+  // keep credentials.
+  await recordShareCreated(ctx, { userId: actor.userId, tenderId, shareId: id });
 
   ctx.logger.info({ shareId: id, tenderId }, 'delingslenke opprettet');
 
@@ -260,6 +266,14 @@ export async function viewSharedTender(
     .update(tenderShares)
     .set({ viewCount: sql`${tenderShares.viewCount} + 1` })
     .where(eq(tenderShares.id, shareRow.id));
+
+  // Spec §44.1. `viewSharedTender` takes no actor and reads no header, so
+  // there is no viewer identity in scope to leak into this call even by
+  // accident — see the note on `recordShareViewed`. `shareRow.createdByUserId`
+  // is deliberately *not* passed as `userId`: that would record the sharer as
+  // having viewed their own link and make the metric meaningless as well as
+  // misleading.
+  await recordShareViewed(ctx, { tenderId: tender.id, shareId: shareRow.id });
 
   // Built by parsing, not by spreading. Anything not named in
   // `sharedTenderViewSchema` is dropped here rather than shipped.

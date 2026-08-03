@@ -204,10 +204,20 @@ export const emailEvents = pgTable(
     receivedAt: timestamptz('received_at').notNull().defaultNow(),
   },
   (table) => [
-    uniqueIndex('email_events_message_type_occurred_key').on(
+    // The idempotency key from spec section 27 and ADR-5, made a property of
+    // the database: Postmark `MessageID` plus the event type, exactly what
+    // `idempotencyKey()` in `@luma/email` computes.
+    //
+    // `occurred_at` used to be part of this key and was removed deliberately.
+    // It comes out of the webhook payload, so including it made the constraint
+    // *look* like deduplication while depending on Postmark sending a
+    // byte-identical timestamp on every retry. A redelivery whose timestamp
+    // differed by a second would have produced a second bounce row and a
+    // second suppression write. Two columns, and the handler can insert
+    // blindly and read the conflict instead of reading first and racing.
+    uniqueIndex('email_events_message_id_event_type_key').on(
       table.postmarkMessageId,
       table.eventType,
-      table.occurredAt,
     ),
     index('email_events_message_id_idx').on(table.postmarkMessageId),
     index('email_events_user_occurred_idx').on(table.userId, table.occurredAt.desc()),

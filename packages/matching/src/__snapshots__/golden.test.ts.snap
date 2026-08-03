@@ -1,0 +1,513 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`golden corpus > matches: IT over verdiintervall 1`] = `
+{
+  "case": "IT over verdiintervall",
+  "explanation": "Anbudet er holdt utenfor varslene dine. Treffscoren ville vært 54,40 av 100.
+
+Dette er grunnlaget for treffet:
+Nøyaktig treff på CPV-koden 72200000 (+32,38 poeng): CPV 72200000 står i profilen din
+2 søkeord fra profilen din finnes i anbudet (+16,88 poeng): «arkitektur» i beskrivelsen; «systemutvikling» i tittelen
+Aktiv konkurranse (+3 poeng): Kunngjøringstype: Kunngjøring av konkurranse
+Det er 9 dager igjen til fristen (+2,14 poeng): Frist: 12.08.2026; Dager igjen: 9
+
+Dette holdt anbudet utenfor:
+Anslått verdi ligger utenfor verdiintervallet i profilen din: Anslått verdi i anbudet: 40 000 000 kr; Verdiintervall i profilen: 1 000 000 kr–20 000 000 kr
+
+Vurderingen er regelbasert. Den bygger bare på varslingsprofilen din og på opplysningene i kunngjøringen. Ingen AI-modell har tolket dette anbudet.
+Treffscoren viser hvor godt anbudet passer varslingsprofilen din. Den sier ingenting om sannsynligheten for å vinne.
+Regelversjon: 2026.08.1",
+  "profile": "IT og systemutvikling",
+  "result": {
+    "alertProfileId": "bbbbbbbb-0000-4000-8000-000000000003",
+    "confidence": "medium",
+    "exclusions": [
+      {
+        "evidence": [
+          "Anslått verdi i anbudet: 40 000 000 kr",
+          "Verdiintervall i profilen: 1 000 000 kr–20 000 000 kr",
+        ],
+        "label": "Anslått verdi ligger utenfor verdiintervallet i profilen din",
+        "type": "value_outside",
+      },
+    ],
+    "included": false,
+    "matchingVersion": "2026.08.1",
+    "reasons": [
+      {
+        "contribution": 32.38,
+        "evidence": [
+          "CPV 72200000 står i profilen din",
+        ],
+        "label": "Nøyaktig treff på CPV-koden 72200000",
+        "type": "cpv",
+      },
+      {
+        "contribution": 16.88,
+        "evidence": [
+          "«arkitektur» i beskrivelsen",
+          "«systemutvikling» i tittelen",
+        ],
+        "label": "2 søkeord fra profilen din finnes i anbudet",
+        "type": "keyword",
+      },
+      {
+        "contribution": 3,
+        "evidence": [
+          "Kunngjøringstype: Kunngjøring av konkurranse",
+        ],
+        "label": "Aktiv konkurranse",
+        "type": "notice_type",
+      },
+      {
+        "contribution": 2.14,
+        "evidence": [
+          "Frist: 12.08.2026",
+          "Dager igjen: 9",
+        ],
+        "label": "Det er 9 dager igjen til fristen",
+        "type": "deadline",
+      },
+    ],
+    "score": 54.4,
+    "tenderId": "aaaaaaaa-0000-4000-8000-000000000004",
+  },
+  "tender": "Rammeavtale IT-konsulenttjenester og systemutvikling",
+}
+`;
+
+exports[`golden corpus > matches: intensjonskunngjøring 1`] = `
+{
+  "case": "intensjonskunngjøring",
+  "explanation": "Høy relevans. Anbudet fikk treffscore 75,50 av 100 mot varslingsprofilen din.
+
+Dette er grunnlaget for treffet:
+Nøyaktig treff på CPV-koden 90910000 (+35 poeng): CPV 90910000 står i profilen din
+Anbudet gjelder 2 områder fra profilen din (+15 poeng): Kommune: Bærum; Område: Akershus; Område i profilen: Akershus, Bærum
+Søkeordet «renhold» finnes i anbudet (+12,50 poeng): «renhold» i tittelen
+Oppdragsgiveren Bærum kommune står i profilen din (+10 poeng): Oppdragsgiver i profilen: Bærum kommune
+Dette er en planlagt anskaffelse. Konkurransen er ikke publisert ennå. (+3 poeng): Dette er en planlagt anskaffelse. Konkurransen er ikke publisert ennå.; Kunngjøringstype: Intensjonskunngjøring
+
+Vurderingen er regelbasert. Den bygger bare på varslingsprofilen din og på opplysningene i kunngjøringen. Ingen AI-modell har tolket dette anbudet.
+Treffscoren viser hvor godt anbudet passer varslingsprofilen din. Den sier ingenting om sannsynligheten for å vinne.
+Regelversjon: 2026.08.1",
+  "profile": "Renhold Akershus",
+  "result": {
+    "alertProfileId": "bbbbbbbb-0000-4000-8000-000000000001",
+    "confidence": "high",
+    "exclusions": [],
+    "included": true,
+    "matchingVersion": "2026.08.1",
+    "reasons": [
+      {
+        "contribution": 35,
+        "evidence": [
+          "CPV 90910000 står i profilen din",
+        ],
+        "label": "Nøyaktig treff på CPV-koden 90910000",
+        "type": "cpv",
+      },
+      {
+        "contribution": 15,
+        "evidence": [
+          "Kommune: Bærum",
+          "Område: Akershus",
+          "Område i profilen: Akershus, Bærum",
+        ],
+        "label": "Anbudet gjelder 2 områder fra profilen din",
+        "type": "geography",
+      },
+      {
+        "contribution": 12.5,
+        "evidence": [
+          "«renhold» i tittelen",
+        ],
+        "label": "Søkeordet «renhold» finnes i anbudet",
+        "type": "keyword",
+      },
+      {
+        "contribution": 10,
+        "evidence": [
+          "Oppdragsgiver i profilen: Bærum kommune",
+        ],
+        "label": "Oppdragsgiveren Bærum kommune står i profilen din",
+        "type": "buyer",
+      },
+      {
+        "contribution": 3,
+        "evidence": [
+          "Dette er en planlagt anskaffelse. Konkurransen er ikke publisert ennå.",
+          "Kunngjøringstype: Intensjonskunngjøring",
+        ],
+        "label": "Dette er en planlagt anskaffelse. Konkurransen er ikke publisert ennå.",
+        "type": "notice_type",
+      },
+    ],
+    "score": 75.5,
+    "tenderId": "aaaaaaaa-0000-4000-8000-000000000006",
+  },
+  "tender": "Intensjonskunngjøring: renhold av rådhuset",
+}
+`;
+
+exports[`golden corpus > matches: landsdekkende uten verdi 1`] = `
+{
+  "case": "landsdekkende uten verdi",
+  "explanation": "Høy relevans. Anbudet fikk treffscore 74,46 av 100 mot varslingsprofilen din.
+
+Dette er grunnlaget for treffet:
+Nøyaktig treff på CPV-koden 90910000 (+35 poeng): CPV 90910000 står i profilen din
+3 søkeord fra profilen din finnes i anbudet (+18,96 poeng): «NS-INSTA 800» i beskrivelsen; «rammeavtale» i tittelen; «renhold» i beskrivelsen
+Anbudet gjelder hele landet, og dekker området i profilen din (+10,50 poeng): Gjelder hele landet
+Det er 24 dager igjen til fristen (+5 poeng): Frist: 27.08.2026; Dager igjen: 24; Minstekrav i profilen: 10 dager
+Aktiv konkurranse (+3 poeng): Kunngjøringstype: Kunngjøring av konkurranse
+Konkurranseformen Åpen anbudskonkurranse står i profilen din (+2 poeng): Prosedyre: Åpen anbudskonkurranse
+
+Vurderingen er regelbasert. Den bygger bare på varslingsprofilen din og på opplysningene i kunngjøringen. Ingen AI-modell har tolket dette anbudet.
+Treffscoren viser hvor godt anbudet passer varslingsprofilen din. Den sier ingenting om sannsynligheten for å vinne.
+Regelversjon: 2026.08.1",
+  "profile": "Renhold Akershus",
+  "result": {
+    "alertProfileId": "bbbbbbbb-0000-4000-8000-000000000001",
+    "confidence": "high",
+    "exclusions": [],
+    "included": true,
+    "matchingVersion": "2026.08.1",
+    "reasons": [
+      {
+        "contribution": 35,
+        "evidence": [
+          "CPV 90910000 står i profilen din",
+        ],
+        "label": "Nøyaktig treff på CPV-koden 90910000",
+        "type": "cpv",
+      },
+      {
+        "contribution": 18.96,
+        "evidence": [
+          "«NS-INSTA 800» i beskrivelsen",
+          "«rammeavtale» i tittelen",
+          "«renhold» i beskrivelsen",
+        ],
+        "label": "3 søkeord fra profilen din finnes i anbudet",
+        "type": "keyword",
+      },
+      {
+        "contribution": 10.5,
+        "evidence": [
+          "Gjelder hele landet",
+        ],
+        "label": "Anbudet gjelder hele landet, og dekker området i profilen din",
+        "type": "geography",
+      },
+      {
+        "contribution": 5,
+        "evidence": [
+          "Frist: 27.08.2026",
+          "Dager igjen: 24",
+          "Minstekrav i profilen: 10 dager",
+        ],
+        "label": "Det er 24 dager igjen til fristen",
+        "type": "deadline",
+      },
+      {
+        "contribution": 3,
+        "evidence": [
+          "Kunngjøringstype: Kunngjøring av konkurranse",
+        ],
+        "label": "Aktiv konkurranse",
+        "type": "notice_type",
+      },
+      {
+        "contribution": 2,
+        "evidence": [
+          "Prosedyre: Åpen anbudskonkurranse",
+        ],
+        "label": "Konkurranseformen Åpen anbudskonkurranse står i profilen din",
+        "type": "procedure",
+      },
+    ],
+    "score": 74.46,
+    "tenderId": "aaaaaaaa-0000-4000-8000-000000000005",
+  },
+  "tender": "Rammeavtale for renholdstjenester til statlige virksomheter",
+}
+`;
+
+exports[`golden corpus > matches: planlagt ventilasjon 1`] = `
+{
+  "case": "planlagt ventilasjon",
+  "explanation": "Verdt å undersøke. Anbudet fikk treffscore 53,34 av 100 mot varslingsprofilen din.
+
+Dette er grunnlaget for treffet:
+CPV-koden 45331200 ligger under profilkoden 45300000 (+27,34 poeng): CPV 45331200 ligger under profilkoden 45300000
+Søkeordet «rehabilitering» finnes i anbudet (+12,50 poeng): «rehabilitering» i tittelen
+Anbudet gjelder Oslo, som ligger i profilen din (+10,50 poeng): Område: Oslo; Område i profilen: Oslo
+Dette er en planlagt anskaffelse. Konkurransen er ikke publisert ennå. (+3 poeng): Dette er en planlagt anskaffelse. Konkurransen er ikke publisert ennå.; Kunngjøringstype: Veiledende kunngjøring
+
+Vurderingen er regelbasert. Den bygger bare på varslingsprofilen din og på opplysningene i kunngjøringen. Ingen AI-modell har tolket dette anbudet.
+Treffscoren viser hvor godt anbudet passer varslingsprofilen din. Den sier ingenting om sannsynligheten for å vinne.
+Regelversjon: 2026.08.1",
+  "profile": "Ventilasjon Oslo",
+  "result": {
+    "alertProfileId": "bbbbbbbb-0000-4000-8000-000000000002",
+    "confidence": "medium",
+    "exclusions": [],
+    "included": true,
+    "matchingVersion": "2026.08.1",
+    "reasons": [
+      {
+        "contribution": 27.34,
+        "evidence": [
+          "CPV 45331200 ligger under profilkoden 45300000",
+        ],
+        "label": "CPV-koden 45331200 ligger under profilkoden 45300000",
+        "type": "cpv",
+      },
+      {
+        "contribution": 12.5,
+        "evidence": [
+          "«rehabilitering» i tittelen",
+        ],
+        "label": "Søkeordet «rehabilitering» finnes i anbudet",
+        "type": "keyword",
+      },
+      {
+        "contribution": 10.5,
+        "evidence": [
+          "Område: Oslo",
+          "Område i profilen: Oslo",
+        ],
+        "label": "Anbudet gjelder Oslo, som ligger i profilen din",
+        "type": "geography",
+      },
+      {
+        "contribution": 3,
+        "evidence": [
+          "Dette er en planlagt anskaffelse. Konkurransen er ikke publisert ennå.",
+          "Kunngjøringstype: Veiledende kunngjøring",
+        ],
+        "label": "Dette er en planlagt anskaffelse. Konkurransen er ikke publisert ennå.",
+        "type": "notice_type",
+      },
+    ],
+    "score": 53.34,
+    "tenderId": "aaaaaaaa-0000-4000-8000-000000000002",
+  },
+  "tender": "Veiledende kunngjøring: rehabilitering av ventilasjonsanlegg",
+}
+`;
+
+exports[`golden corpus > matches: renhold utenfor geografi 1`] = `
+{
+  "case": "renhold utenfor geografi",
+  "explanation": "Anbudet er holdt utenfor varslene dine. Treffscoren ville vært 8 av 100.
+
+Dette er grunnlaget for treffet:
+Det er 31 dager igjen til fristen (+5 poeng): Frist: 03.09.2026; Dager igjen: 31
+Aktiv konkurranse (+3 poeng): Kunngjøringstype: Kunngjøring av konkurranse
+
+Dette holdt anbudet utenfor:
+Anbudet ligger utenfor de geografiske områdene i profilen din: Anbudet gjelder: Akershus, Bærum; Profilen din dekker: Oslo
+
+Vurderingen er regelbasert. Den bygger bare på varslingsprofilen din og på opplysningene i kunngjøringen. Ingen AI-modell har tolket dette anbudet.
+Treffscoren viser hvor godt anbudet passer varslingsprofilen din. Den sier ingenting om sannsynligheten for å vinne.
+Regelversjon: 2026.08.1",
+  "profile": "Ventilasjon Oslo",
+  "result": {
+    "alertProfileId": "bbbbbbbb-0000-4000-8000-000000000002",
+    "confidence": "low",
+    "exclusions": [
+      {
+        "evidence": [
+          "Anbudet gjelder: Akershus, Bærum",
+          "Profilen din dekker: Oslo",
+        ],
+        "label": "Anbudet ligger utenfor de geografiske områdene i profilen din",
+        "type": "geography_outside",
+      },
+    ],
+    "included": false,
+    "matchingVersion": "2026.08.1",
+    "reasons": [
+      {
+        "contribution": 5,
+        "evidence": [
+          "Frist: 03.09.2026",
+          "Dager igjen: 31",
+        ],
+        "label": "Det er 31 dager igjen til fristen",
+        "type": "deadline",
+      },
+      {
+        "contribution": 3,
+        "evidence": [
+          "Kunngjøringstype: Kunngjøring av konkurranse",
+        ],
+        "label": "Aktiv konkurranse",
+        "type": "notice_type",
+      },
+    ],
+    "score": 8,
+    "tenderId": "aaaaaaaa-0000-4000-8000-000000000001",
+  },
+  "tender": "Rammeavtale for renhold av kommunale bygg",
+}
+`;
+
+exports[`golden corpus > matches: renhold: sterk match 1`] = `
+{
+  "case": "renhold: sterk match",
+  "explanation": "Høy relevans. Anbudet fikk treffscore 95,42 av 100 mot varslingsprofilen din.
+
+Dette er grunnlaget for treffet:
+Treff på 2 av 2 CPV-koder i anbudet (+35 poeng): CPV 90910000 står i profilen din; CPV 90911200 ligger under profilkoden 90910000
+3 søkeord fra profilen din finnes i anbudet (+20,42 poeng): «NS-INSTA 800» i beskrivelsen; «rammeavtale» i tittelen; «renhold» i tittelen
+Anbudet gjelder 2 områder fra profilen din (+15 poeng): Kommune: Bærum; Område: Akershus; Område i profilen: Akershus, Bærum
+Oppdragsgiveren Bærum kommune står i profilen din (+10 poeng): Oppdragsgiver i profilen: Bærum kommune
+Anslått verdi 14 000 000 kr ligger innenfor verdiintervallet i profilen din (+5 poeng): Anslått verdi i anbudet: 14 000 000 kr; Verdiintervall i profilen: 5 000 000 kr–25 000 000 kr
+Det er 31 dager igjen til fristen (+5 poeng): Frist: 03.09.2026; Dager igjen: 31; Minstekrav i profilen: 10 dager
+Aktiv konkurranse (+3 poeng): Kunngjøringstype: Kunngjøring av konkurranse
+Konkurranseformen Åpen anbudskonkurranse står i profilen din (+2 poeng): Prosedyre: Åpen anbudskonkurranse
+
+Vurderingen er regelbasert. Den bygger bare på varslingsprofilen din og på opplysningene i kunngjøringen. Ingen AI-modell har tolket dette anbudet.
+Treffscoren viser hvor godt anbudet passer varslingsprofilen din. Den sier ingenting om sannsynligheten for å vinne.
+Regelversjon: 2026.08.1",
+  "profile": "Renhold Akershus",
+  "result": {
+    "alertProfileId": "bbbbbbbb-0000-4000-8000-000000000001",
+    "confidence": "high",
+    "exclusions": [],
+    "included": true,
+    "matchingVersion": "2026.08.1",
+    "reasons": [
+      {
+        "contribution": 35,
+        "evidence": [
+          "CPV 90910000 står i profilen din",
+          "CPV 90911200 ligger under profilkoden 90910000",
+        ],
+        "label": "Treff på 2 av 2 CPV-koder i anbudet",
+        "type": "cpv",
+      },
+      {
+        "contribution": 20.42,
+        "evidence": [
+          "«NS-INSTA 800» i beskrivelsen",
+          "«rammeavtale» i tittelen",
+          "«renhold» i tittelen",
+        ],
+        "label": "3 søkeord fra profilen din finnes i anbudet",
+        "type": "keyword",
+      },
+      {
+        "contribution": 15,
+        "evidence": [
+          "Kommune: Bærum",
+          "Område: Akershus",
+          "Område i profilen: Akershus, Bærum",
+        ],
+        "label": "Anbudet gjelder 2 områder fra profilen din",
+        "type": "geography",
+      },
+      {
+        "contribution": 10,
+        "evidence": [
+          "Oppdragsgiver i profilen: Bærum kommune",
+        ],
+        "label": "Oppdragsgiveren Bærum kommune står i profilen din",
+        "type": "buyer",
+      },
+      {
+        "contribution": 5,
+        "evidence": [
+          "Anslått verdi i anbudet: 14 000 000 kr",
+          "Verdiintervall i profilen: 5 000 000 kr–25 000 000 kr",
+        ],
+        "label": "Anslått verdi 14 000 000 kr ligger innenfor verdiintervallet i profilen din",
+        "type": "value",
+      },
+      {
+        "contribution": 5,
+        "evidence": [
+          "Frist: 03.09.2026",
+          "Dager igjen: 31",
+          "Minstekrav i profilen: 10 dager",
+        ],
+        "label": "Det er 31 dager igjen til fristen",
+        "type": "deadline",
+      },
+      {
+        "contribution": 3,
+        "evidence": [
+          "Kunngjøringstype: Kunngjøring av konkurranse",
+        ],
+        "label": "Aktiv konkurranse",
+        "type": "notice_type",
+      },
+      {
+        "contribution": 2,
+        "evidence": [
+          "Prosedyre: Åpen anbudskonkurranse",
+        ],
+        "label": "Konkurranseformen Åpen anbudskonkurranse står i profilen din",
+        "type": "procedure",
+      },
+    ],
+    "score": 95.42,
+    "tenderId": "aaaaaaaa-0000-4000-8000-000000000001",
+  },
+  "tender": "Rammeavtale for renhold av kommunale bygg",
+}
+`;
+
+exports[`golden corpus > matches: tildeling ekskluderes 1`] = `
+{
+  "case": "tildeling ekskluderes",
+  "explanation": "Anbudet er holdt utenfor varslene dine. Treffscoren ville vært 0 av 100.
+
+Dette holdt anbudet utenfor:
+Anbudet ligger utenfor de geografiske områdene i profilen din: Anbudet gjelder: Trøndelag, Trondheim; Profilen din dekker: Akershus, Asker, Bærum
+Konkurransen er avgjort: Status hos kilden: tildelt
+Dette er en tildelingskunngjøring. Tildelinger vises ikke i anbudsvarsler ennå.: Kunngjøringskategori: tildeling
+
+Vurderingen er regelbasert. Den bygger bare på varslingsprofilen din og på opplysningene i kunngjøringen. Ingen AI-modell har tolket dette anbudet.
+Treffscoren viser hvor godt anbudet passer varslingsprofilen din. Den sier ingenting om sannsynligheten for å vinne.
+Regelversjon: 2026.08.1",
+  "profile": "Renhold Akershus",
+  "result": {
+    "alertProfileId": "bbbbbbbb-0000-4000-8000-000000000001",
+    "confidence": "low",
+    "exclusions": [
+      {
+        "evidence": [
+          "Anbudet gjelder: Trøndelag, Trondheim",
+          "Profilen din dekker: Akershus, Asker, Bærum",
+        ],
+        "label": "Anbudet ligger utenfor de geografiske områdene i profilen din",
+        "type": "geography_outside",
+      },
+      {
+        "evidence": [
+          "Status hos kilden: tildelt",
+        ],
+        "label": "Konkurransen er avgjort",
+        "type": "closed",
+      },
+      {
+        "evidence": [
+          "Kunngjøringskategori: tildeling",
+        ],
+        "label": "Dette er en tildelingskunngjøring. Tildelinger vises ikke i anbudsvarsler ennå.",
+        "type": "award_notice",
+      },
+    ],
+    "included": false,
+    "matchingVersion": "2026.08.1",
+    "reasons": [],
+    "score": 0,
+    "tenderId": "aaaaaaaa-0000-4000-8000-000000000003",
+  },
+  "tender": "Tildeling: drift og vedlikehold av kommunale veier",
+}
+`;

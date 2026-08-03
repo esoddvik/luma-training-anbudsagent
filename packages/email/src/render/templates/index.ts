@@ -10,5 +10,6 @@ export {
 export { renderImmediateAlert } from './immediate.js';
 export { renderMagicLink } from './magic-link.js';
 export { renderMaterialChange } from './material-change.js';
+export { renderOrderAdminNotification } from './order-admin.js';
 export { renderOrderReceived } from './order-received.js';
 export { renderPaidAccessActivated } from './paid-access.js';

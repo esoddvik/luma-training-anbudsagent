@@ -11,11 +11,19 @@ import type {
 import type { PromotionBlock } from './promotion.js';
 
 /**
- * The nine MVP templates (spec section 25).
+ * The MVP templates: spec section 25's nine, plus one.
  *
  * The names are the contract with Postmark: they identify the stream
  * (`postmark/streams.ts`), they are the Postmark `Tag`, and they version the
  * template so a copy rewrite becomes `-v2` rather than a silent change.
+ *
+ * `order-admin-notification-v1` is not in section 25's list. Section 28.2 step
+ * 2 requires notifying `BILLING_ADMIN_EMAIL` when an order arrives, and the
+ * nine have no admin variant, so the only way to satisfy the step with the
+ * listed templates was to send the billing address a copy of the customer's
+ * confirmation. That copy carries the invoicing fields but is addressed to the
+ * customer, and an administrator scanning an inbox cannot tell a new order
+ * from a receipt. The tenth template is that step's own document.
  */
 export const TEMPLATE_NAMES = [
   'auth-magic-link-v1',
@@ -25,6 +33,7 @@ export const TEMPLATE_NAMES = [
   'tender-weekly-digest-v1',
   'tender-material-change-v1',
   'order-request-received-v1',
+  'order-admin-notification-v1',
   'paid-access-activated-v1',
   'account-delete-confirmation-v1',
 ] as const;
@@ -148,6 +157,26 @@ export interface AlertConfirmationContext extends BaseEmailContext {
 export interface OrderReceivedContext extends BaseEmailContext {
   readonly order: CreateOrderInput;
   readonly status: OrderStatus;
+}
+
+/**
+ * The billing administrator's notification (spec section 28.2, step 2).
+ *
+ * `recipientEmail` is `BILLING_ADMIN_EMAIL`, not the customer. The order id
+ * and the admin URL are required rather than optional: without them the
+ * message is a description of work with no way to reach the work.
+ */
+export interface OrderAdminNotificationContext extends BaseEmailContext {
+  readonly order: CreateOrderInput;
+  /** The persisted `OrderRequest.id`. Quoted in the invoice and in support. */
+  readonly orderId: string;
+  readonly status: OrderStatus;
+  /**
+   * The admin order view (spec section 16,
+   * `/admin/anbudsvarsling/bestillinger`). Supplied by the caller, which owns
+   * the web routes; this package only tags it for attribution.
+   */
+  readonly adminOrderUrl: string;
 }
 
 export interface PaidAccessActivatedContext extends BaseEmailContext {

@@ -8,6 +8,7 @@ import {
   renderImmediateAlert,
   renderMagicLink,
   renderMaterialChange,
+  renderOrderAdminNotification,
   renderOrderReceived,
   renderPaidAccessActivated,
   renderWeeklyDigest,
@@ -16,12 +17,13 @@ import type { DigestContext, LinkContext, RenderedEmail, TemplateName } from '..
 import * as f from './fixtures.js';
 
 /**
- * Renders all nine MVP templates from the shared fixtures.
+ * Renders every MVP template from the shared fixtures.
  *
  * Having one function produce the whole set is what makes the cross-cutting
  * assertions cheap: the forbidden-phrasing scan, the link-parity check and the
  * "is this actually Norwegian" review all run over every template without
- * anyone having to remember to add the tenth one to three separate lists.
+ * anyone having to remember to add the next one to three separate lists.
+ * Adding a template here is what puts it under all of them at once.
  */
 
 export interface RenderAllOptions {
@@ -102,6 +104,16 @@ export function renderAllTemplates(options?: RenderAllOptions): RenderedEmail<Te
       links: linksFor('landing'),
       order: f.ORDER_INPUT,
       status: 'received',
+    }),
+    // The one email in the set whose recipient is not the customer.
+    renderOrderAdminNotification({
+      ...base,
+      recipientEmail: f.BILLING_ADMIN_EMAIL,
+      links: linksFor('landing'),
+      order: f.ORDER_INPUT,
+      orderId: f.ORDER_REQUEST_ID,
+      status: 'received',
+      adminOrderUrl: f.ADMIN_ORDER_URL,
     }),
     renderPaidAccessActivated({
       ...base,

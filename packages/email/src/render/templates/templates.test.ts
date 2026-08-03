@@ -6,8 +6,8 @@ import { renderAllTemplates } from '../../testing/all-templates.js';
 
 const rendered = renderAllTemplates();
 
-describe('the nine MVP templates', () => {
-  it('renders exactly the templates in spec section 25', () => {
+describe('the MVP templates', () => {
+  it('renders exactly the templates in TEMPLATE_NAMES', () => {
     expect(rendered.map((email) => email.template).sort()).toEqual([...TEMPLATE_NAMES].sort());
   });
 

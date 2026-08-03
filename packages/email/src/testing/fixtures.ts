@@ -362,6 +362,32 @@ export const ORDER_INPUT: CreateOrderInput = {
   purchaseOrderNumber: 'PO-2026-118',
 };
 
+/**
+ * An order with every optional field left out.
+ *
+ * The admin notification is required to print those fields anyway, so this is
+ * the fixture that proves the blanks are visible rather than dropped.
+ */
+export const ORDER_INPUT_MINIMAL: CreateOrderInput = {
+  productCode: 'heldagskurs',
+  productName: 'Heldagskurs – tilbudsarbeid i praksis',
+  billingCompanyName: 'Fjordvik Anlegg AS',
+  billingAddress: 'Havnegata 3',
+  billingPostalCode: '5003',
+  billingCity: 'Bergen',
+  billingCountry: 'Norge',
+  invoiceEmail: 'regnskap@fjordvikanlegg.no',
+  contactPerson: 'Ola Fjordvik',
+};
+
+export const ORDER_REQUEST_ID = '88888888-8888-4888-8888-000000000001';
+
+/** `BILLING_ADMIN_EMAIL` (spec section 28.2, step 2). Not a customer address. */
+export const BILLING_ADMIN_EMAIL = 'faktura@luma-training.com';
+
+/** The admin order view (spec section 16). Built by the caller, tagged here. */
+export const ADMIN_ORDER_URL = `https://anbudsvarsling.luma-training.com/admin/anbudsvarsling/bestillinger/${ORDER_REQUEST_ID}`;
+
 export function marketingConsentEvent(overrides?: Partial<ConsentEvent>): ConsentEvent {
   return {
     id: '77777777-7777-4777-8777-000000000001',

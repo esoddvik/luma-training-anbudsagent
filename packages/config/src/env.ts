@@ -84,6 +84,25 @@ const legalShape = {
   CURRENT_MARKETING_CONSENT_TEXT_VERSION: z.string().min(1),
 };
 
+/**
+ * The sender identity printed in every email footer.
+ *
+ * Spec section 25 requires sender and contact information there, and Norwegian
+ * marketing law expects a physical address. Section 48 lists no variable for
+ * it, so the address lived as a constant in a service module — configuration
+ * in a source file, which an operator has no way of discovering is theirs to
+ * change. These three keys are that constant, made visible.
+ *
+ * `SENDER_CONTACT_EMAIL` is separate from `AUTH_EMAIL_FROM` on purpose: the
+ * from-address is a verified Postmark sender signature and is usually a
+ * no-reply, while this is the address a recipient can actually write to.
+ */
+const senderShape = {
+  SENDER_NAME: z.string().trim().min(1).default('Luma Training'),
+  SENDER_POSTAL_ADDRESS: z.string().trim().min(1),
+  SENDER_CONTACT_EMAIL: z.email(),
+};
+
 const postmarkShape = {
   POSTMARK_SERVER_TOKEN: z.string().min(1),
   POSTMARK_ACCOUNT_TOKEN: z.string().optional(),
@@ -99,6 +118,7 @@ const coreSchema = z.object({
   ...authShape,
   ...sharingShape,
   ...legalShape,
+  ...senderShape,
   ...postmarkShape,
   API_URL: httpUrl,
   MCP_URL: httpUrl,
@@ -117,6 +137,25 @@ const coreSchema = z.object({
 
   // Spec 23.2: editorial routing for the Oslo-only full-day course.
   OSLO_REGION_CODES: stringList,
+
+  /**
+   * Whether this instance runs the pg-boss worker (spec 38, ADR-8).
+   *
+   * Defaults to on, because the normal deployment is one `core` process that
+   * serves HTTP and works the queue (ADR-1). Setting it to `false` yields an
+   * instance that still enqueues, reads queue state and answers readiness, but
+   * attaches no handlers and runs no cron — which is what makes it safe to
+   * scale the API horizontally without every replica competing for the same
+   * ingest run.
+   *
+   * Parsed as a flag rather than with `z.coerce.boolean()`, which returns true
+   * for the string `'false'` and would silently do the opposite of what the
+   * operator wrote.
+   */
+  WORKER_ENABLED: z
+    .string()
+    .optional()
+    .transform((raw) => !['0', 'false', 'no', 'off'].includes((raw ?? '').trim().toLowerCase())),
 });
 
 const webSchema = z.object({
@@ -124,6 +163,7 @@ const webSchema = z.object({
   ...authShape,
   ...sharingShape,
   ...legalShape,
+  ...senderShape,
   API_URL: httpUrl,
   MCP_URL: httpUrl,
   POSTMARK_SERVER_TOKEN: z.string().min(1),

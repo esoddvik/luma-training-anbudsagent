@@ -30,6 +30,7 @@ export {
   renderImmediateAlert,
   renderMagicLink,
   renderMaterialChange,
+  renderOrderAdminNotification,
   renderOrderReceived,
   renderPaidAccessActivated,
   renderWeeklyDigest,
@@ -51,6 +52,9 @@ export {
   formatValueRange,
 } from './format.js';
 export { buildLinks, extractUrls, externalSourceLink, lumaLink, type EmailLinks } from './links.js';
+
+// Sender identity (spec section 25), from configuration rather than a constant.
+export { senderIdentityFromEnv } from './sender.js';
 
 // Promotion selection (spec section 23).
 export {

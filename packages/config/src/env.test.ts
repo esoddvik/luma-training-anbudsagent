@@ -30,7 +30,36 @@ const validCore: Record<string, string> = {
   CURRENT_MARKETING_CONSENT_TEXT_VERSION: '1.0',
   BILLING_ADMIN_EMAIL: 'faktura@luma-training.com',
   CRON_SECRET: 'w'.repeat(32),
+  SENDER_POSTAL_ADDRESS: 'Luma Training AS, Storgata 1, 0155 Oslo',
+  SENDER_CONTACT_EMAIL: 'post@luma-training.com',
 };
+
+/** The browser-facing subset, which also renders transactional email. */
+const validWeb: Record<string, string> = {
+  NODE_ENV: 'test',
+  DATABASE_URL: validCore.DATABASE_URL as string,
+  APP_URL: validCore.APP_URL as string,
+  API_URL: validCore.API_URL as string,
+  MCP_URL: validCore.MCP_URL as string,
+  AUTH_SECRET: validCore.AUTH_SECRET as string,
+  AUTH_EMAIL_FROM: validCore.AUTH_EMAIL_FROM as string,
+  SHARE_TOKEN_SECRET: validCore.SHARE_TOKEN_SECRET as string,
+  LUMA_PRIVACY_POLICY_URL: validCore.LUMA_PRIVACY_POLICY_URL as string,
+  TENDER_SERVICE_TERMS_URL: validCore.TENDER_SERVICE_TERMS_URL as string,
+  CURRENT_PRIVACY_POLICY_VERSION: '2026-01-01',
+  CURRENT_TERMS_VERSION: '1.0',
+  CURRENT_MARKETING_CONSENT_TEXT_VERSION: '1.0',
+  POSTMARK_SERVER_TOKEN: validCore.POSTMARK_SERVER_TOKEN as string,
+  POSTMARK_TRANSACTIONAL_STREAM: 'transactional',
+  SENDER_POSTAL_ADDRESS: validCore.SENDER_POSTAL_ADDRESS as string,
+  SENDER_CONTACT_EMAIL: validCore.SENDER_CONTACT_EMAIL as string,
+};
+
+function webEnvWithout(key: string): Record<string, string | undefined> {
+  const clone: Record<string, string | undefined> = { ...validWeb };
+  delete clone[key];
+  return clone;
+}
 
 function coreEnvWithout(key: string): Record<string, string | undefined> {
   const clone: Record<string, string | undefined> = { ...validCore };
@@ -69,6 +98,11 @@ describe('parseCoreEnv', () => {
     'CRON_SECRET',
     'LUMA_PRIVACY_POLICY_URL',
     'TENDER_SERVICE_TERMS_URL',
+    // Spec 25: the footer's physical sender address and reply address. An
+    // email that ships without them is not merely incomplete, it is
+    // non-compliant, so neither may be optional or defaulted.
+    'SENDER_POSTAL_ADDRESS',
+    'SENDER_CONTACT_EMAIL',
   ])('rejects an environment missing %s', (key) => {
     expect(() => parseCoreEnv(coreEnvWithout(key))).toThrowError(new RegExp(key));
   });
@@ -143,6 +177,51 @@ describe('parseCoreEnv', () => {
     ).toThrowError(/ADMIN_EMAIL_ALLOWLIST/);
   });
 
+  it('reads the sender identity used in every email footer (spec 25)', () => {
+    const env = parseCoreEnv(validCore);
+    expect(env.SENDER_POSTAL_ADDRESS).toBe('Luma Training AS, Storgata 1, 0155 Oslo');
+    expect(env.SENDER_CONTACT_EMAIL).toBe('post@luma-training.com');
+  });
+
+  it('defaults the sender name to the company name', () => {
+    expect(parseCoreEnv(validCore).SENDER_NAME).toBe('Luma Training');
+  });
+
+  it('lets an operator override the sender name', () => {
+    expect(parseCoreEnv({ ...validCore, SENDER_NAME: 'Luma Training AS' }).SENDER_NAME).toBe(
+      'Luma Training AS',
+    );
+  });
+
+  it('rejects a postal address that is blank or only whitespace', () => {
+    // `.min(1)` alone would accept a single space, which renders as a footer
+    // with no address at all and passes every other check in the pipeline.
+    expect(() => parseCoreEnv({ ...validCore, SENDER_POSTAL_ADDRESS: '' })).toThrowError(
+      /SENDER_POSTAL_ADDRESS/,
+    );
+    expect(() => parseCoreEnv({ ...validCore, SENDER_POSTAL_ADDRESS: '   ' })).toThrowError(
+      /SENDER_POSTAL_ADDRESS/,
+    );
+  });
+
+  it('rejects a contact address that is not an email address', () => {
+    expect(() =>
+      parseCoreEnv({ ...validCore, SENDER_CONTACT_EMAIL: 'post(at)luma-training.com' }),
+    ).toThrowError(/SENDER_CONTACT_EMAIL/);
+  });
+
+  it('never echoes the rejected contact address back in the error message', () => {
+    let message = '';
+    try {
+      parseCoreEnv({ ...validCore, SENDER_CONTACT_EMAIL: 'ola.nordmann(at)privat.example' });
+    } catch (error) {
+      message = (error as Error).message;
+    }
+    expect(message).toMatch(/SENDER_CONTACT_EMAIL/);
+    expect(message).not.toContain('ola.nordmann');
+    expect(message).not.toContain('privat.example');
+  });
+
   it('treats optional observability keys as genuinely optional', () => {
     const env = parseCoreEnv(validCore);
     expect(env.SENTRY_DSN).toBeUndefined();
@@ -173,45 +252,37 @@ describe('parseCoreEnv', () => {
 
 describe('parseWebEnv', () => {
   it('accepts the browser-facing subset without server secrets', () => {
-    const env = parseWebEnv({
-      NODE_ENV: 'test',
-      DATABASE_URL: validCore.DATABASE_URL,
-      APP_URL: validCore.APP_URL,
-      API_URL: validCore.API_URL,
-      MCP_URL: validCore.MCP_URL,
-      AUTH_SECRET: validCore.AUTH_SECRET,
-      AUTH_EMAIL_FROM: validCore.AUTH_EMAIL_FROM,
-      SHARE_TOKEN_SECRET: validCore.SHARE_TOKEN_SECRET,
-      LUMA_PRIVACY_POLICY_URL: validCore.LUMA_PRIVACY_POLICY_URL,
-      TENDER_SERVICE_TERMS_URL: validCore.TENDER_SERVICE_TERMS_URL,
-      CURRENT_PRIVACY_POLICY_VERSION: '2026-01-01',
-      CURRENT_TERMS_VERSION: '1.0',
-      CURRENT_MARKETING_CONSENT_TEXT_VERSION: '1.0',
-      POSTMARK_SERVER_TOKEN: validCore.POSTMARK_SERVER_TOKEN,
-      POSTMARK_TRANSACTIONAL_STREAM: 'transactional',
-    });
+    const env = parseWebEnv(validWeb);
     expect(env.APP_URL).toBe(validCore.APP_URL);
   });
 
   it('does not require the Doffin subscription key, which only core uses', () => {
-    const withoutDoffin = parseWebEnv({
-      NODE_ENV: 'test',
-      DATABASE_URL: validCore.DATABASE_URL,
-      APP_URL: validCore.APP_URL,
-      API_URL: validCore.API_URL,
-      MCP_URL: validCore.MCP_URL,
-      AUTH_SECRET: validCore.AUTH_SECRET,
-      AUTH_EMAIL_FROM: validCore.AUTH_EMAIL_FROM,
-      SHARE_TOKEN_SECRET: validCore.SHARE_TOKEN_SECRET,
-      LUMA_PRIVACY_POLICY_URL: validCore.LUMA_PRIVACY_POLICY_URL,
-      TENDER_SERVICE_TERMS_URL: validCore.TENDER_SERVICE_TERMS_URL,
-      CURRENT_PRIVACY_POLICY_VERSION: '2026-01-01',
-      CURRENT_TERMS_VERSION: '1.0',
-      CURRENT_MARKETING_CONSENT_TEXT_VERSION: '1.0',
-      POSTMARK_SERVER_TOKEN: validCore.POSTMARK_SERVER_TOKEN,
-      POSTMARK_TRANSACTIONAL_STREAM: 'transactional',
-    });
-    expect(withoutDoffin).not.toHaveProperty('DOFFIN_SUBSCRIPTION_KEY');
+    expect(parseWebEnv(validWeb)).not.toHaveProperty('DOFFIN_SUBSCRIPTION_KEY');
+  });
+
+  it.each(['SENDER_POSTAL_ADDRESS', 'SENDER_CONTACT_EMAIL'])(
+    'requires %s, because the web app renders footers too',
+    (key) => {
+      expect(() => parseWebEnv(webEnvWithout(key))).toThrowError(new RegExp(key));
+    },
+  );
+
+  it('reads the same sender identity as core', () => {
+    const env = parseWebEnv(validWeb);
+    expect(env.SENDER_NAME).toBe('Luma Training');
+    expect(env.SENDER_POSTAL_ADDRESS).toBe(validCore.SENDER_POSTAL_ADDRESS);
+    expect(env.SENDER_CONTACT_EMAIL).toBe(validCore.SENDER_CONTACT_EMAIL);
+  });
+
+  it('rejects an invalid sender contact address without echoing it', () => {
+    let message = '';
+    try {
+      parseWebEnv({ ...validWeb, SENDER_CONTACT_EMAIL: 'kari.hansen kontakt.example' });
+    } catch (error) {
+      message = (error as Error).message;
+    }
+    expect(message).toMatch(/SENDER_CONTACT_EMAIL/);
+    expect(message).not.toContain('kari.hansen');
   });
 });
 

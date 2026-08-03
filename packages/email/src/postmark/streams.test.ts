@@ -27,6 +27,9 @@ const EXPECTED_FROM_SPEC: Record<TemplateName, StreamKind> = {
   'auth-magic-link-v1': 'transactional',
   'alert-confirmation-v1': 'transactional',
   'order-request-received-v1': 'transactional',
+  // Section 28.2 step 2: the billing administrator's notification is the same
+  // account-critical event seen from Luma's side.
+  'order-admin-notification-v1': 'transactional',
   'paid-access-activated-v1': 'transactional',
   'account-delete-confirmation-v1': 'transactional',
   // Section 27, "Tender notifications": immediate alerts, digests, changes.
@@ -61,6 +64,17 @@ describe('template to stream mapping', () => {
     // not templates. Nothing in section 25 belongs there, and the type
     // `MarketingTemplate` is `never` for the same reason.
     expect(templatesForStream('luma-marketing')).toEqual([]);
+  });
+
+  it('keeps the billing administrator notification off marketing (spec 28.2)', () => {
+    // The recipient is a role address configured by an operator. It has given
+    // no marketing consent, so the marketing stream is not merely wrong but
+    // unlawful to use; and a suppression there would stop orders from being
+    // noticed at all, with no error anywhere.
+    expect(streamForTemplate('order-admin-notification-v1')).toBe('transactional');
+    expect(templatesForStream('luma-marketing')).not.toContain('order-admin-notification-v1');
+    expect(templatesForStream('tender-notifications')).not.toContain('order-admin-notification-v1');
+    expect(templatesForStream('transactional')).toContain('order-admin-notification-v1');
   });
 
   it('keeps account-critical mail off the tender stream', () => {

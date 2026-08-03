@@ -19,6 +19,14 @@
 
 import { INVOICE_COPY_NB } from '@luma/domain';
 
+/**
+ * One exception to "customer-facing": `ORDER_ADMIN_NB` is written for whoever
+ * processes orders at Luma, not for a customer. It is still Norwegian — spec
+ * section 6 exempts only code, logs and architecture documents, not the text a
+ * colleague reads in an inbox — but it is phrased as a work item rather than
+ * as a message to a customer, and it carries no promotion.
+ */
+
 /** Product and sender identity (spec section 42). */
 export const BRAND_NB = {
   productName: 'Luma Anbudsvarsling',
@@ -95,6 +103,13 @@ export const FOOTER_NB = {
   whyTenderAlerts:
     'Du mottar denne e-posten fordi du har opprettet en varslingsprofil i Luma Anbudsvarsling.',
   whyTransactional: 'Du mottar denne e-posten fordi den gjelder kontoen din i Luma Anbudsvarsling.',
+  /**
+   * The billing administrator's why-line. It names the routing rather than an
+   * account, because the recipient is a role address and the person reading it
+   * needs to know which setting sends it here (spec section 28.2, step 2).
+   */
+  whyBillingAdmin:
+    'Du mottar denne e-posten fordi adressen er satt opp som mottaker for bestillinger i Luma Anbudsvarsling.',
   manageProfile: 'Administrer varslingsprofil',
   pauseAlerts: 'Pause varsler',
   unsubscribeTenderAlerts: 'Avslutt anbudsvarsling',
@@ -223,6 +238,71 @@ export const ORDER_RECEIVED_NB = {
   freeServiceReminder:
     'Anbudsvarslingen er og forblir gratis. Denne bestillingen gjelder bare produktet over.',
 } as const;
+
+/**
+ * order-admin-notification-v1 (spec section 28.2, step 2).
+ *
+ * The internal counterpart to `ORDER_RECEIVED_NB`, and deliberately not a
+ * reuse of it. The labels are written from Luma's side of the transaction:
+ * the customer reads "Deres referanse", the person raising the invoice reads
+ * "Kundens referanse", and the same word in both files would be wrong in one
+ * of them.
+ *
+ * Nothing here promotes anything. This is a work item, and the one sentence
+ * that tells the reader what to do next is the manual invoicing flow from
+ * spec section 28.2, steps 3 to 5.
+ */
+export const ORDER_ADMIN_NB = {
+  heading: 'Ny bestilling til behandling',
+  /** Names the sending system and states that the customer is already served. */
+  internalNote:
+    'Intern driftsmelding fra Luma Anbudsvarsling. Kunden har allerede fått sin egen bekreftelse.',
+  intro: 'En kunde har sendt inn en bestilling som skal faktureres og aktiveres manuelt.',
+
+  invoiceHeading: 'Fakturagrunnlag',
+  orderIdLabel: 'Bestillings-ID',
+  receivedAtLabel: 'Mottatt',
+  statusLabel: 'Status',
+  productLabel: 'Produkt',
+  productCodeLabel: 'Produktkode',
+  priceBasisLabel: 'Prisgrunnlag',
+  companyLabel: 'Fakturamottaker',
+  organizationNumberLabel: 'Organisasjonsnummer',
+  addressLabel: 'Fakturaadresse',
+  invoiceEmailLabel: 'Faktura-e-post',
+  contactPersonLabel: 'Kontaktperson',
+  customerReferenceLabel: 'Kundens referanse',
+  purchaseOrderLabel: 'Bestillingsnummer',
+
+  /**
+   * Printed instead of dropping the row.
+   *
+   * An omitted line on an invoice basis is indistinguishable from a rendering
+   * bug, and both end with somebody calling the customer to ask for a field
+   * they may well have supplied.
+   */
+  missingValue: 'Ikke oppgitt',
+
+  /** The price basis in the MVP: manual invoicing, amounts excluding VAT. */
+  priceBasis: `${INVOICE_COPY_NB.paymentMethod}. ${INVOICE_COPY_NB.priceExcludesVat}`,
+
+  nextStepHeading: 'Neste steg',
+  /** Spec section 28.2, steps 3 to 5, in one line. */
+  nextStep:
+    'Lag fakturaen i Lumas ordinære fakturaprosess, sett bestillingen til «Under behandling», og aktiver tilgangen når fakturaen er sendt – kunden varsles automatisk om aktiveringen.',
+  action: 'Åpne bestillingen i admin',
+} as const;
+
+/**
+ * Identifies the order in an inbox: what was ordered, and by whom.
+ *
+ * The company is parenthesised rather than dash-separated because product
+ * names contain dashes themselves — "Påfyll – månedlig fagbrev – Nordvik Bygg
+ * AS" reads as one long product name at a glance.
+ */
+export function orderAdminSubject(productName: string, companyName: string): string {
+  return `Ny bestilling: ${productName} (${companyName})`;
+}
 
 /** paid-access-activated-v1 (spec section 28.2, step 5). */
 export const PAID_ACCESS_NB = {

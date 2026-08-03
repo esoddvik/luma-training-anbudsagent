@@ -18,12 +18,18 @@ export type StreamKind = (typeof STREAM_KINDS)[number];
 
 /**
  * Template to stream. Exhaustive by construction: `satisfies` fails the build
- * if a template in spec section 25 has no entry.
+ * if a template in `TEMPLATE_NAMES` has no entry.
  */
 export const TEMPLATE_STREAM = {
   'auth-magic-link-v1': 'transactional',
   'alert-confirmation-v1': 'transactional',
   'order-request-received-v1': 'transactional',
+  // Spec section 27 lists "bestillingsbekreftelse" under transactional. The
+  // administrator's copy of that event belongs on the same stream and nowhere
+  // near marketing: it is operational mail to a role address that has never
+  // consented to anything, and a suppression there would silently stop orders
+  // being processed.
+  'order-admin-notification-v1': 'transactional',
   'paid-access-activated-v1': 'transactional',
   'account-delete-confirmation-v1': 'transactional',
   'tender-immediate-v1': 'tender-notifications',

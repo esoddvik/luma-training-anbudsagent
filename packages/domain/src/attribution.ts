@@ -19,6 +19,18 @@ export const attributionEventTypeSchema = z.enum([
   'tool_to_course_seat',
   /** A registration that arrived through a share link. */
   'share_to_signup',
+  /** A user created a share link (spec section 44.1, ADR-15). */
+  'share_created',
+  /**
+   * Somebody opened a shared view.
+   *
+   * The shared view is public and unauthenticated, so an event of this type
+   * carries **no viewer identity**: `user_id` is null, and nothing derived
+   * from the request — address, agent, referrer — is written anywhere on the
+   * row. The `share_id` identifies the link, which belongs to the sharer, and
+   * is what makes "signups per share" (spec section 44.3) computable.
+   */
+  'share_viewed',
 ]);
 export type AttributionEventType = z.infer<typeof attributionEventTypeSchema>;
 

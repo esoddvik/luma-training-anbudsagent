@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`the nine MVP templates > account-delete-confirmation-v1 > matches the HTML snapshot 1`] = `
+exports[`the MVP templates > account-delete-confirmation-v1 > matches the HTML snapshot 1`] = `
 "<!doctype html>
 <html lang="nb">
 <head>
@@ -58,7 +58,7 @@ exports[`the nine MVP templates > account-delete-confirmation-v1 > matches the H
 "
 `;
 
-exports[`the nine MVP templates > account-delete-confirmation-v1 > matches the plain-text snapshot 1`] = `
+exports[`the MVP templates > account-delete-confirmation-v1 > matches the plain-text snapshot 1`] = `
 "Luma Anbudsvarsling
 En gratis tjeneste fra Luma Training
 
@@ -97,9 +97,9 @@ Kontakt: anbudsvarsling@luma-training.com
 "
 `;
 
-exports[`the nine MVP templates > account-delete-confirmation-v1 > matches the subject snapshot 1`] = `"Kontoen din i Luma Anbudsvarsling er slettet"`;
+exports[`the MVP templates > account-delete-confirmation-v1 > matches the subject snapshot 1`] = `"Kontoen din i Luma Anbudsvarsling er slettet"`;
 
-exports[`the nine MVP templates > alert-confirmation-v1 > matches the HTML snapshot 1`] = `
+exports[`the MVP templates > alert-confirmation-v1 > matches the HTML snapshot 1`] = `
 "<!doctype html>
 <html lang="nb">
 <head>
@@ -162,7 +162,7 @@ exports[`the nine MVP templates > alert-confirmation-v1 > matches the HTML snaps
 "
 `;
 
-exports[`the nine MVP templates > alert-confirmation-v1 > matches the plain-text snapshot 1`] = `
+exports[`the MVP templates > alert-confirmation-v1 > matches the plain-text snapshot 1`] = `
 "Luma Anbudsvarsling
 En gratis tjeneste fra Luma Training
 
@@ -224,9 +224,9 @@ Kontakt: anbudsvarsling@luma-training.com
 "
 `;
 
-exports[`the nine MVP templates > alert-confirmation-v1 > matches the subject snapshot 1`] = `"Varslingsprofilen «Bygg og rehabilitering» er aktiv"`;
+exports[`the MVP templates > alert-confirmation-v1 > matches the subject snapshot 1`] = `"Varslingsprofilen «Bygg og rehabilitering» er aktiv"`;
 
-exports[`the nine MVP templates > auth-magic-link-v1 > matches the HTML snapshot 1`] = `
+exports[`the MVP templates > auth-magic-link-v1 > matches the HTML snapshot 1`] = `
 "<!doctype html>
 <html lang="nb">
 <head>
@@ -283,7 +283,7 @@ exports[`the nine MVP templates > auth-magic-link-v1 > matches the HTML snapshot
 "
 `;
 
-exports[`the nine MVP templates > auth-magic-link-v1 > matches the plain-text snapshot 1`] = `
+exports[`the MVP templates > auth-magic-link-v1 > matches the plain-text snapshot 1`] = `
 "Luma Anbudsvarsling
 En gratis tjeneste fra Luma Training
 
@@ -316,9 +316,117 @@ Kontakt: anbudsvarsling@luma-training.com
 "
 `;
 
-exports[`the nine MVP templates > auth-magic-link-v1 > matches the subject snapshot 1`] = `"Logg inn i Luma Anbudsvarsling"`;
+exports[`the MVP templates > auth-magic-link-v1 > matches the subject snapshot 1`] = `"Logg inn i Luma Anbudsvarsling"`;
 
-exports[`the nine MVP templates > order-request-received-v1 > matches the HTML snapshot 1`] = `
+exports[`the MVP templates > order-admin-notification-v1 > matches the HTML snapshot 1`] = `
+"<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
+<title>Ny bestilling: Påfyll – månedlig fagbrev (Nordvik Bygg AS)</title>
+<style>@media (prefers-color-scheme: dark) {
+  .luma-page { background-color: #16171a !important; }
+  .luma-panel-cell, .luma-promotion-cell, .luma-planned-cell {
+    background-color: #212227 !important;
+    border-color: #3a3b42 !important;
+  }
+  .luma-text, .luma-text * { color: #f2f2f0 !important; }
+  .luma-muted, .luma-muted * { color: #b6b6b2 !important; }
+  .luma-link { color: #9dc0f0 !important; }
+}</style>
+</head>
+<body class="luma-page" style="margin:0;padding:0;background-color:#f4f4f2;color:#1a1a1a;-webkit-text-size-adjust:100%">
+<div style="display:none;font-size:1px;color:#f4f4f2;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden">Bestillings-ID: 88888888-8888-4888-8888-000000000001</div>
+<table role="presentation" class="luma-page" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;background-color:#f4f4f2">
+<tr>
+<td align="center" style="padding:20px 12px">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;text-align:left">
+<tr>
+<td>
+<!--luma:section:title-->
+<h1 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:22px;line-height:1.3;font-weight:600;color:#1a1a1a">Ny bestilling til behandling</h1>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">12. mars 2026 kl. 09:00</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Intern driftsmelding fra Luma Anbudsvarsling. Kunden har allerede fått sin egen bekreftelse.</p>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">En kunde har sendt inn en bestilling som skal faktureres og aktiveres manuelt.</p>
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Fakturagrunnlag</h3>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin-bottom:10px"><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Bestillings-ID</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">88888888-8888-4888-8888-000000000001</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Mottatt</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">12. mars 2026 kl. 09:00</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Status</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Mottatt</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Produkt</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Påfyll – månedlig fagbrev</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Produktkode</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">paafyll</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Prisgrunnlag</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Betaling med faktura. Pris ekskl. mva.</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Fakturamottaker</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Nordvik Bygg AS</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Organisasjonsnummer</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">912345678</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Fakturaadresse</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Industriveien 12, 1481 Hagan, Norge</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Faktura-e-post</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">faktura@nordvikbygg.no</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Kontaktperson</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Ingrid Nordvik</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Kundens referanse</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Avd. 400</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Bestillingsnummer</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">PO-2026-118</td></tr></table>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong><a class="luma-link" href="https://anbudsvarsling.luma-training.com/admin/anbudsvarsling/bestillinger/88888888-8888-4888-8888-000000000001?utm_source=anbudsvarsling&amp;utm_medium=landing" style="color:#1c4b8c;text-decoration:underline">Åpne bestillingen i admin</a></strong></p>
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Neste steg</h3>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">Lag fakturaen i Lumas ordinære fakturaprosess, sett bestillingen til «Under behandling», og aktiver tilgangen når fakturaen er sendt – kunden varsles automatisk om aktiveringen.</p>
+<!--luma:section:legal-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr><td style="border-top:2px solid #c9c7bb;font-size:0;line-height:0;height:1px">&nbsp;</td></tr></table>
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Hvorfor mottar jeg denne e-posten?</h3>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Du mottar denne e-posten fordi adressen er satt opp som mottaker for bestillinger i Luma Anbudsvarsling.</p>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://luma-training.com/personvern?utm_source=anbudsvarsling&amp;utm_medium=landing" style="color:#1c4b8c;text-decoration:underline">Personvern</a></li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/vilkar?utm_source=anbudsvarsling&amp;utm_medium=landing" style="color:#1c4b8c;text-decoration:underline">Vilkår for bruk</a></li></ul>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Avsender: Luma Training AS, Storgata 1, 0155 Oslo</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Kontakt: <a class="luma-link" href="mailto:anbudsvarsling@luma-training.com" style="color:#1c4b8c">anbudsvarsling@luma-training.com</a></p></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</body>
+</html>
+"
+`;
+
+exports[`the MVP templates > order-admin-notification-v1 > matches the plain-text snapshot 1`] = `
+"Ny bestilling til behandling
+============================
+12. mars 2026 kl. 09:00
+
+Intern driftsmelding fra Luma Anbudsvarsling. Kunden har allerede fått
+sin egen bekreftelse.
+
+En kunde har sendt inn en bestilling som skal faktureres og aktiveres
+manuelt.
+
+Fakturagrunnlag
+---------------
+Bestillings-ID: 88888888-8888-4888-8888-000000000001
+Mottatt: 12. mars 2026 kl. 09:00
+Status: Mottatt
+Produkt: Påfyll – månedlig fagbrev
+Produktkode: paafyll
+Prisgrunnlag: Betaling med faktura. Pris ekskl. mva.
+Fakturamottaker: Nordvik Bygg AS
+Organisasjonsnummer: 912345678
+Fakturaadresse: Industriveien 12, 1481 Hagan, Norge
+Faktura-e-post: faktura@nordvikbygg.no
+Kontaktperson: Ingrid Nordvik
+Kundens referanse: Avd. 400
+Bestillingsnummer: PO-2026-118
+
+Åpne bestillingen i admin:
+https://anbudsvarsling.luma-training.com/admin/anbudsvarsling/bestillinger/88888888-8888-4888-8888-000000000001?utm_source=anbudsvarsling&utm_medium=landing
+
+Neste steg
+----------
+Lag fakturaen i Lumas ordinære fakturaprosess, sett bestillingen til
+«Under behandling», og aktiver tilgangen når fakturaen er sendt – kunden
+varsles automatisk om aktiveringen.
+
+------------------------------------------------------------------------
+Hvorfor mottar jeg denne e-posten?
+Du mottar denne e-posten fordi adressen er satt opp som mottaker for
+bestillinger i Luma Anbudsvarsling.
+
+Personvern:
+https://luma-training.com/personvern?utm_source=anbudsvarsling&utm_medium=landing
+Vilkår for bruk:
+https://anbudsvarsling.luma-training.com/vilkar?utm_source=anbudsvarsling&utm_medium=landing
+
+Avsender: Luma Training AS, Storgata 1, 0155 Oslo
+Kontakt: anbudsvarsling@luma-training.com
+"
+`;
+
+exports[`the MVP templates > order-admin-notification-v1 > matches the subject snapshot 1`] = `"Ny bestilling: Påfyll – månedlig fagbrev (Nordvik Bygg AS)"`;
+
+exports[`the MVP templates > order-request-received-v1 > matches the HTML snapshot 1`] = `
 "<!doctype html>
 <html lang="nb">
 <head>
@@ -374,7 +482,7 @@ exports[`the nine MVP templates > order-request-received-v1 > matches the HTML s
 "
 `;
 
-exports[`the nine MVP templates > order-request-received-v1 > matches the plain-text snapshot 1`] = `
+exports[`the MVP templates > order-request-received-v1 > matches the plain-text snapshot 1`] = `
 "Luma Anbudsvarsling
 En gratis tjeneste fra Luma Training
 
@@ -418,9 +526,9 @@ Kontakt: anbudsvarsling@luma-training.com
 "
 `;
 
-exports[`the nine MVP templates > order-request-received-v1 > matches the subject snapshot 1`] = `"Vi har mottatt bestillingen din"`;
+exports[`the MVP templates > order-request-received-v1 > matches the subject snapshot 1`] = `"Vi har mottatt bestillingen din"`;
 
-exports[`the nine MVP templates > paid-access-activated-v1 > matches the HTML snapshot 1`] = `
+exports[`the MVP templates > paid-access-activated-v1 > matches the HTML snapshot 1`] = `
 "<!doctype html>
 <html lang="nb">
 <head>
@@ -474,7 +582,7 @@ exports[`the nine MVP templates > paid-access-activated-v1 > matches the HTML sn
 "
 `;
 
-exports[`the nine MVP templates > paid-access-activated-v1 > matches the plain-text snapshot 1`] = `
+exports[`the MVP templates > paid-access-activated-v1 > matches the plain-text snapshot 1`] = `
 "Luma Anbudsvarsling
 En gratis tjeneste fra Luma Training
 
@@ -504,9 +612,9 @@ Kontakt: anbudsvarsling@luma-training.com
 "
 `;
 
-exports[`the nine MVP templates > paid-access-activated-v1 > matches the subject snapshot 1`] = `"Tilgangen din er aktivert"`;
+exports[`the MVP templates > paid-access-activated-v1 > matches the subject snapshot 1`] = `"Tilgangen din er aktivert"`;
 
-exports[`the nine MVP templates > tender-daily-digest-v1 > matches the HTML snapshot 1`] = `
+exports[`the MVP templates > tender-daily-digest-v1 > matches the HTML snapshot 1`] = `
 "<!doctype html>
 <html lang="nb">
 <head>
@@ -629,7 +737,7 @@ exports[`the nine MVP templates > tender-daily-digest-v1 > matches the HTML snap
 "
 `;
 
-exports[`the nine MVP templates > tender-daily-digest-v1 > matches the plain-text snapshot 1`] = `
+exports[`the MVP templates > tender-daily-digest-v1 > matches the plain-text snapshot 1`] = `
 "Luma Anbudsvarsling
 En gratis tjeneste fra Luma Training
 
@@ -775,9 +883,9 @@ Kontakt: anbudsvarsling@luma-training.com
 "
 `;
 
-exports[`the nine MVP templates > tender-daily-digest-v1 > matches the subject snapshot 1`] = `"3 nye anbud i dag – «Bygg og rehabilitering»"`;
+exports[`the MVP templates > tender-daily-digest-v1 > matches the subject snapshot 1`] = `"3 nye anbud i dag – «Bygg og rehabilitering»"`;
 
-exports[`the nine MVP templates > tender-immediate-v1 > matches the HTML snapshot 1`] = `
+exports[`the MVP templates > tender-immediate-v1 > matches the HTML snapshot 1`] = `
 "<!doctype html>
 <html lang="nb">
 <head>
@@ -865,7 +973,7 @@ exports[`the nine MVP templates > tender-immediate-v1 > matches the HTML snapsho
 "
 `;
 
-exports[`the nine MVP templates > tender-immediate-v1 > matches the plain-text snapshot 1`] = `
+exports[`the MVP templates > tender-immediate-v1 > matches the plain-text snapshot 1`] = `
 "Luma Anbudsvarsling
 En gratis tjeneste fra Luma Training
 
@@ -952,9 +1060,9 @@ Kontakt: anbudsvarsling@luma-training.com
 "
 `;
 
-exports[`the nine MVP templates > tender-immediate-v1 > matches the subject snapshot 1`] = `"Nytt anbud: Rehabilitering av Bjørnsletta skole – bygg og tekniske fag"`;
+exports[`the MVP templates > tender-immediate-v1 > matches the subject snapshot 1`] = `"Nytt anbud: Rehabilitering av Bjørnsletta skole – bygg og tekniske fag"`;
 
-exports[`the nine MVP templates > tender-material-change-v1 > matches the HTML snapshot 1`] = `
+exports[`the MVP templates > tender-material-change-v1 > matches the HTML snapshot 1`] = `
 "<!doctype html>
 <html lang="nb">
 <head>
@@ -1041,7 +1149,7 @@ exports[`the nine MVP templates > tender-material-change-v1 > matches the HTML s
 "
 `;
 
-exports[`the nine MVP templates > tender-material-change-v1 > matches the plain-text snapshot 1`] = `
+exports[`the MVP templates > tender-material-change-v1 > matches the plain-text snapshot 1`] = `
 "Luma Anbudsvarsling
 En gratis tjeneste fra Luma Training
 
@@ -1120,9 +1228,9 @@ Kontakt: anbudsvarsling@luma-training.com
 "
 `;
 
-exports[`the nine MVP templates > tender-material-change-v1 > matches the subject snapshot 1`] = `"Endring i anbudet: Rammeavtale for tømrertjenester"`;
+exports[`the MVP templates > tender-material-change-v1 > matches the subject snapshot 1`] = `"Endring i anbudet: Rammeavtale for tømrertjenester"`;
 
-exports[`the nine MVP templates > tender-weekly-digest-v1 > matches the HTML snapshot 1`] = `
+exports[`the MVP templates > tender-weekly-digest-v1 > matches the HTML snapshot 1`] = `
 "<!doctype html>
 <html lang="nb">
 <head>
@@ -1245,7 +1353,7 @@ exports[`the nine MVP templates > tender-weekly-digest-v1 > matches the HTML sna
 "
 `;
 
-exports[`the nine MVP templates > tender-weekly-digest-v1 > matches the plain-text snapshot 1`] = `
+exports[`the MVP templates > tender-weekly-digest-v1 > matches the plain-text snapshot 1`] = `
 "Luma Anbudsvarsling
 En gratis tjeneste fra Luma Training
 
@@ -1391,4 +1499,4 @@ Kontakt: anbudsvarsling@luma-training.com
 "
 `;
 
-exports[`the nine MVP templates > tender-weekly-digest-v1 > matches the subject snapshot 1`] = `"3 nye anbud denne uken – «Bygg og rehabilitering»"`;
+exports[`the MVP templates > tender-weekly-digest-v1 > matches the subject snapshot 1`] = `"3 nye anbud denne uken – «Bygg og rehabilitering»"`;

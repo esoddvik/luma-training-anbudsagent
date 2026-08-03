@@ -45,26 +45,43 @@ export interface IngestStatusReport {
    * dashboard can say "unavailable" instead of drawing an all-zero chart that
    * looks like a healthy idle system.
    *
-   * **These counts are a cache, and it is refreshed only by a supervising
-   * worker.** `boss.getQueues` reads `ready_count` / `active_count` /
-   * `failed_count` as columns on `pgboss.queue`, written by pg-boss's monitor
-   * on a ~60 s interval that runs only when `supervise` is true. With a worker
-   * up they are truthful to within a minute. With *no* worker anywhere they
-   * freeze at their last value, and a queue that has never been monitored
-   * reads as all-zero — which is indistinguishable from empty and healthy.
+   * **Bounded staleness, not live counts.** `queueStatus` reads through
+   * `getQueueStats(name, { force: true })`, which recomputes from the job
+   * table whenever the cached row is older than 60 s — and always when it has
+   * never been computed, because `monitor_on` is then NULL. So the numbers are
+   * never more than about a minute behind, with or without a worker running.
+   * Label them "oppdatert minst hvert minutt" if the surface says anything;
+   * "live" would be wrong.
    *
-   * Two consequences, both deliberate:
+   * Do **not** switch this to `boss.getQueues()`, which is the obvious-looking
+   * cheaper call. That reads `ready_count` / `active_count` / `failed_count` as
+   * cached columns on `pgboss.queue`, written only by pg-boss's monitor, which
+   * runs only where `supervise` is true. With no worker anywhere those freeze
+   * at their last value, and a queue that has never been monitored reads as
+   * all-zero — indistinguishable from empty and healthy. There is a test in the
+   * queue package asserting the divergence: same instant, `getQueues` says
+   * `ready: 0` where `getQueueStats` says `ready: 1`.
    *
-   * - Spec §47's stalled-queue alert must **not** be built on these numbers.
-   *   The condition it needs to detect (nothing is processing) is the same
-   *   condition that stops the metric updating, so it would stay quiet through
-   *   the outage it exists for. Anchor it on evidence the work itself leaves
+   * Consequences:
+   *
+   * - Spec §47's stalled-queue alert **can** be built on these numbers — a
+   *   rising `ready` with `active` pinned at zero is exactly the signal, and it
+   *   keeps updating precisely because the read recomputes rather than waiting
+   *   for a monitor that has stopped. (An earlier version of this comment said
+   *   the opposite. That was correct for `getQueues` and is wrong for the call
+   *   actually used.) Corroborating it against evidence the work itself leaves
    *   behind — `ingestion_runs` advancing, `notification_deliveries` being
-   *   written — which is what the runbook already tells an operator to watch.
-   * - No "as of" timestamp is rendered. `QueueResult.updatedOn` is when the
-   *   queue's *configuration* last changed, not when the counts were computed,
-   *   so showing it would put a plausible recent time next to stale numbers.
-   *   The honest stamp is `monitor_on`, which `getQueues` does not return.
+   *   written — is still worth doing, but as defence in depth rather than
+   *   because this metric is untrustworthy.
+   * - A queue missing from the registry throws rather than returning the other
+   *   eleven, and the handler below downgrades that to `null`. "Unavailable" is
+   *   the honest answer when queue registration never ran.
+   * - The read is bounded at 5 s and throws rather than hanging, so a wedged
+   *   queue cannot hold an admin request open.
+   * - No "as of" timestamp is rendered. If one is ever wanted, the honest
+   *   source is `monitor_on`; `QueueResult.updatedOn` is when the queue's
+   *   *configuration* last changed and would show a plausible recent time next
+   *   to older numbers.
    */
   readonly queues:
     readonly { name: string; ready: number; active: number; failed: number }[] | null;

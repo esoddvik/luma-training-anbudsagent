@@ -284,10 +284,14 @@ describeDb('the queue handlers', () => {
      *
      * It was a `beforeEach`, which meant two pg-boss starts — each of which
      * connects, checks its schema version and runs its own migration path.
-     * Eleven integration files already contend for one PostgreSQL, and the
-     * observed symptom is a `beforeAll` in some *other* suite timing out at
-     * vitest's 10 s default. Halving the startups this file needs is the part
-     * of that contention this file is responsible for.
+     * Eleven integration files contend for one PostgreSQL, and the symptom
+     * this removed was a hook in some *other* suite timing out.
+     *
+     * That symptom is now also addressed from the other end: every package
+     * that touches a database sets `hookTimeout: 60_000` at project level, so
+     * a slow hook is no longer a failed hook. This stays regardless — the
+     * timeout stops contention being reported as a failure, it does not make
+     * two redundant queue startups a good idea.
      *
      * The queue holds no per-test state: `registerJobs` wires handlers, and
      * every test drives it through a job it enqueues itself.

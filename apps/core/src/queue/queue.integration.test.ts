@@ -9,8 +9,14 @@ import { createTestDatabase, hasDatabase, type TestDatabase } from '@luma/db/tes
 import { FixtureTenderSourceAdapter, type DoffinSearchHit } from '@luma/doffin';
 import { FakePostmarkClient } from '@luma/email';
 import { createLogger } from '@luma/observability';
-import { JOB } from '../jobs/names.js';
-import { DEAD_LETTER_QUEUE, QUEUE_SCHEMA, startQueue, type QueueRuntime } from './boss.js';
+import { ALL_JOB_NAMES, JOB } from '../jobs/names.js';
+import {
+  DEAD_LETTER_QUEUE,
+  QUEUE_SCHEMA,
+  queueStatus,
+  startQueue,
+  type QueueRuntime,
+} from './boss.js';
 import { registerJobs, registerSchedules } from './register.js';
 
 /**
@@ -161,9 +167,10 @@ describeDb('the pg-boss job runtime', () => {
       connectionString,
       logger,
       // Two, not the production default of five. Eleven integration files
-      // contend for one PostgreSQL and the observed symptom is another
-      // suite's `beforeAll` timing out; every connection this file does not
-      // hold is one they can have.
+      // contend for one PostgreSQL, and every connection this file does not
+      // hold is one they can have. `hookTimeout: 60_000` at project level now
+      // keeps that contention from being reported as a failure; not holding
+      // three connections a test never uses is still the right default.
       max: 2,
       ...(options.worker === undefined ? {} : { worker: options.worker }),
     });
@@ -251,6 +258,61 @@ describeDb('the pg-boss job runtime', () => {
       async () => (await jobsCreated(boss, DEAD_LETTER_QUEUE)) > deadLetteredBefore,
       'the job to be dead-lettered',
     );
+  }, 60_000);
+
+  it('reports real depth on an instance that runs no monitor', async () => {
+    // `worker: false` means `supervise: false`, which means this process never
+    // starts the monitor loop that maintains pg-boss's cached counts. That is
+    // the case where the old `getQueues` implementation reported all-zero and
+    // called it healthy.
+    const { boss } = await start({ worker: false });
+
+    await registerJobs({
+      boss,
+      db: harness.db,
+      adapter: new FixtureTenderSourceAdapter([]),
+      emailClient: new FakePostmarkClient(),
+      logger,
+      worker: false,
+      config: emailConfig(),
+    });
+
+    // No handler is attached to this queue anywhere, so the job stays queued.
+    const queue = JOB.feedbackProcess;
+    await boss.send(queue, {});
+
+    // The cached read, taken first because the forced read below repairs the
+    // cache as a side effect. `monitor_on` is still NULL, so pg-boss's own
+    // columns say zero — a queue with work in it, reporting empty.
+    const cached = await boss.getQueues([queue]);
+    expect(cached[0]?.readyCount).toBe(0);
+
+    // The same instant, through `queueStatus`. This is the whole point of the
+    // change: an operator asking "is work moving" gets 1, not 0.
+    const status = await queueStatus(boss);
+    expect(status.find((entry) => entry.name === queue)?.ready).toBe(1);
+
+    // Every declared queue is present, so a caller can tell "zero" from
+    // "missing" without consulting the job registry itself.
+    expect(status.length).toBe(ALL_JOB_NAMES.length + 1);
+    expect(status.map((entry) => entry.name)).toContain(DEAD_LETTER_QUEUE);
+  }, 60_000);
+
+  it('throws rather than hanging when the reading exceeds its budget', async () => {
+    const { boss } = await start({ worker: false });
+    await registerJobs({
+      boss,
+      db: harness.db,
+      adapter: new FixtureTenderSourceAdapter([]),
+      emailClient: new FakePostmarkClient(),
+      logger,
+      worker: false,
+      config: emailConfig(),
+    });
+
+    // A dashboard that renders "unavailable" is more use than one that never
+    // paints, so the caller needs a rejection it can catch.
+    await expect(queueStatus(boss, 1)).rejects.toThrow(/timed out/);
   }, 60_000);
 
   it('configures every real queue with backoff, a retry limit and a dead letter', async () => {

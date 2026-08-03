@@ -148,6 +148,9 @@ export interface QueueDepth {
   readonly failed: number;
 }
 
+/** How long the whole reading may take before it is abandoned. */
+const QUEUE_STATUS_TIMEOUT_MS = 5_000;
+
 /**
  * Queue depth and failure counts per queue (spec §45 "køstatus", §47 metrics).
  *
@@ -155,47 +158,89 @@ export interface QueueDepth {
  * matters operationally: those are jobs that exhausted their retries and are
  * waiting for a human. `redrive` puts them back.
  *
- * **These numbers are a cache, and the thing that refreshes it is the thing
- * that can fail.** Read the chain before building an alert on them:
- * `getQueues` selects `queued_count`, `ready_count`, `active_count` and
- * `failed_count` as *columns on `pgboss.queue`*, not as an aggregate over the
- * job table. Those columns are written only by pg-boss's `cacheQueueStats`,
- * which runs from the monitor loop, which runs from the supervisor, which
- * `PgBoss.start()` starts **only when `supervise` is true** — and `supervise`
- * is `worker` here. Refresh is roughly every 60 seconds
- * (`monitorIntervalSeconds`, `superviseIntervalSeconds`).
+ * **Why this asks per queue with `force` instead of one `getQueues` call.**
+ * `getQueues` looks like the obvious choice and is the wrong one. It selects
+ * `queued_count`, `ready_count`, `active_count` and `failed_count` as *columns
+ * on `pgboss.queue`* — a cache, not an aggregate over the job table. Those
+ * columns are written only by pg-boss's `cacheQueueStats`, which runs from the
+ * monitor loop, which runs from the supervisor, which `PgBoss.start()` starts
+ * **only when `supervise` is true** — and `supervise` is `worker` here.
  *
- * Three consequences, in increasing order of how much they would hurt:
+ * So with `getQueues`, an estate where no instance is a worker reports frozen
+ * counts, and a queue that has never been monitored reports all-zero. Both are
+ * indistinguishable from "empty and healthy" at exactly the moment nothing is
+ * being processed. That is a metric whose failure mode is silence during the
+ * outage it exists to reveal — the same shape as a test that cannot fail.
  *
- * 1. A reading can be up to about a minute old. Fine for a dashboard.
- * 2. A `WORKER_ENABLED=false` replica still reports truthfully, because the
- *    cache lives in the shared database and some worker refreshes it. Queue
- *    depth is a property of the database, not of the process reading it.
- * 3. **If no instance is a worker, these numbers freeze silently.** Nothing
- *    refreshes them, every field keeps its last value, and a queue that has
- *    never been monitored reads as all-zero — indistinguishable from empty and
- *    healthy. So spec §47's "stalled queue" alert must not be built on these
- *    counts alone: the failure it needs to detect is the same failure that
- *    stops the metric updating, and the alert would sit quiet through exactly
- *    the outage it exists for. Anchor that alert on evidence produced by the
- *    work itself — `ingestion_runs` advancing, `notification_deliveries`
- *    being written — which is what the runbook already tells the operator to
- *    watch.
+ * `getQueueStats(name, { force: true })` closes it. `capturedOn` is
+ * `monitor_on`, so a never-monitored queue reads as infinitely stale and is
+ * recomputed from the job table; anything older than 60 seconds is likewise
+ * recomputed and re-cached. The recompute is a plain `UPDATE … RETURNING` with
+ * no advisory lock, so it works from a producer-only replica that runs no
+ * monitor at all.
  *
- * `QueueResult.updatedOn` is not a freshness stamp for any of this; it is when
- * the queue's *configuration* changed. The stats timestamp is `monitor_on`,
- * which `getQueues` does not return.
+ * **State the guarantee precisely, because it is easy to over-read.** `force`
+ * does *not* mean "always fresh": a value computed in the last 60 seconds is
+ * reused, so repeated dashboard refreshes do not each re-run the aggregate.
+ * What it buys is a *bound* — the reading is never more than about a minute
+ * old, with or without a worker running. `getQueues` offers no bound at all
+ * once the monitor stops. A test asserting that a job sent a moment ago shows
+ * up immediately would fail, and did: that property was never on offer.
+ *
+ * The cost is one aggregate per queue per minute, on an admin-only,
+ * rate-limited path. That would be the wrong trade on a customer route and is
+ * the right one here.
+ *
+ * Bounded rather than left to hang: a caller rendering "unavailable" is more
+ * use to an operator than a dashboard that never paints. It throws on a
+ * missing queue too, which means registration did not run — worth surfacing,
+ * not worth papering over by returning the other eleven.
+ *
+ * One trap worth leaving signposted: `QueueResult.updatedOn` is not a
+ * freshness stamp for any of this. It is when the queue's *configuration*
+ * changed, and it will read as recent beside counts of any age.
  */
-export async function queueStatus(boss: PgBoss): Promise<QueueDepth[]> {
+export async function queueStatus(
+  boss: PgBoss,
+  timeoutMs = QUEUE_STATUS_TIMEOUT_MS,
+): Promise<QueueDepth[]> {
   const names: string[] = [...ALL_JOB_NAMES, DEAD_LETTER_QUEUE];
-  const queues = await boss.getQueues(names);
-  return queues.map((queue) => ({
-    name: queue.name,
-    ready: queue.readyCount,
-    active: queue.activeCount,
-    failed: queue.failedCount,
-  }));
+
+  const reading = Promise.all(
+    names.map(async (name): Promise<QueueDepth> => {
+      const [stats] = await boss.getQueueStats(name, { force: true });
+      if (!stats) throw new Error(`no stats returned for queue ${name}`);
+      return {
+        name,
+        ready: stats.readyCount,
+        active: stats.activeCount,
+        failed: stats.failedCount,
+      };
+    }),
+  );
+
+  let timer: NodeJS.Timeout | undefined;
+  try {
+    return await Promise.race([
+      reading,
+      new Promise<never>((_resolve, reject) => {
+        timer = setTimeout(
+          () => reject(new Error(`queue status timed out after ${timeoutMs}ms`)),
+          timeoutMs,
+        );
+      }),
+    ]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
 }
+
+// A `queueConfiguration()` wrapper over `getQueues` was written here and then
+// deleted. It returned the cached counts this module has just finished arguing
+// against, under a name that implied it returned settings — the kind of helper
+// somebody reaches for precisely because it looks safe. Retry settings are
+// asserted straight from `boss.getQueue(name)` where they are needed, which is
+// one call and no ambiguity.
 
 /** Narrow the loose `string` from `queueStatus` back to a known job name. */
 export function isJobName(value: string): value is JobName {

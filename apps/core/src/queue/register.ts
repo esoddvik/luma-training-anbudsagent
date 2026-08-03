@@ -12,7 +12,7 @@ import { runImmediateAlerts } from '../jobs/immediate.js';
 import { sendClaimedImmediateAlert } from '../jobs/immediate-send.js';
 import { runIngest } from '../jobs/ingest.js';
 import { runMatching } from '../jobs/match.js';
-import { CRON, JOB, type JobName } from '../jobs/names.js';
+import { ALL_JOB_NAMES, CRON, JOB, type JobName } from '../jobs/names.js';
 import { runShareCleanup } from '../jobs/share-cleanup.js';
 import { DEAD_LETTER_QUEUE } from './boss.js';
 
@@ -233,6 +233,40 @@ export async function registerSchedules(boss: PgBoss): Promise<void> {
   await boss.schedule(JOB.shareCleanup, CRON.shareCleanup, null, { tz: SCHEDULE_TZ });
 }
 
+/**
+ * Names every queue that exists with nothing working it (spec §38).
+ *
+ * §38 lists eleven job types. Seven have handlers below. `tender.normalize`
+ * and `tender.change-detect` are done synchronously inside `runIngest` —
+ * normalisation in `@luma/doffin`'s `runSync`, change detection in
+ * `upsertTender` — which is deliberate, because splitting them out would let
+ * the ingest checkpoint advance past work that had not happened yet. The other
+ * three — `postmark.webhook.process`, `feedback.process` and
+ * `order.request.notify` — have no consumer at all: the routes and services
+ * that would feed them do their work in the request today.
+ *
+ * The trap this warning exists for is one I created by making the queues
+ * anyway. `boss.send` to a queue with no worker **succeeds**, returns a job id,
+ * and the job then sits in `created` forever. §27 tells the webhook route to
+ * «kølegg langsom behandling», so the most likely future caller is aimed
+ * straight at it. A boot-time warning naming the queues is the cheapest way to
+ * make that visible before it is a silent data-loss bug at 3am.
+ *
+ * The list is read back from pg-boss rather than maintained by hand, because a
+ * hand-kept list of "queues we handle" is precisely the thing that stops
+ * matching the `work` calls above it.
+ */
+function warnAboutUnconsumedQueues(boss: PgBoss, logger: Logger): void {
+  const working = new Set(boss.getWipData().map((entry) => entry.name));
+  const unconsumed = ALL_JOB_NAMES.filter((name) => !working.has(name));
+  if (unconsumed.length === 0) return;
+
+  logger.warn(
+    { queues: unconsumed },
+    'queues exist with no worker: enqueueing to these succeeds and the job is never run',
+  );
+}
+
 export async function registerJobs(options: RegisterJobsOptions): Promise<void> {
   const { boss, db, logger, config } = options;
   const worker = options.worker ?? true;
@@ -398,8 +432,7 @@ export async function registerJobs(options: RegisterJobsOptions): Promise<void> 
     }),
   );
 
-  // consent.sync → reconcile withdrawals. Read `consent-sync.ts` before
-  // trusting this to have suppressed anybody in Postmark: it cannot.
+  // consent.sync → reconcile marketing-consent withdrawals to Postmark.
   await boss.work(
     JOB.consentSync,
     WORK_OPTIONS,
@@ -413,6 +446,8 @@ export async function registerJobs(options: RegisterJobsOptions): Promise<void> 
       return { ...report };
     }),
   );
+
+  warnAboutUnconsumedQueues(boss, logger);
 
   logger.info({ queues: Object.keys(QUEUE_OPTIONS).length }, 'job handlers registered');
 }

@@ -109,6 +109,28 @@ async function jobsCreated(boss: PgBoss, name: string): Promise<number> {
   return Number(result.rows[0]?.count ?? 0);
 }
 
+/**
+ * Removes the cron schedules `registerJobs` just installed.
+ *
+ * Every test in this file shares one database, and a worker instance runs
+ * pg-boss's timekeeper. `CRON.doffinSync` is `'0 * * * *'`, so a run that
+ * happens to cross the top of an hour gets a real `doffin.sync` injected into
+ * it — which ingests, which enqueues `tender.match`, which lands in the counts
+ * another test is asserting on.
+ *
+ * That is not hypothetical. It cost a run at 17:00:37, thirty-seven seconds
+ * after the boundary, and passed on either side of it. A test that fails once
+ * an hour reads as a flake and gets re-run, which is exactly how a real defect
+ * acquires camouflage.
+ */
+async function disableCron(boss: PgBoss): Promise<void> {
+  await Promise.all([
+    boss.unschedule(JOB.doffinSync),
+    boss.unschedule(JOB.notificationDigestPrepare),
+    boss.unschedule(JOB.shareCleanup),
+  ]);
+}
+
 async function jobStates(boss: PgBoss, name: string): Promise<string[]> {
   const result = await boss
     .getDb()
@@ -298,6 +320,41 @@ describeDb('the pg-boss job runtime', () => {
     expect(status.map((entry) => entry.name)).toContain(DEAD_LETTER_QUEUE);
   }, 60_000);
 
+  it('leaves exactly the five known job types without a worker', async () => {
+    const { boss } = await start();
+    await registerJobs({
+      boss,
+      db: harness.db,
+      adapter: new FixtureTenderSourceAdapter([]),
+      emailClient: new FakePostmarkClient(),
+      logger,
+      config: emailConfig(),
+    });
+
+    await disableCron(boss);
+
+    const working = new Set(boss.getWipData().map((entry) => entry.name));
+    const unconsumed = ALL_JOB_NAMES.filter((name) => !working.has(name)).sort();
+
+    // Spec §38 names eleven job types; seven have handlers. This asserts the
+    // remaining five by name so that adding a twelfth queue without a worker,
+    // or silently dropping a handler, fails here instead of becoming a queue
+    // that accepts jobs and never runs them.
+    //
+    // `tender.normalize` and `tender.change-detect` are done inside
+    // `runIngest` rather than as separate jobs; the other three have no
+    // implementation yet. Both facts are stated in `warnAboutUnconsumedQueues`.
+    expect(unconsumed).toEqual(
+      [
+        JOB.tenderNormalize,
+        JOB.tenderChangeDetect,
+        JOB.postmarkWebhookProcess,
+        JOB.feedbackProcess,
+        JOB.orderRequestNotify,
+      ].sort(),
+    );
+  }, 60_000);
+
   it('throws rather than hanging when the reading exceeds its budget', async () => {
     const { boss } = await start({ worker: false });
     await registerJobs({
@@ -384,6 +441,18 @@ describeDb('the pg-boss job runtime', () => {
       config: emailConfig(),
     });
 
+    // Before anything is enqueued: cron off, and a baseline for the counts
+    // below. Both are needed — cron off so the hourly `doffin.sync` cannot
+    // inject an ingest into the middle of this test, the baseline so a job
+    // from an earlier test cannot satisfy the assertion on its own.
+    await disableCron(boss);
+    // Asserted, not assumed. Waiting for a run that happens to cross the top
+    // of an hour would make this gate fire once per twenty-four attempts; the
+    // schedule table being empty is the same fact, checkable every time.
+    expect(await boss.getSchedules()).toEqual([]);
+
+    const matchJobsBefore = await jobsCreated(boss, JOB.tenderMatch);
+
     const firstRun = await boss.send(JOB.doffinSync, {});
     expect(await waitForJob(boss, firstRun)).toBe('completed');
 
@@ -392,7 +461,7 @@ describeDb('the pg-boss job runtime', () => {
 
     // Two new tenders, so exactly one match job carrying both of them.
     const afterFirstRun = await jobsCreated(boss, JOB.tenderMatch);
-    expect(afterFirstRun).toBe(1);
+    expect(afterFirstRun - matchJobsBefore).toBe(1);
 
     // The same notices again. Every payload hash is unchanged, so `runIngest`
     // reports them as `unchanged` and the handler must enqueue nothing. If it

@@ -134,6 +134,23 @@ export type DeferredWork =
     readonly detail?: string;
   };
 
+/**
+ * Where deferred work goes. Defaults to a logging no-op.
+ *
+ * **Before wiring this to pg-boss, check the target queue has a consumer.**
+ * `boss.send` to a queue with no registered worker *succeeds* — it returns a
+ * job id and the row sits in `created` forever. The queue whose name most
+ * obviously fits this seam, `postmark.webhook.process`, is one of the five in
+ * §38 that currently have no handler, so the natural wiring is also the one
+ * that loses the work silently. `warnAboutUnconsumedQueues` in `queue/` reads
+ * the live worker list back from pg-boss and names those five; consult it
+ * rather than assuming, because the list changes as handlers land.
+ *
+ * That matters here specifically because §27 requires the webhook to answer
+ * fast and «kølegg langsom behandling», so this seam is on the path a future
+ * implementer will take. A dropped operational alert is invisible by
+ * construction — nobody is waiting for it.
+ */
 export interface DeferredWorkQueue {
   enqueue(work: DeferredWork): Promise<void>;
 }

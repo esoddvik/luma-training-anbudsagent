@@ -34,7 +34,26 @@ Where possible, a planned procurement that later becomes an active competition i
 
 **Out of scope: municipal sources.** Council meetings, budgets and investment plans are not monitored. This is documented in the terms, the customer-facing coverage text and the support material (§5), and it is not on the roadmap.
 
-## Unverified precondition and phase 8 gate
+## Phase 8 gate: VERIFIED 2026-08-03 — partially satisfied
+
+> **Update, 2026-08-03.** The precondition below has been checked against the live Doffin API. The full evidence is in [`docs/doffin-api-findings.md`](../doffin-api-findings.md) §8. The answer is **partial**, and it splits phase 8 in two.
+>
+> **(a) Supplier identity — available, and better than hoped.** The JSON search response carries `lots[].winner[].name` together with `.organizationId`, pre-resolved. Fill rate is **219 of 219** sampled award notices. No XML fetch is needed. Supplier watching is buildable as specified.
+>
+> **(b) Contract duration or end date — not available.** Absent from the JSON entirely. Present in only **2 of 10** award notices examined in the eForms XML. What *is* consistently present is the contract *signature* date, which is not an end date. Under the decision criteria below this is the middle case: **framework-expiry alerting is not buildable from award notices as specified.**
+>
+> A workaround exists but has a dependency. Contract duration *is* reliably present on the original **competition** notice (`cac:ProcurementProject/cac:PlannedPeriod`), so an end date could be estimated as signature date plus that duration. That requires linking the award back to its competition notice, which is only possible through the eForms `ContractFolderID` — XML-only, and one extra request per notice. If framework expiry is wanted, it ships as an explicitly labelled estimate, never as a stated date.
+>
+> **Two findings that change the ingest, not just phase 8**, and that are the reason the linkage keys are stored from day one:
+>
+> - A correction is **not an update to a notice**. Doffin publishes it as a brand-new notice with a new id, referencing the superseded one only inside the XML, only by eForms UUID. Change detection therefore depends on persisting `noticeUuid` and `contractFolderId` for every notice ingested.
+> - These keys **cannot be backfilled**. Adding them later means a full re-ingest. They are stored now even though nothing in the MVP reads them.
+>
+> **One correction to the first reading of the evidence.** An initial pass reported contract durations of "6 MONTH" on competition notices. That was wrong: it matched `cac:TenderValidityPeriod` (how long a bid stays valid), not `cac:ProcurementProject/cac:PlannedPeriod` (the contract length, 48 MONTH on the same notice). Any implementation extracting duration must scope the XPath to `PlannedPeriod`, or it will record bid-validity periods as contract lengths and produce renewal dates that are wrong by years.
+>
+> **Consequence for the schema:** `supplier_watches` is now unblocked. `framework_expiry_estimates` remains blocked pending a product decision on whether an explicitly uncertain estimate is worth shipping.
+
+**Original text, retained for the record.**
 
 **Whether Doffin award notices actually expose supplier name and contract duration is UNVERIFIED at the time of this decision.** The specification's phase 8 plan depends on it (§50: "Forutsetning som skal verifiseres før fase 8 planlegges i detalj").
 

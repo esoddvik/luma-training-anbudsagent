@@ -28,6 +28,13 @@ export function createPostmarkTransport(serverToken: string): PostmarkTransport 
       });
       return { Suppressions: response.Suppressions };
     },
+    async createSuppressions(messageStream, request) {
+      return client.createSuppressions(messageStream, {
+        Suppressions: request.Suppressions.map((entry) => ({
+          EmailAddress: entry.EmailAddress,
+        })),
+      });
+    },
   };
 }
 

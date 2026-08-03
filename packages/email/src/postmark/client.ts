@@ -81,6 +81,22 @@ export interface EmailClient {
 
   /** Whether an address is suppressed on a given stream. */
   isSuppressed(email: string, stream: StreamKind): Promise<boolean>;
+
+  /**
+   * Suppresses an address on one stream at Postmark.
+   *
+   * Needed because withdrawing marketing consent has to reach Postmark, not
+   * only our own tables (spec §21, ADR-9). Our own guard already makes a
+   * marketing send impossible without a consent proof, so this is not what
+   * stops *this system* mailing a withdrawn user. It exists for the two cases
+   * our guard cannot reach: a campaign sent from Postmark's own interface, and
+   * being able to show a regulator that the withdrawal propagated.
+   *
+   * Scoped to one stream deliberately. Suppressing an address globally would
+   * also stop magic links and order confirmations, and spec §27 is explicit
+   * that unsubscribing from marketing must never disable account-critical mail.
+   */
+  suppressAddress(email: string, stream: StreamKind): Promise<void>;
 }
 
 /**
@@ -96,6 +112,10 @@ export interface PostmarkTransport {
     messageStream: string,
     filter: { emailAddress: string },
   ): Promise<{ Suppressions: ReadonlyArray<{ EmailAddress: string }> }>;
+  createSuppressions(
+    messageStream: string,
+    request: { Suppressions: ReadonlyArray<{ EmailAddress: string }> },
+  ): Promise<unknown>;
 }
 
 export interface PostmarkOutboundMessage {
@@ -212,6 +232,14 @@ export class PostmarkEmailClient implements EmailClient {
     return response.Suppressions.some(
       (entry) => entry.EmailAddress.trim().toLowerCase() === normalised,
     );
+  }
+
+  async suppressAddress(email: string, stream: StreamKind): Promise<void> {
+    // Postmark treats a repeat suppression as a no-op rather than an error, so
+    // the reconciliation job can run on every tick without checking first.
+    await this.#transport.createSuppressions(streamId(stream, this.#streams), {
+      Suppressions: [{ EmailAddress: email.trim().toLowerCase() }],
+    });
   }
 
   async #send(input: {

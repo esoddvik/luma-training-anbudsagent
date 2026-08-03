@@ -111,6 +111,18 @@ export class FakePostmarkClient implements EmailClient {
     this.#suppressed.set(stream, set);
   }
 
+  /**
+   * The `EmailClient` member, as the consent-withdrawal job calls it.
+   *
+   * Distinct from `suppress` above only in being async: that one is test
+   * setup standing in for a bounce webhook, this one is production code
+   * pushing a withdrawal to Postmark. Both land in the same per-stream set,
+   * so a test can assert either way round.
+   */
+  async suppressAddress(email: string, stream: StreamKind): Promise<void> {
+    this.suppress(email, stream);
+  }
+
   unsuppress(email: string, stream: StreamKind): void {
     this.#suppressed.get(stream)?.delete(normalise(email));
   }

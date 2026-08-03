@@ -142,6 +142,47 @@ describe('tokens.css is the single source of truth', () => {
     }
   });
 
+  /**
+   * Closes one of the two silent-failure modes in this feature that a
+   * text-reading suite *can* close.
+   *
+   * The `:hover` / `:focus-within` parity test compares the two declarations,
+   * so retargeting `--luma-shadow-hover` at `none`, at `0 0 0`, or at something
+   * flatter than the resting state keeps both sides equal and keeps the suite
+   * green while the lift stops landing on screen. Comparing the token *values*
+   * is what catches that; comparing the declarations never could.
+   *
+   * This still proves nothing about what renders — see the note in the report.
+   * It proves the scale escalates, which is the part that lives in the text.
+   */
+  it('escalates elevation across the scale in every theme block', () => {
+    function blurRadius(value: string | undefined, label: string): number {
+      expect(value, `mangler skygge for ${label}`).toBeDefined();
+      const blur = Number.parseFloat((value ?? '').trim().split(/\s+/)[2] ?? '');
+      expect(
+        Number.isFinite(blur),
+        `${label}: klarte ikke lese blur-radius av «${value}» — er skyggen satt til none eller 0?`,
+      ).toBe(true);
+      return blur;
+    }
+
+    for (const [label, block] of [
+      ['light', lightBlock],
+      ['dark (prefers-color-scheme)', darkMediaBlock],
+      ['dark ([data-theme])', darkAttributeBlock],
+    ] as const) {
+      const sm = blurRadius(block['--luma-shadow-sm'], `${label} sm`);
+      const md = blurRadius(block['--luma-shadow-md'], `${label} md`);
+      const hover = blurRadius(block['--luma-shadow-hover'], `${label} hover`);
+
+      expect(md, `${label}: shadow-md er ikke dypere enn shadow-sm`).toBeGreaterThan(sm);
+      expect(
+        hover,
+        `${label}: shadow-hover er ikke dypere enn shadow-md — løftet ville ikke syns`,
+      ).toBeGreaterThan(md);
+    }
+  });
+
   it('reserves a promotion token group so promotion is visually distinct', () => {
     const promotionTokens = Object.keys(colorProperties(lightBlock)).filter((name) =>
       name.startsWith('--luma-color-promotion-'),

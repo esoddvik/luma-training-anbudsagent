@@ -4,7 +4,9 @@ Spec §51 lists fourteen conditions that must be met before the service can be l
 
 **Status as of 2026-08-03: not launchable.** Several blockers are legal rather than technical and cannot be closed by engineering at all.
 
-**Every gap that engineering could close is closed.** Login works end to end, the background job runtime runs, consent withdrawal reaches Postmark, and the §39 route list is complete. What remains in this table is legal text, a security review, and integrations that need real third-party accounts. See `spec-deviations.md` for the three gaps that are still genuinely open.
+Login works end to end, the background job runtime runs, consent withdrawal reaches Postmark, and the §39 route list is complete. Most of what remains in this table is legal text, a security review, and integrations that need real third-party accounts. See `spec-deviations.md` for the gaps that are still genuinely open.
+
+> **This paragraph previously claimed every gap engineering could close was closed.** It was written on the strength of the §39 *route list* being complete, and a later pass reading §39's requirement line found an eighth item, OpenAPI documentation, that nothing implemented. The same pass over §40 found that its MCP host allowlist did not exist while `apps/mcp/README.md` stated it did. Both are now tracked below. The claim is left visible rather than deleted, because the way it went wrong is the useful part: a section's route inventory is not the section, and no citation check built here could have caught the difference — auditing what you wrote finds claims that are present and wrong, never a requirement absent entirely.
 
 Legend: **done** — implemented and covered by a test that would fail if it regressed. **partial** — the mechanism exists but is not yet joined to the running system. **open** — not started. **external** — not ours to close.
 
@@ -38,6 +40,10 @@ Not yet met: signup in under five minutes (1) — the industry templates that ma
 **Doffin's terms of use have not been read.** Everything here depends on a data source whose licensing nobody has checked. Spec §7.3 forbids scraping when the API suffices, which suggests the question was considered, but blocker 9 asks for the terms to be checked and that has not happened. This should be settled before more is built on top.
 
 **No security review has taken place.** Blocker 11 asks for one specifically for the shared view. The tests assert the properties we thought to test; a review is what finds the ones we did not.
+
+**§40's twenty-one requirements, enumerated rather than assumed.** Nineteen are implemented: data minimisation, transport encryption, secret storage, MCP token hashing, the token and magic-link log bans, email redaction in logs, role-based admin, the audit log, rate limiting, `bodyLimit` and helmet and CORS on `core`, authenticated webhooks, account deletion, data export, backup, the restore procedure, and incident response. The host allowlist was missing and is now built. One is deliberately not:
+
+- **Request size limits exist on `core` and not on `mcp`.** `apps/core` sets `bodyLimit` to 1 MiB; `apps/mcp` is a raw `node:http` server and sets nothing. The exposure is smaller than it looks — `authenticate` reads only the `Authorization` header, and both it and the host allowlist run and return before `transport.handleRequest` ever reads the body, so an unauthenticated caller cannot make this server buffer anything. What remains is an authenticated token holder sending an unbounded body, and a token holder is a named user who can be revoked. It is not built because `apps/mcp/src/main.ts` has no integration-test harness, so a limit added now could not be shown to leave real MCP traffic working, and a wrong limit on the demo surface fails in front of an audience. **Route this to the security review in blocker 11** rather than treating it as closed.
 
 **Nothing has been sent through real Postmark, and the MCP demo has never run against a real client.** Both are tested against fakes, which proves the logic and proves nothing about the integration. Blockers 5 and 12 are asking about the integration.
 

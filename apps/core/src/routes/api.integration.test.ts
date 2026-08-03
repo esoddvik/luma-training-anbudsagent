@@ -17,7 +17,7 @@ import {
   tenders,
   users,
 } from '@luma/db';
-import { createTestDatabase, hasDatabase, type TestDatabase } from '@luma/db/testing';
+import { createTestDatabase, hasDatabase, isCi, type TestDatabase } from '@luma/db/testing';
 import { FORBIDDEN_SHARE_FIELDS, MARKETING_CONSENT_TEXT_NB } from '@luma/domain';
 import { FakePostmarkClient } from '@luma/email';
 import { MATCHING_VERSION } from '@luma/matching';
@@ -42,24 +42,49 @@ import type { ApiConfig, JobRunner } from '../services/context.js';
 const describeDb = hasDatabase ? describe : describe.skip;
 
 /**
- * Skipping is a developer convenience, never a CI outcome.
+ * A second latch under the harness guard, for one specific failure.
  *
- * Without `DATABASE_URL` every test below is skipped, and a suite that skips
- * itself reports the same green as a suite that passed. That is tolerable on a
- * laptop with no Postgres running; it is not tolerable on a build whose job is
- * to prove the cross-user, shared-view and admin-only checks still hold. The
- * CI workflow does provide Postgres today — this exists so that the day
- * somebody drops the service block or the `env:` entry, the build turns red
- * instead of quietly verifying nothing.
+ * `@luma/db/testing` already throws at import when CI is set without a
+ * database, so in the ordinary CI-without-Postgres case this file never loads
+ * and the test below never runs — the collection error gets there first. That
+ * makes this guard redundant *for that case*, and it is worth being precise
+ * about why it stays rather than repeating the comfortable claim that the two
+ * "catch different things". (They do not: with the harness guard intact,
+ * `apps/core` reports four files failing to load and this test appears nowhere
+ * in the output.)
+ *
+ * What it catches is the harness guard being narrowed or removed. If that
+ * happens, `hasDatabase` goes back to being a silent `false` and every suite in
+ * the repository resumes skipping quietly; this file would then still fail, and
+ * `apps/core` is where the cross-user, shared-view-leak and admin-only tests
+ * live. One package keeps a tripwire; it costs a few lines.
+ *
+ * That scenario is demonstrated, not merely argued: the `packages/db` owner
+ * neutered the harness guard to `if (false && …)`, rebuilt `dist`, and ran this
+ * package with `CI=true` and no `DATABASE_URL`. This test failed and took the
+ * run to exit 1; without it the same configuration exits 0 with 104 tests
+ * silently skipped. The guard was then restored and the matrix re-verified.
+ *
+ * Deliberate scope: this fallback covers *this file only*. The other three
+ * integration suites in `apps/core` live under `src/jobs/`, which this agent
+ * does not own, and they still skip quietly if the harness guard is weakened.
+ * That is a considered limit rather than an oversight — the security tests are
+ * the ones worth defending twice — but it does mean the fallback protects this
+ * suite, not the package.
+ *
+ * `isCi` is imported rather than re-derived. An earlier version of this file
+ * parsed `CI` itself with `Boolean(process.env.CI)`, drifted from the harness
+ * within the hour, and failed a laptop run that was correct to skip.
  */
 describe('integration coverage guard', () => {
   it('refuses to let CI pass this file by skipping it', () => {
-    const skippingInCi = Boolean(process.env.CI) && !hasDatabase;
+    const skippingInCi = isCi && !hasDatabase;
     expect(
       skippingInCi
-        ? 'CI ran the API integration suite with no DATABASE_URL, so every security ' +
-            'test in this file was skipped and the run proved nothing. Restore the ' +
-            'PostgreSQL service and the DATABASE_URL env entry in .github/workflows/ci.yml.'
+        ? 'CI reached this file with no DATABASE_URL, so every security test in it ' +
+            'was skipped. The guard in packages/db/src/testing/harness.ts should have ' +
+            'thrown before this point — check whether it has been narrowed or removed, ' +
+            'then restore DATABASE_URL on the test job in .github/workflows/ci.yml.'
         : 'ok',
     ).toBe('ok');
   });

@@ -29,6 +29,23 @@ import { MIGRATIONS_FOLDER } from '../migrate.js';
 export const DATABASE_URL = process.env.DATABASE_URL;
 
 /**
+ * Whether this process is running in CI.
+ *
+ * `CI` is read as a flag, not as a string, because `CI=false` is a real thing
+ * people export — it is the documented way to stop a Next.js or CRA build
+ * treating warnings as errors, and this repository has a Next app. Plain
+ * truthiness would read `'false'` as "we are in CI" and hard-fail a laptop run
+ * that was correct to skip.
+ *
+ * **Exported so nothing parses `CI` twice.** That is not hypothetical
+ * tidiness: `apps/core` grew its own `Boolean(process.env.CI)` copy an hour
+ * apart from this one and reintroduced exactly the `CI=false` bug the parsing
+ * above removes. Two files independently interpreting one environment variable
+ * will drift. Import this instead of writing another.
+ */
+export const isCi = !['', '0', 'false'].includes((process.env.CI ?? '').toLowerCase());
+
+/**
  * In CI, a missing database is a broken pipeline, not a reason to skip.
  *
  * Every integration suite in the repository skips itself when `DATABASE_URL`
@@ -42,16 +59,13 @@ export const DATABASE_URL = process.env.DATABASE_URL;
  * here rather than being copied into each suite, because every one of them
  * imports this module. A new integration test added tomorrow is covered
  * without its author having to remember anything.
+ *
+ * Because it throws during module evaluation, it **preempts collection**: a
+ * suite that also asserts on this condition will never get as far as running
+ * that assertion while this guard is intact. Such an assertion is still worth
+ * keeping, but its purpose is to survive *this* guard being weakened or
+ * removed — not to produce a prettier message alongside it.
  */
-/**
- * `CI` is read as a flag, not as a string, because `CI=false` is a real thing
- * people export — it is the documented way to stop a Next.js or CRA build
- * treating warnings as errors, and this repository has a Next app. Plain
- * truthiness would read that as "we are in CI" and hard-fail a laptop run that
- * was correct to skip.
- */
-const isCi = !['', '0', 'false'].includes((process.env.CI ?? '').toLowerCase());
-
 if (isCi && !DATABASE_URL) {
   throw new Error(
     'DATABASE_URL is not set, but CI is. Integration tests would silently skip and the ' +

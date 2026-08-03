@@ -265,6 +265,36 @@ DATABASE_URL=postgres://luma:luma@localhost:5432/luma_anbudsvarsling \
 Without `DATABASE_URL` these are **skipped, not passed**. The summary line says
 so; read it before believing a green run.
 
+### The CI guard — read this before "fixing" a red pipeline
+
+`testing/harness.ts` throws at import time when `CI` is set and `DATABASE_URL`
+is not. **This is deliberate and it is not a bug.**
+
+Thirteen integration files across `packages/db`, `apps/core`, `apps/web` and
+`apps/mcp` derive their skip from `hasDatabase`. Without the guard, a CI leg
+that lost its PostgreSQL service would skip all thirteen and exit 0 — reporting
+success having verified nothing about the consent trigger (ADR-9), attribution
+isolation (ADR-6), account deletion (§40), cross-user isolation, or the
+shared-view leak. A gate that passes while skipping its own subject is worse
+than no gate, because it is trusted.
+
+If CI goes red with `DATABASE_URL is not set, but CI is`, the fix is to restore
+the `postgres` service and the `DATABASE_URL` env entry on the test job in
+`.github/workflows/ci.yml`. **The fix is never to delete the guard.**
+
+`isCi` is exported from the harness. Anything else that needs to know whether
+it is in CI should import it rather than parsing `process.env.CI` again —
+`CI=false` is truthy as a string, and a second parser has already drifted into
+that bug once.
+
+Verified behaviour, re-run after every change to the guard:
+
+| `CI` | `DATABASE_URL` | Expected |
+| --- | --- | --- |
+| `true`, `1`, `TRUE` | unset | **exit 1**, integration files fail to collect |
+| `false`, `0`, empty, unset | unset | exit 0, integration suites skip |
+| any | set | exit 0, nothing skipped |
+
 Assertions use `expectRejection()` from `testing/harness.ts` rather than
 `expect(...).rejects.toThrow()`. Drizzle wraps a driver failure in
 `Error: Failed query: <sql>` and hangs the real `PostgresError` off `cause`, so

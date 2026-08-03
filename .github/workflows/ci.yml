@@ -16,6 +16,11 @@ permissions:
 # Nothing here is or may ever be a real secret.
 env:
   NODE_ENV: test
+  # Keep this 'true'. It arms the database guard in
+  # packages/db/src/testing/harness.ts, which reads CI as a flag — '', '0' and
+  # 'false' all count as "not CI". Setting CI: 'false' on a job (the documented
+  # way to stop a Next build treating warnings as errors) also disarms the
+  # guard for that job, so its integration tests would silently skip.
   CI: 'true'
   TURBO_TELEMETRY_DISABLED: '1'
   TURBO_CACHE_DIR: .turbo/cache
@@ -86,6 +91,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
+    # LOAD-BEARING. All 13 integration suites need a real PostgreSQL. Without
+    # this service they do not fail — they skip, and the job reports success
+    # having verified nothing about cross-user isolation, the shared-view leak,
+    # consent immutability (ADR-9), attribution isolation (ADR-6) or account
+    # deletion (§40). Do not remove this block to make a red build go green.
     services:
       postgres:
         image: postgres:16
@@ -133,5 +143,12 @@ jobs:
 
       - name: Run tests
         env:
+          # REQUIRED — do not delete to make a red build go green.
+          # packages/db/src/testing/harness.ts throws at import time when CI is
+          # set without DATABASE_URL. That guard exists because the integration
+          # suites skip themselves when there is no database, so removing this
+          # line does not disable a few tests — it makes the whole job pass
+          # while verifying nothing. If this goes red for a missing database,
+          # fix the database, not this line or the postgres service above.
           DATABASE_URL: postgres://luma:luma@localhost:5432/luma_anbudsvarsling_test
         run: pnpm test

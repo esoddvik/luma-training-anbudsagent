@@ -211,10 +211,29 @@ Two workflows, both blocking. Neither uses `continue-on-error`.
 
 ### `.github/workflows/ci.yml` — push to `main` and every PR
 
-| Job       | Steps                                                    |
-| --------- | -------------------------------------------------------- |
-| `quality` | `format:check` → `lint` → `typecheck` → `build`          |
+| Job       | Steps                                                            |
+| --------- | ---------------------------------------------------------------- |
+| `quality` | `format:check` → `lint` → `typecheck` → `build`                  |
 | `test`    | `db:migrate` → `test`, against a `postgres:16` service container |
+
+> **The `test` job's database is load-bearing, and the failure mode is silent.**
+> The integration suites skip themselves when `DATABASE_URL` is absent, so a
+> `test` job without a database does not fail — it passes, having verified
+> nothing about cross-user isolation, the shared-view leak, consent
+> immutability (ADR-9), attribution isolation (ADR-6) or account deletion (§40).
+>
+> `packages/db/src/testing/harness.ts` guards against this: it throws at import
+> time when `CI` is set and `DATABASE_URL` is not. So the pipeline now fails
+> loudly for the right reason. The trap is that deleting the `DATABASE_URL` env
+> entry or the `services.postgres` block is the quickest way to make that red
+> build green — and it restores the exact silent-success the guard was added to
+> prevent. If the `test` job goes red for a missing database, fix the database.
+>
+> Note also that the guard reads `CI` as a flag: `''`, `'0'` and `'false'` all
+> count as "not CI". `CI: 'false'` is the documented way to stop a Next build
+> treating warnings as errors, so setting it on a job disarms the guard there
+> too. Harmless for `quality`, which runs no integration tests — worth checking
+> before adding a third job.
 
 Both jobs install with `pnpm install --frozen-lockfile`, so **a stale lockfile
 fails CI**. Run `pnpm install` and commit `pnpm-lock.yaml` with any dependency

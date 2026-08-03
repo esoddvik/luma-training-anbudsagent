@@ -210,10 +210,16 @@ const QUEUE_STATUS_TIMEOUT_MS = 5_000;
  * producer-only replica passes.
  *
  * So §47 needs both signals, and they are not interchangeable: queue depth for
- * a consumer-side stall, and evidence the work itself produces —
- * `ingestion_runs` advancing, `tenders.last_synced_at` moving — for "nothing
- * is running at all". Only the second can distinguish a quiet queue from a
- * dead estate, because only the second stops when production stops.
+ * a consumer-side stall, and evidence the work itself produces for "nothing is
+ * running at all". Only the second can distinguish a quiet queue from a dead
+ * estate, because only the second stops when production stops.
+ *
+ * That second signal needs no new machinery: `IngestStatusReport` in
+ * `services/admin.ts` already carries `lastSuccessfulRunAt` and `lastRun`
+ * beside the `queues` field fed from here. An alert reads both off one
+ * response — depth for "is anything draining", ingest recency for "is
+ * anything being produced". Neither field alone separates an idle Sunday from
+ * a dead estate; §12's hourly sync is what makes the pair conclusive.
  *
  * Bounded rather than left to hang: a caller rendering "unavailable" is more
  * use to an operator than a dashboard that never paints. It throws on a

@@ -85,6 +85,8 @@ Three traps in the same area:
 
 **The strongest evidence remains what the work itself produces**: `ingestion_runs` gaining a row on schedule, `notification_deliveries` being written when a digest hour passes, the newest tender's `last_synced_at` advancing. These are the only signals that stop when *production* stops, so they are the ones that catch a missing worker. Alert on them, and treat queue depth as the finer-grained companion rather than the primary.
 
+Nothing new has to be built for that. `GET /admin/ingest-status` already returns `lastRun` and `lastSuccessfulRunAt` for the §45 dashboard, so the alert is two fields off one existing response: **if `lastSuccessfulRunAt` has not moved in appreciably more than the sync interval, no worker is running.** Add no endpoint.
+
 > **This section has now been rewritten twice**, first because the counts came from a cache that a stopped worker also stopped refreshing, then because the fix for that left the guidance covering only half the failure modes. Both revisions were found by tracing the call chain end to end rather than by rereading the code, which had already been read carefully each time. If you are extending the alerting, trace it again rather than trusting this paragraph.
 
 ## Email

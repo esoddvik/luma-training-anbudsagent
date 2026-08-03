@@ -1,0 +1,58 @@
+{
+  "id": "2026-112480",
+  "buyer": [
+    {
+      "id": "7fcceaaff6948f767e629e00b5fcc8d1",
+      "organizationId": "916879067",
+      "name": "SYKEHUSINNKJØP HF"
+    }
+  ],
+  "heading": "Intensjonskunngjøring: Elektronisk system for pasientovervåking og klinisk dokumentasjon",
+  "description": "Oppdragsgiver Sykehusinnkjøp vil i henhold til anskaffelsesregelverkets § 21-5 kunngjøre at Helse Nord skal anskaffe regional avtale for kjøp av et elektronisk pasientovervåkningssystem og klinisk dokumentasjon. Bakgrunnen er at Oppdragsgiver mener det foreligger hjemmel i anskaffelsesforskriftens § 13-4 til å inngå kontrakt direkte da det bare er en bestemt leverandør som kan oppfylle Helse Nord sitt behov. Se vedlegg i kunngjøringen.",
+  "locationId": [
+    "NO073",
+    "NO072",
+    "NO071"
+  ],
+  "estimatedValue": null,
+  "type": "ANNOUNCEMENT_OF_INTENT",
+  "allTypes": [
+    "ANNOUNCEMENT_OF_INTENT",
+    "RESULT"
+  ],
+  "status": null,
+  "issueDate": "2026-07-28T08:30:08Z",
+  "deadline": null,
+  "publicationDate": "2026-07-29",
+  "receivedTenders": 0,
+  "allReceivedTenders": null,
+  "cpvCodes": [
+    "33195000",
+    "48100000",
+    "48180000",
+    "33190000",
+    "48800000",
+    "48814400",
+    "48000000",
+    "33000000",
+    "33100000",
+    "48814000",
+    "48814100",
+    "48810000"
+  ],
+  "limitedDataFlag": null,
+  "doffinClassicUrl": null,
+  "lots": [
+    {
+      "heading": "Intensjonskunngjøring: Elektronisk system for pasientovervåking og klinisk dokumentasjon",
+      "description": "Oppdragsgiver Sykehusinnkjøp vil i henhold til anskaffelsesregelverkets § 21-5 kunngjøre at Helse Nord skal anskaffe regional avtale for kjøp av et elektronisk pasientovervåkningssystem og klinisk dokumentasjon. Bakgrunnen er at Oppdragsgiver mener det foreligger hjemmel i anskaffelsesforskriftens § 13-4 til å inngå kontrakt direkte da det bare er en bestemt leverandør som kan oppfylle Helse Nord sitt behov. Se vedlegg i kunngjøringen.",
+      "winner": [
+        {
+          "id": "8745a3262a7b56a81e6d0255ac043fed",
+          "organizationId": null,
+          "name": "Medanets OY"
+        }
+      ]
+    }
+  ]
+}

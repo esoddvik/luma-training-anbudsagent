@@ -1,0 +1,93 @@
+{
+  "_comment": "Values extracted by hand from GET https://api.doffin.no/public/v2/download/{noticeId} (eForms UBL XML). Captured 2026-08-03. Included because procedureType, contract duration and the eForms notice-subtype code do NOT exist in the JSON search response.",
+  "2026-112539": {
+    "doffinType": "ADVISORY_NOTICE",
+    "rootElement": "PriorInformationNotice",
+    "noticeSubtype": {
+      "listName": "planning",
+      "value": "pin-only"
+    },
+    "customizationId": "eforms-sdk-1.13#extended#urn:fdc:anskaffelser.no:2023:eforms:national",
+    "regulatoryDomain": "other",
+    "procedureCode": null,
+    "plannedPeriod": null
+  },
+  "2026-112480": {
+    "doffinType": "ANNOUNCEMENT_OF_INTENT",
+    "rootElement": "ContractAwardNotice",
+    "noticeSubtype": {
+      "listName": "dir-awa-pre",
+      "value": "veat"
+    },
+    "customizationId": "eforms-sdk-1.13#extended#urn:fdc:anskaffelser.no:2023:eforms:eu",
+    "regulatoryDomain": "32014L0024",
+    "procedureCode": "neg-wo-call",
+    "plannedPeriod": null
+  },
+  "2026-112541": {
+    "doffinType": "ANNOUNCEMENT_OF_COMPETITION",
+    "rootElement": "ContractNotice",
+    "noticeSubtype": {
+      "listName": "competition",
+      "value": "cn-standard"
+    },
+    "customizationId": "eforms-sdk-1.13#extended#urn:fdc:anskaffelser.no:2023:eforms:eu",
+    "regulatoryDomain": "32014L0024",
+    "procedureCode": "open",
+    "plannedPeriod": {
+      "durationMeasure": 48,
+      "unitCode": "MONTH"
+    },
+    "tenderValidityPeriod": {
+      "durationMeasure": 6,
+      "unitCode": "MONTH",
+      "note": "NOT contract duration - do not confuse with plannedPeriod"
+    }
+  },
+  "2026-112546": {
+    "doffinType": "ANNOUNCEMENT_OF_CONCLUSION_OF_CONTRACT",
+    "rootElement": "ContractAwardNotice",
+    "noticeSubtype": {
+      "listName": "result",
+      "value": "can-standard"
+    },
+    "customizationId": "eforms-sdk-1.13#extended#urn:fdc:anskaffelser.no:2023:eforms:eu",
+    "regulatoryDomain": "32014L0024",
+    "procedureCode": "open",
+    "plannedPeriod": null,
+    "settledContract": {
+      "id": "CON-0001",
+      "issueDate": "2026-07-31Z"
+    },
+    "lotTenderPayableAmount": {
+      "currencyID": "NOK",
+      "value": 3529420
+    }
+  },
+  "2026-112529": {
+    "doffinType": "ANNOUNCEMENT_OF_CONCLUSION_OF_CONTRACT",
+    "rootElement": "ContractAwardNotice",
+    "noticeSubtype": {
+      "listName": "result",
+      "value": "can-standard"
+    },
+    "plannedPeriod": {
+      "startDate": "2025-08-01Z",
+      "endDate": "2025-12-19Z"
+    },
+    "note": "One of the minority of award notices that DOES carry a contract period."
+  },
+  "2026-111809": {
+    "doffinType": "ANNOUNCEMENT_OF_COMPETITION",
+    "rootElement": "ContractNotice",
+    "noticeSubtype": {
+      "listName": "competition",
+      "value": "cn-standard"
+    },
+    "changes": {
+      "changedNoticeIdentifier": "31ee646a-d4df-4ca5-a1ef-5241be87f845-01",
+      "changedSectionIdentifier": "LOT-0000"
+    },
+    "note": "A correction: published as a NEW notice that points back at the superseded one."
+  }
+}

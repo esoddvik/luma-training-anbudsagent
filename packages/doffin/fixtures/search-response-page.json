@@ -1,0 +1,187 @@
+{
+  "numHitsTotal": 157143,
+  "numHitsAccessible": 1000,
+  "hits": [
+    {
+      "id": "2026-112542",
+      "buyer": [
+        {
+          "id": "1b37f6d04a77ae305c670f1bc3ac7df8",
+          "organizationId": "964978840",
+          "name": "Herøy kommune"
+        },
+        {
+          "id": "a5ba5f6ce723cf72ab5867f59e7630f5",
+          "organizationId": "822534422",
+          "name": "Sande kommune"
+        },
+        {
+          "id": "46a2be9f3ab71bf96cf7390c2d459d45",
+          "organizationId": "939760946",
+          "name": "Volda kommune"
+        }
+      ],
+      "heading": "Elektronisk pasientjournal (EPJ) til legekontor",
+      "description": "Formålet med anskaffinga er å dekke oppdragsgjevar sitt behov for elektronisk pasientjournal (EPJ) for legar og hjelpepersonell på våre legekontor.   EPJ-løysinga skal leverast som ei web-basert skyteneste SaaS.  EPJ-løysinga må ivareta dagens og framtida sine standardar, samt overhalde til ein kvar tid gjeldande lover og forskrifter med krav sett til moderne EPJ-løysing, arkivering, informasjonssikkerheit og integrering med Helsenettet til Norsk Helsenett. Leveransen skal og inkludere ajourhald og brukaropplæring.   Det er utarbeida ein kravsspesifikasjonen med nærare spesifikasjon av krava til EPJ-løysinga.",
+      "locationId": [
+        "anyw"
+      ],
+      "estimatedValue": null,
+      "type": "ANNOUNCEMENT_OF_COMPETITION",
+      "allTypes": [
+        "ANNOUNCEMENT_OF_COMPETITION",
+        "COMPETITION"
+      ],
+      "status": "ACTIVE",
+      "issueDate": "2026-07-30T13:48:30Z",
+      "deadline": "2026-09-01T10:00:00Z",
+      "publicationDate": "2026-08-03",
+      "receivedTenders": null,
+      "allReceivedTenders": null,
+      "cpvCodes": [
+        "72000000",
+        "72300000",
+        "48800000",
+        "48814400",
+        "48000000",
+        "48814500",
+        "48814000",
+        "48810000"
+      ],
+      "limitedDataFlag": null,
+      "doffinClassicUrl": null,
+      "lots": [
+        {
+          "heading": "Elektronisk pasientjournal (EPJ) til legekontor",
+          "description": "Formålet med anskaffinga er å dekke oppdragsgjevar sitt behov for elektronisk pasientjournal (EPJ) for legar og hjelpepersonell på våre legekontor.   EPJ-løysinga skal leverast som ei web-basert skyteneste SaaS.  EPJ-løysinga må ivareta dagens og framtida sine standardar, samt overhalde til ein kvar tid gjeldande lover og forskrifter med krav sett til moderne EPJ-løysing, arkivering, informasjonssikkerheit og integrering med Helsenettet til Norsk Helsenett. Leveransen skal og inkludere ajourhald og brukaropplæring.   Det er utarbeida ein kravsspesifikasjonen med nærare spesifikasjon av krava til EPJ-løysinga.",
+          "winner": []
+        }
+      ]
+    },
+    {
+      "id": "2026-112546",
+      "buyer": [
+        {
+          "id": "e481794d3e6967af806706d10eb4ab01",
+          "organizationId": "991825827",
+          "name": "Digitaliseringsdirektoratet"
+        }
+      ],
+      "heading": "Kontraktstildeling - Kontaktsenterløsning til Digitaliseringsdirektoratet",
+      "description": "Digitaliseringsdirektoratet (Digdir) har behov for en kontaktsenterløsning for å motta og besvare brukerhenvendelser på telefon og chat.",
+      "locationId": [
+        "NO071",
+        "NO0A2"
+      ],
+      "estimatedValue": {
+        "currencyCode": "NOK",
+        "amount": 4000000
+      },
+      "type": "ANNOUNCEMENT_OF_CONCLUSION_OF_CONTRACT",
+      "allTypes": [
+        "ANNOUNCEMENT_OF_CONCLUSION_OF_CONTRACT",
+        "RESULT"
+      ],
+      "status": null,
+      "issueDate": "2026-07-31T07:32:02Z",
+      "deadline": null,
+      "publicationDate": "2026-08-03",
+      "receivedTenders": 0,
+      "allReceivedTenders": [
+        {
+          "type": "tenders",
+          "total": 0
+        },
+        {
+          "type": "t-esubm",
+          "total": 3
+        }
+      ],
+      "cpvCodes": [
+        "32500000",
+        "48222000",
+        "48220000",
+        "64216000",
+        "64000000",
+        "64216100",
+        "48500000",
+        "72000000",
+        "79512000",
+        "72300000",
+        "79510000",
+        "64210000",
+        "32524000",
+        "79000000",
+        "48200000",
+        "32520000",
+        "32000000",
+        "72210000",
+        "64200000",
+        "72212000",
+        "72212220",
+        "72212222",
+        "72212200",
+        "79500000",
+        "48510000",
+        "64216110",
+        "64215000",
+        "48000000",
+        "72200000"
+      ],
+      "limitedDataFlag": null,
+      "doffinClassicUrl": null,
+      "lots": [
+        {
+          "heading": "Kontraktstildeling - Kontaktsenterløsning til Digitaliseringsdirektoratet",
+          "description": "Digitaliseringsdirektoratet (Digdir) har behov for en kontaktsenterløsning for å motta og besvare brukerhenvendelser på telefon og chat.",
+          "winner": [
+            {
+              "id": "de602c4b6314c7d7a75b6b3c46b33004",
+              "organizationId": "890164072",
+              "name": "Globalconnect AS"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2026-112543",
+      "buyer": [
+        {
+          "id": "7fcceaaff6948f767e629e00b5fcc8d1",
+          "organizationId": "916879067",
+          "name": "SYKEHUSINNKJØP HF"
+        }
+      ],
+      "heading": "Renholdstjenester til Mjøssenteret, Sykehuset Innlandet HF",
+      "description": "Anskaffelsens formål er renholdstjenester til Mjøssenter HF. Oppgitt forbruk/omfang er estimert til 1,8 millioner over 4 år, det et estimat for informasjon til tilbyder, og er ikke bindende for fremtidig avtalevolum.",
+      "locationId": [
+        "NO020"
+      ],
+      "estimatedValue": null,
+      "type": "ANNOUNCEMENT_OF_COMPETITION",
+      "allTypes": [
+        "ANNOUNCEMENT_OF_COMPETITION",
+        "COMPETITION"
+      ],
+      "status": "ACTIVE",
+      "issueDate": "2026-07-30T17:00:00Z",
+      "deadline": "2026-09-07T10:00:00Z",
+      "publicationDate": "2026-08-03",
+      "receivedTenders": null,
+      "allReceivedTenders": null,
+      "cpvCodes": [
+        "90000000"
+      ],
+      "limitedDataFlag": null,
+      "doffinClassicUrl": null,
+      "lots": [
+        {
+          "heading": "Renholdstjenester til Mjøssenteret, Sykehuset Innlandet HF",
+          "description": "Anskaffelsens formål er renholdstjenester til Mjøssenter HF. Oppgitt forbruk/omfang er estimert til 1,8 millioner over 4 år, det et estimat for informasjon til tilbyder, og er ikke bindende for fremtidig avtalevolum. ",
+          "winner": []
+        }
+      ]
+    }
+  ]
+}

@@ -272,6 +272,25 @@ importers:
         specifier: 'catalog:'
         version: 4.1.10(@types/node@22.20.1)(vite@7.3.1(@types/node@22.20.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.5))
 
+  packages/content:
+    dependencies:
+      '@luma/domain':
+        specifier: workspace:*
+        version: link:../domain
+      zod:
+        specifier: 'catalog:'
+        version: 4.4.3
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.20.1
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.10(@types/node@22.20.1)(vite@7.3.1(@types/node@22.20.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.5))
+
   packages/db:
     dependencies:
       '@luma/config':
@@ -299,6 +318,28 @@ importers:
       tsx:
         specifier: 'catalog:'
         version: 4.23.5
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.10(@types/node@22.20.1)(vite@7.3.1(@types/node@22.20.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.5))
+
+  packages/doffin:
+    dependencies:
+      '@luma/domain':
+        specifier: workspace:*
+        version: link:../domain
+      '@luma/observability':
+        specifier: workspace:*
+        version: link:../observability
+      zod:
+        specifier: 'catalog:'
+        version: 4.4.3
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.20.1
       typescript:
         specifier: 'catalog:'
         version: 5.9.3

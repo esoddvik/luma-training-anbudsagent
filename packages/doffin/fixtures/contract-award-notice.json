@@ -1,0 +1,86 @@
+{
+  "id": "2026-112546",
+  "buyer": [
+    {
+      "id": "e481794d3e6967af806706d10eb4ab01",
+      "organizationId": "991825827",
+      "name": "Digitaliseringsdirektoratet"
+    }
+  ],
+  "heading": "Kontraktstildeling - Kontaktsenterløsning til Digitaliseringsdirektoratet",
+  "description": "Digitaliseringsdirektoratet (Digdir) har behov for en kontaktsenterløsning for å motta og besvare brukerhenvendelser på telefon og chat.",
+  "locationId": [
+    "NO071",
+    "NO0A2"
+  ],
+  "estimatedValue": {
+    "currencyCode": "NOK",
+    "amount": 4000000
+  },
+  "type": "ANNOUNCEMENT_OF_CONCLUSION_OF_CONTRACT",
+  "allTypes": [
+    "ANNOUNCEMENT_OF_CONCLUSION_OF_CONTRACT",
+    "RESULT"
+  ],
+  "status": null,
+  "issueDate": "2026-07-31T07:32:02Z",
+  "deadline": null,
+  "publicationDate": "2026-08-03",
+  "receivedTenders": 0,
+  "allReceivedTenders": [
+    {
+      "type": "tenders",
+      "total": 0
+    },
+    {
+      "type": "t-esubm",
+      "total": 3
+    }
+  ],
+  "cpvCodes": [
+    "32500000",
+    "48222000",
+    "48220000",
+    "64216000",
+    "64000000",
+    "64216100",
+    "48500000",
+    "72000000",
+    "79512000",
+    "72300000",
+    "79510000",
+    "64210000",
+    "32524000",
+    "79000000",
+    "48200000",
+    "32520000",
+    "32000000",
+    "72210000",
+    "64200000",
+    "72212000",
+    "72212220",
+    "72212222",
+    "72212200",
+    "79500000",
+    "48510000",
+    "64216110",
+    "64215000",
+    "48000000",
+    "72200000"
+  ],
+  "limitedDataFlag": null,
+  "doffinClassicUrl": null,
+  "lots": [
+    {
+      "heading": "Kontraktstildeling - Kontaktsenterløsning til Digitaliseringsdirektoratet",
+      "description": "Digitaliseringsdirektoratet (Digdir) har behov for en kontaktsenterløsning for å motta og besvare brukerhenvendelser på telefon og chat.",
+      "winner": [
+        {
+          "id": "de602c4b6314c7d7a75b6b3c46b33004",
+          "organizationId": "890164072",
+          "name": "Globalconnect AS"
+        }
+      ]
+    }
+  ]
+}

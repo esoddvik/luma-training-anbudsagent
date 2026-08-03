@@ -11,7 +11,7 @@ export function hasScope(caller: AuthenticatedCaller, scope: McpScope): boolean 
 }
 
 export const NO_PROFILES_NB =
-  'Du har ingen varslingsprofil ennå. Opprett en i Luma Anbudsvarsling først, så kan jeg matche anbud mot den.';
+  'Du har ingen varslingsprofil ennå. Opprett en i varslingstjenesten først, så kan jeg matche anbud mot den.';
 
 export const PROFILE_NOT_FOUND_NB =
   'Fant ingen varslingsprofil med den id-en. Bruk list_alert_profiles for å se dine egne profiler.';

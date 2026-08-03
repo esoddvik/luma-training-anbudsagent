@@ -195,6 +195,9 @@ importers:
       '@luma/domain':
         specifier: workspace:*
         version: link:../../packages/domain
+      '@luma/mcp-tools':
+        specifier: workspace:*
+        version: link:../../packages/mcp-tools
       '@luma/observability':
         specifier: workspace:*
         version: link:../../packages/observability
@@ -220,9 +223,27 @@ importers:
 
   apps/web:
     dependencies:
+      '@luma/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      '@luma/content':
+        specifier: workspace:*
+        version: link:../../packages/content
+      '@luma/db':
+        specifier: workspace:*
+        version: link:../../packages/db
+      '@luma/domain':
+        specifier: workspace:*
+        version: link:../../packages/domain
+      '@luma/matching':
+        specifier: workspace:*
+        version: link:../../packages/matching
       '@luma/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      drizzle-orm:
+        specifier: 'catalog:'
+        version: 0.45.2(pg@8.22.0)(postgres@3.4.9)
       next:
         specifier: 'catalog:'
         version: 16.2.12(@playwright/test@1.62.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -232,6 +253,9 @@ importers:
       react-dom:
         specifier: 'catalog:'
         version: 19.2.8(react@19.2.8)
+      zod:
+        specifier: 'catalog:'
+        version: 4.4.3
     devDependencies:
       '@playwright/test':
         specifier: 'catalog:'

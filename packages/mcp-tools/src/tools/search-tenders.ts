@@ -72,7 +72,7 @@ export interface SearchTendersResult {
   readonly sideMerknad: string | null;
 }
 
-export const searchTendersTool = defineReadTool({
+export const searchTendersTool = defineReadTool<typeof inputSchema, SearchTendersResult>({
   name: 'search_tenders',
   title: 'Søk i anbud',
   description:

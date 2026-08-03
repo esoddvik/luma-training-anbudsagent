@@ -66,7 +66,7 @@ export interface GetTenderResult {
   readonly tilgangsMerknad: string | null;
 }
 
-export const getTenderTool = defineReadTool({
+export const getTenderTool = defineReadTool<typeof inputSchema, GetTenderResult>({
   name: 'get_tender',
   title: 'Hent ett anbud',
   description:

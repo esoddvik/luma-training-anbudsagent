@@ -93,7 +93,15 @@ export type LumaTool = ReadTool | WriteTool;
 
 interface ToolSpec<S extends z.ZodType, TResult> extends ToolMeta {
   readonly inputSchema: S;
-  readonly auditFacts?: (input: z.output<S>, result: TResult | undefined) => ToolAuditFacts;
+  /**
+   * `NoInfer` keeps this callback out of `TResult` inference, so a tool that
+   * omits the explicit type arguments still gets its result type from the
+   * handler's return type rather than from this parameter.
+   */
+  readonly auditFacts?: (
+    input: z.output<S>,
+    result: NoInfer<TResult> | undefined,
+  ) => ToolAuditFacts;
 }
 
 /**
@@ -275,7 +283,7 @@ export async function invokeToolFrom(
 function scopeMessageNb(tool: LumaTool, missing: McpScope): string {
   return (
     `Tokenet ditt mangler tilgangen «${missing}», som «${tool.name}» krever. ` +
-    'Lag et nytt MCP-token med riktige tilganger i Luma Anbudsvarsling, eller be brukeren om å gjøre det.'
+    'Lag et nytt MCP-token med riktige tilganger i innstillingene dine, eller be brukeren om å gjøre det.'
   );
 }
 

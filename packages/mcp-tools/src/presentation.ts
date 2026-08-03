@@ -307,9 +307,9 @@ export function toExclusionView(exclusion: MatchExclusion): ExclusionView {
 export function toSavedStateView(state: UserTenderState | undefined): SavedStateView {
   return {
     lagret: state?.saved ?? false,
-    lagretTidspunkt: state?.savedAt != null ? isoInstant(state.savedAt) : null,
+    lagretTidspunkt: state?.savedAt ? isoInstant(state.savedAt) : null,
     avvist: state?.dismissed ?? false,
-    avvistTidspunkt: state?.dismissedAt != null ? isoInstant(state.dismissedAt) : null,
+    avvistTidspunkt: state?.dismissedAt ? isoInstant(state.dismissedAt) : null,
   };
 }
 

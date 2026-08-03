@@ -78,7 +78,10 @@ interface Scored {
   readonly score: number;
 }
 
-export const findMatchingTendersTool = defineReadTool({
+export const findMatchingTendersTool = defineReadTool<
+  typeof inputSchema,
+  FindMatchingTendersResult
+>({
   name: 'find_matching_tenders',
   title: 'Finn anbud som passer varslingsprofilen',
   description:

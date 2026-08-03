@@ -70,9 +70,7 @@ describe('parseCoreEnv', () => {
     'LUMA_PRIVACY_POLICY_URL',
     'TENDER_SERVICE_TERMS_URL',
   ])('rejects an environment missing %s', (key) => {
-    expect(() => parseCoreEnv(coreEnvWithout(key))).toThrowError(
-      new RegExp(key),
-    );
+    expect(() => parseCoreEnv(coreEnvWithout(key))).toThrowError(new RegExp(key));
   });
 
   it('rejects secrets shorter than 32 characters', () => {
@@ -88,9 +86,9 @@ describe('parseCoreEnv', () => {
   });
 
   it('rejects a non-URL privacy policy link', () => {
-    expect(() =>
-      parseCoreEnv({ ...validCore, LUMA_PRIVACY_POLICY_URL: 'not-a-url' }),
-    ).toThrowError(/LUMA_PRIVACY_POLICY_URL/);
+    expect(() => parseCoreEnv({ ...validCore, LUMA_PRIVACY_POLICY_URL: 'not-a-url' })).toThrowError(
+      /LUMA_PRIVACY_POLICY_URL/,
+    );
   });
 
   it('defaults the share link lifetime to 30 days (spec 17)', () => {
@@ -104,9 +102,9 @@ describe('parseCoreEnv', () => {
   });
 
   it('rejects a share lifetime that is zero or negative', () => {
-    expect(() =>
-      parseCoreEnv({ ...validCore, SHARE_DEFAULT_TTL_DAYS: '0' }),
-    ).toThrowError(/SHARE_DEFAULT_TTL_DAYS/);
+    expect(() => parseCoreEnv({ ...validCore, SHARE_DEFAULT_TTL_DAYS: '0' })).toThrowError(
+      /SHARE_DEFAULT_TTL_DAYS/,
+    );
   });
 
   it('defaults the VAT rate to the Norwegian standard rate', () => {

@@ -38,12 +38,7 @@ export type MarketingCategory = z.infer<typeof marketingCategorySchema>;
  * The ladder orders editorial choice. It is explicitly not an aggressiveness
  * scale: every level obeys the same placement and labelling rules.
  */
-export const ladderLevelSchema = z.union([
-  z.literal(1),
-  z.literal(2),
-  z.literal(3),
-  z.literal(4),
-]);
+export const ladderLevelSchema = z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4)]);
 export type LadderLevel = z.infer<typeof ladderLevelSchema>;
 
 export const regionScopeSchema = z.enum(['national', 'oslo_region']);

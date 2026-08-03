@@ -2,7 +2,11 @@
   "$schema": "https://turbo.build/schema.json",
   "ui": "stream",
   "globalDependencies": [".env.example", "tsconfig.base.json"],
-  "globalEnv": ["NODE_ENV"],
+  // DATABASE_URL is passed through deliberately. The integration suites in
+  // @luma/db and core skip themselves when it is absent, so without it here
+  // turbo would report a green run that quietly skipped every test that talks
+  // to a real database — the most valuable ones in the repository.
+  "globalEnv": ["NODE_ENV", "LOG_LEVEL", "DATABASE_URL", "CI"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],

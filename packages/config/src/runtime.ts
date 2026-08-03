@@ -1,4 +1,11 @@
-import { parseCoreEnv, parseMcpEnv, parseWebEnv, type CoreEnv, type McpEnv, type WebEnv } from './env.js';
+import {
+  parseCoreEnv,
+  parseMcpEnv,
+  parseWebEnv,
+  type CoreEnv,
+  type McpEnv,
+  type WebEnv,
+} from './env.js';
 import { loadDotEnv } from './load-env.js';
 
 /**

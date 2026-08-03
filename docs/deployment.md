@@ -39,19 +39,45 @@ a config-as-code file inside the app directory. See
 [`apps/core/README.md`](../apps/core/README.md) and
 [`apps/mcp/README.md`](../apps/mcp/README.md) for the exact settings.
 
-### A note on turbo filters
+### Package naming and turbo filters
 
-Every build command here filters by **package name**: `--filter=web`,
-`--filter=core...`, `--filter=mcp...`. These assume the three apps are named
-plainly (`web`, `core`, `mcp`) in their `package.json`, not scoped like the
-shared packages (`@luma/config`, `@luma/db`, …).
+The repo splits naming by kind, and every build command depends on it:
 
-If an app is ever renamed to `@luma/web`, the filter silently resolves to zero
-packages and the build produces nothing rather than failing loudly. Switch to
-the path form — `--filter=./apps/web` — which matches by directory and is
-immune to renames. The files to change together are `apps/web/vercel.json`,
-`apps/core/railway.json`, `apps/mcp/railway.json`, both `Dockerfile`s and
-`.github/workflows/e2e.yml`.
+- **Apps are unscoped**: `web`, `core`, `mcp`.
+- **Libraries are scoped**: `@luma/auth`, `@luma/config`, `@luma/db`, `@luma/domain`,
+  `@luma/email`, `@luma/matching`, `@luma/observability`, `@luma/ui`, `@luma/content`.
+
+So `--filter=web` and `--filter=@luma/ui` are both correct as written.
+
+If an app is ever renamed to `@luma/web`, the filter **silently resolves to zero
+packages** — the build succeeds and produces nothing rather than failing. That
+is the dangerous failure mode, because a deploy of the previous artifact looks
+like a deploy of the new one. If you rename an app, switch to the path form
+`--filter=./apps/web`, which matches by directory and is rename-proof, and
+change these together: `apps/web/vercel.json`, `apps/core/railway.json`,
+`apps/mcp/railway.json`, both `Dockerfile`s and `.github/workflows/e2e.yml`.
+
+### Entrypoints
+
+Both Railway services start a compiled entrypoint directly, with no pnpm or
+shell wrapper, so `SIGTERM` reaches the process and the graceful-shutdown
+handler in `src/shutdown.ts` actually runs:
+
+| Service | Start command                 | Default port |
+| ------- | ----------------------------- | ------------ |
+| core    | `node apps/core/dist/main.js` | 8080         |
+| mcp     | `node apps/mcp/dist/main.js`  | 8081         |
+
+Railway injects `PORT`; the defaults above apply only to local and Docker runs.
+If an entrypoint is ever renamed from `main.ts`, update the `startCommand` in
+the matching `railway.json` **and** the `CMD` in the matching `Dockerfile`.
+
+### Containerizing apps/web
+
+`apps/web` builds with `output: 'standalone'` and `outputFileTracingRoot` set to
+the workspace root, so the pnpm-linked `@luma/ui` files get traced into the
+standalone bundle. That only matters if someone containerizes web the way core
+and mcp are containerized — the Vercel path in `vercel.json` does not use it.
 
 ---
 
@@ -193,6 +219,17 @@ Two workflows, both blocking. Neither uses `continue-on-error`.
 Both jobs install with `pnpm install --frozen-lockfile`, so **a stale lockfile
 fails CI**. Run `pnpm install` and commit `pnpm-lock.yaml` with any dependency
 change.
+
+> **Do not reorder the `quality` steps.** `format:check` has to run before
+> `typecheck` and `build`. Both `next typegen` and `next build` regenerate
+> `apps/web/next-env.d.ts`, and Next writes it with double quotes, which
+> prettier rejects under the repo's `singleQuote` config. The file is gitignored
+> so it is absent from a fresh checkout — checking formatting first is the only
+> reason this passes. The durable fix is a `next-env.d.ts` line in the root
+> `.prettierignore`; until that lands, the ordering is load-bearing.
+>
+> The same applies locally: run `pnpm format:check` before `pnpm build`, or it
+> will flag a generated file you did not write.
 
 pnpm is installed by `pnpm/action-setup@v4` with no pinned version — it reads
 `packageManager` from the root `package.json`. Bump the version there and CI

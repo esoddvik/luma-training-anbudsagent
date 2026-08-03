@@ -9,9 +9,4 @@ export {
   type WebEnv,
 } from './env.js';
 export { loadDotEnv } from './load-env.js';
-export {
-  getCoreEnv,
-  getMcpEnv,
-  getWebEnv,
-  resetEnvCacheForTests,
-} from './runtime.js';
+export { getCoreEnv, getMcpEnv, getWebEnv, resetEnvCacheForTests } from './runtime.js';

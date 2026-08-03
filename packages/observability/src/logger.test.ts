@@ -19,9 +19,7 @@ function captureLogger() {
       redact: { paths: [...redactPaths], censor: '[redacted]' },
       hooks: {
         logMethod(args, method) {
-          const scrubbed = args.map((arg) =>
-            typeof arg === 'string' ? scrubSecrets(arg) : arg,
-          );
+          const scrubbed = args.map((arg) => (typeof arg === 'string' ? scrubSecrets(arg) : arg));
           return method.apply(this, scrubbed as Parameters<typeof method>);
         },
       },

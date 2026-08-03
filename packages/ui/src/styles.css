@@ -1,0 +1,461 @@
+/* =============================================================================
+ * Luma Anbudsvarsling — primitive component styles
+ * =============================================================================
+ *
+ * Every declaration here reads from a token in `tokens.css`. No literal colour,
+ * spacing or radius value is allowed in this file — that is what keeps a brand
+ * swap to a single-file change.
+ *
+ * Import order in the consuming app: `tokens.css` first, then this file.
+ * ========================================================================== */
+
+/* --- Focus -----------------------------------------------------------------
+ * Section 16 requires keyboard navigation. Every interactive primitive gets a
+ * visible ring; we never remove the outline without replacing it.
+ * -------------------------------------------------------------------------- */
+.luma-focusable:focus-visible,
+.luma-button:focus-visible,
+.luma-input:focus-visible,
+.luma-textarea:focus-visible,
+.luma-select:focus-visible,
+.luma-checkbox__control:focus-visible,
+.luma-skip-link:focus-visible {
+  outline: var(--luma-focus-ring-width) solid var(--luma-color-focus-ring);
+  outline-offset: var(--luma-focus-ring-offset);
+}
+
+/* --- VisuallyHidden -------------------------------------------------------- */
+.luma-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- SkipLink -------------------------------------------------------------- */
+.luma-skip-link {
+  position: absolute;
+  left: var(--luma-space-xs);
+  top: var(--luma-space-xs);
+  z-index: 100;
+  transform: translateY(-200%);
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--luma-hit-target-min);
+  padding: var(--luma-space-xs) var(--luma-space-md);
+  border-radius: var(--luma-radius-md);
+  background: var(--luma-color-primary);
+  color: var(--luma-color-primary-on);
+  font-weight: var(--luma-font-weight-semibold);
+  text-decoration: none;
+}
+
+.luma-skip-link:focus {
+  transform: translateY(0);
+}
+
+/* --- Button ---------------------------------------------------------------- */
+.luma-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--luma-space-xs);
+  min-height: var(--luma-hit-target-min);
+  min-width: var(--luma-hit-target-min);
+  padding: var(--luma-space-xs) var(--luma-space-lg);
+  border: var(--luma-border-width) solid transparent;
+  border-radius: var(--luma-radius-md);
+  font-family: inherit;
+  font-size: var(--luma-font-size-md);
+  font-weight: var(--luma-font-weight-semibold);
+  line-height: var(--luma-line-height-snug);
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    color 120ms ease;
+}
+
+.luma-button:disabled,
+.luma-button[aria-disabled='true'] {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.luma-button--sm {
+  min-height: var(--luma-hit-target-min);
+  padding: var(--luma-space-2xs) var(--luma-space-md);
+  font-size: var(--luma-font-size-sm);
+}
+
+.luma-button--full {
+  width: 100%;
+}
+
+.luma-button--primary {
+  background: var(--luma-color-primary);
+  color: var(--luma-color-primary-on);
+}
+
+.luma-button--primary:hover:not(:disabled) {
+  background: var(--luma-color-primary-hover);
+}
+
+.luma-button--secondary {
+  background: var(--luma-color-surface);
+  color: var(--luma-color-text);
+  border-color: var(--luma-color-border-strong);
+}
+
+.luma-button--secondary:hover:not(:disabled) {
+  background: var(--luma-color-surface-raised);
+}
+
+.luma-button--ghost {
+  background: transparent;
+  color: var(--luma-color-primary);
+}
+
+.luma-button--ghost:hover:not(:disabled) {
+  background: var(--luma-color-primary-soft);
+}
+
+.luma-button--danger {
+  background: var(--luma-color-danger);
+  color: var(--luma-color-danger-on);
+}
+
+.luma-button--danger:hover:not(:disabled) {
+  background: var(--luma-color-danger-hover);
+}
+
+/* --- Card ------------------------------------------------------------------ */
+.luma-card {
+  display: block;
+  padding: var(--luma-space-lg);
+  border: var(--luma-border-width) solid var(--luma-color-border);
+  border-radius: var(--luma-radius-lg);
+  background: var(--luma-color-surface-raised);
+  color: var(--luma-color-text);
+}
+
+.luma-card--flat {
+  background: var(--luma-color-surface);
+  box-shadow: none;
+}
+
+.luma-card--raised {
+  box-shadow: var(--luma-shadow-md);
+}
+
+.luma-card__title {
+  margin: 0 0 var(--luma-space-xs);
+  font-size: var(--luma-font-size-lg);
+  font-weight: var(--luma-font-weight-semibold);
+  line-height: var(--luma-line-height-snug);
+}
+
+/* --- Badge ------------------------------------------------------------------
+ * `planlagt` marks a planlagt anskaffelse (spec 16: own clearly marked
+ * category). It uses the info tokens so it never looks like a live deadline.
+ * --------------------------------------------------------------------------- */
+.luma-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--luma-space-2xs);
+  padding: var(--luma-space-3xs) var(--luma-space-xs);
+  border: var(--luma-border-width) solid transparent;
+  border-radius: var(--luma-radius-pill);
+  font-size: var(--luma-font-size-xs);
+  font-weight: var(--luma-font-weight-semibold);
+  line-height: var(--luma-line-height-snug);
+  white-space: nowrap;
+}
+
+.luma-badge--neutral {
+  background: var(--luma-color-surface-sunken);
+  color: var(--luma-color-text);
+  border-color: var(--luma-color-border);
+}
+
+.luma-badge--planlagt {
+  background: var(--luma-color-info-soft);
+  color: var(--luma-color-info-soft-text);
+  border-color: var(--luma-color-info);
+}
+
+.luma-badge--treff {
+  background: var(--luma-color-primary-soft);
+  color: var(--luma-color-primary-soft-text);
+  border-color: var(--luma-color-primary);
+}
+
+.luma-badge--success {
+  background: var(--luma-color-success-soft);
+  color: var(--luma-color-success-soft-text);
+  border-color: var(--luma-color-success);
+}
+
+.luma-badge--warning {
+  background: var(--luma-color-warning-soft);
+  color: var(--luma-color-warning-soft-text);
+  border-color: var(--luma-color-warning);
+}
+
+.luma-badge--danger {
+  background: var(--luma-color-danger-soft);
+  color: var(--luma-color-danger-soft-text);
+  border-color: var(--luma-color-danger);
+}
+
+/* --- Alert / Callout -------------------------------------------------------- */
+.luma-alert {
+  display: block;
+  padding: var(--luma-space-md);
+  border: var(--luma-border-width) solid;
+  border-left-width: var(--luma-focus-ring-width);
+  border-radius: var(--luma-radius-md);
+}
+
+.luma-alert__title {
+  margin: 0 0 var(--luma-space-2xs);
+  font-size: var(--luma-font-size-md);
+  font-weight: var(--luma-font-weight-semibold);
+  line-height: var(--luma-line-height-snug);
+}
+
+.luma-alert__body > :last-child {
+  margin-bottom: 0;
+}
+
+.luma-alert--info {
+  background: var(--luma-color-info-soft);
+  color: var(--luma-color-info-soft-text);
+  border-color: var(--luma-color-info);
+}
+
+.luma-alert--success {
+  background: var(--luma-color-success-soft);
+  color: var(--luma-color-success-soft-text);
+  border-color: var(--luma-color-success);
+}
+
+.luma-alert--warning {
+  background: var(--luma-color-warning-soft);
+  color: var(--luma-color-warning-soft-text);
+  border-color: var(--luma-color-warning);
+}
+
+.luma-alert--danger {
+  background: var(--luma-color-danger-soft);
+  color: var(--luma-color-danger-soft-text);
+  border-color: var(--luma-color-danger);
+}
+
+.luma-alert--neutral {
+  background: var(--luma-color-primary-soft);
+  color: var(--luma-color-primary-soft-text);
+  border-color: var(--luma-color-primary);
+}
+
+/* --- Field ------------------------------------------------------------------ */
+.luma-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--luma-space-2xs);
+}
+
+.luma-field__label {
+  font-size: var(--luma-font-size-sm);
+  font-weight: var(--luma-font-weight-semibold);
+  color: var(--luma-color-text);
+}
+
+.luma-field__required {
+  color: var(--luma-color-danger);
+}
+
+.luma-field__hint {
+  font-size: var(--luma-font-size-sm);
+  color: var(--luma-color-text-muted);
+}
+
+.luma-field__error {
+  font-size: var(--luma-font-size-sm);
+  font-weight: var(--luma-font-weight-medium);
+  color: var(--luma-color-danger);
+}
+
+/* --- Text controls ----------------------------------------------------------- */
+.luma-input,
+.luma-textarea,
+.luma-select {
+  display: block;
+  width: 100%;
+  min-height: var(--luma-hit-target-min);
+  padding: var(--luma-space-xs) var(--luma-space-sm);
+  border: var(--luma-border-width) solid var(--luma-color-border);
+  border-radius: var(--luma-radius-md);
+  background: var(--luma-color-surface);
+  color: var(--luma-color-text);
+  font-family: inherit;
+  /* 16px avoids the iOS Safari zoom-on-focus jump. */
+  font-size: var(--luma-font-size-md);
+  line-height: var(--luma-line-height-normal);
+}
+
+.luma-input::placeholder,
+.luma-textarea::placeholder {
+  color: var(--luma-color-text-muted);
+}
+
+.luma-input:disabled,
+.luma-textarea:disabled,
+.luma-select:disabled {
+  background: var(--luma-color-surface-sunken);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.luma-input[aria-invalid='true'],
+.luma-textarea[aria-invalid='true'],
+.luma-select[aria-invalid='true'] {
+  border-color: var(--luma-color-danger);
+  border-width: var(--luma-focus-ring-offset);
+}
+
+.luma-textarea {
+  min-height: calc(var(--luma-hit-target-min) * 2);
+  resize: vertical;
+}
+
+/* --- Checkbox ----------------------------------------------------------------- */
+.luma-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--luma-space-xs);
+  min-height: var(--luma-hit-target-min);
+  padding: var(--luma-space-2xs) 0;
+  cursor: pointer;
+}
+
+.luma-checkbox__control {
+  flex: none;
+  width: var(--luma-space-lg);
+  height: var(--luma-space-lg);
+  margin-top: var(--luma-space-3xs);
+  accent-color: var(--luma-color-primary);
+  cursor: pointer;
+}
+
+.luma-checkbox__text {
+  font-size: var(--luma-font-size-md);
+  line-height: var(--luma-line-height-normal);
+  color: var(--luma-color-text);
+}
+
+/* --- Layout helpers ------------------------------------------------------------ */
+.luma-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--luma-space-md);
+}
+
+.luma-stack[data-gap='xs'] {
+  gap: var(--luma-space-xs);
+}
+.luma-stack[data-gap='sm'] {
+  gap: var(--luma-space-sm);
+}
+.luma-stack[data-gap='lg'] {
+  gap: var(--luma-space-lg);
+}
+.luma-stack[data-gap='xl'] {
+  gap: var(--luma-space-xl);
+}
+.luma-stack[data-gap='2xl'] {
+  gap: var(--luma-space-2xl);
+}
+
+.luma-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--luma-space-sm);
+}
+
+.luma-cluster[data-gap='xs'] {
+  gap: var(--luma-space-xs);
+}
+.luma-cluster[data-gap='md'] {
+  gap: var(--luma-space-md);
+}
+.luma-cluster[data-gap='lg'] {
+  gap: var(--luma-space-lg);
+}
+.luma-cluster[data-justify='between'] {
+  justify-content: space-between;
+}
+.luma-cluster[data-justify='end'] {
+  justify-content: flex-end;
+}
+.luma-cluster[data-align='start'] {
+  align-items: flex-start;
+}
+
+/* --- Promotion block ------------------------------------------------------------
+ * Spec 23.4: promotion must come after the tender content, be clearly visually
+ * separated, and be labelled as Luma content. The distinct warm surface, the
+ * heavy top rule and the always-present label are how that is enforced in CSS.
+ * ------------------------------------------------------------------------------- */
+.luma-promotion {
+  margin-top: var(--luma-space-xl);
+  padding: var(--luma-space-lg);
+  border: var(--luma-border-width) solid var(--luma-color-promotion-border);
+  border-top-width: var(--luma-radius-sm);
+  border-radius: var(--luma-radius-lg);
+  background: var(--luma-color-promotion-surface);
+  color: var(--luma-color-promotion-text);
+}
+
+.luma-promotion__label {
+  display: block;
+  margin-bottom: var(--luma-space-xs);
+  font-size: var(--luma-font-size-xs);
+  font-weight: var(--luma-font-weight-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--luma-color-promotion-muted);
+}
+
+.luma-promotion__title {
+  margin: 0 0 var(--luma-space-xs);
+  font-size: var(--luma-font-size-lg);
+  font-weight: var(--luma-font-weight-semibold);
+  color: var(--luma-color-promotion-text);
+}
+
+.luma-promotion__disclosure {
+  margin: var(--luma-space-sm) 0 0;
+  font-size: var(--luma-font-size-xs);
+  color: var(--luma-color-promotion-muted);
+}
+
+.luma-promotion a {
+  color: var(--luma-color-promotion-accent);
+  font-weight: var(--luma-font-weight-semibold);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .luma-button,
+  .luma-skip-link {
+    transition: none;
+  }
+}

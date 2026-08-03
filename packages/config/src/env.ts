@@ -27,9 +27,7 @@ export function csvList(raw: string | undefined): string[] {
 }
 
 const secret = (name: string) =>
-  z
-    .string()
-    .min(SECRET_MIN_LENGTH, `${name} must be at least ${SECRET_MIN_LENGTH} characters`);
+  z.string().min(SECRET_MIN_LENGTH, `${name} must be at least ${SECRET_MIN_LENGTH} characters`);
 
 const postgresUrl = z
   .string()

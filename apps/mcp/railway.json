@@ -5,7 +5,7 @@
     "buildCommand": "pnpm install --frozen-lockfile && pnpm turbo run build --filter=mcp..."
   },
   "deploy": {
-    "startCommand": "node apps/mcp/dist/index.js",
+    "startCommand": "node apps/mcp/dist/main.js",
     "healthcheckPath": "/health",
     "healthcheckTimeout": 60,
     "restartPolicyType": "ON_FAILURE",

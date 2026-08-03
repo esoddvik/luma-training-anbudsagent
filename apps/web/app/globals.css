@@ -1,0 +1,175 @@
+@import 'tailwindcss';
+
+/* Explicit source roots: the app is a workspace package, so relying on
+ * Tailwind's automatic detection alone is fragile in the monorepo. */
+@source '../app';
+@source '../src';
+
+/* =============================================================================
+ * Tailwind consumes the @luma/ui tokens — it never defines its own colours.
+ *
+ * `--color-*: initial` clears Tailwind's default palette so `bg-slate-500` and
+ * friends simply do not exist. The only colours available to utility classes
+ * are the ones below, and every one of them is a `var(--luma-*)` reference, so
+ * light/dark switching and a future brand swap both keep working.
+ * ========================================================================== */
+@theme inline {
+  --color-*: initial;
+
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-inherit: inherit;
+
+  --color-surface: var(--luma-color-surface);
+  --color-surface-raised: var(--luma-color-surface-raised);
+  --color-surface-sunken: var(--luma-color-surface-sunken);
+  --color-text: var(--luma-color-text);
+  --color-text-muted: var(--luma-color-text-muted);
+  --color-line: var(--luma-color-border);
+  --color-line-strong: var(--luma-color-border-strong);
+  --color-focus: var(--luma-color-focus-ring);
+
+  --color-primary: var(--luma-color-primary);
+  --color-primary-hover: var(--luma-color-primary-hover);
+  --color-primary-on: var(--luma-color-primary-on);
+  --color-primary-soft: var(--luma-color-primary-soft);
+  --color-primary-soft-text: var(--luma-color-primary-soft-text);
+
+  --color-success: var(--luma-color-success);
+  --color-success-soft: var(--luma-color-success-soft);
+  --color-success-soft-text: var(--luma-color-success-soft-text);
+  --color-warning: var(--luma-color-warning);
+  --color-warning-soft: var(--luma-color-warning-soft);
+  --color-warning-soft-text: var(--luma-color-warning-soft-text);
+  --color-danger: var(--luma-color-danger);
+  --color-danger-soft: var(--luma-color-danger-soft);
+  --color-danger-soft-text: var(--luma-color-danger-soft-text);
+  --color-info: var(--luma-color-info);
+  --color-info-soft: var(--luma-color-info-soft);
+  --color-info-soft-text: var(--luma-color-info-soft-text);
+
+  --color-promotion: var(--luma-color-promotion-surface);
+  --color-promotion-line: var(--luma-color-promotion-border);
+  --color-promotion-text: var(--luma-color-promotion-text);
+  --color-promotion-muted: var(--luma-color-promotion-muted);
+  --color-promotion-accent: var(--luma-color-promotion-accent);
+
+  --font-sans: var(--luma-font-sans);
+  --font-mono: var(--luma-font-mono);
+
+  --text-xs: var(--luma-font-size-xs);
+  --text-sm: var(--luma-font-size-sm);
+  --text-base: var(--luma-font-size-md);
+  --text-lg: var(--luma-font-size-lg);
+  --text-xl: var(--luma-font-size-xl);
+  --text-2xl: var(--luma-font-size-2xl);
+  --text-3xl: var(--luma-font-size-3xl);
+  --text-4xl: var(--luma-font-size-4xl);
+
+  --leading-tight: var(--luma-line-height-tight);
+  --leading-snug: var(--luma-line-height-snug);
+  --leading-normal: var(--luma-line-height-normal);
+
+  --spacing-2xs: var(--luma-space-2xs);
+  --spacing-xs: var(--luma-space-xs);
+  --spacing-sm: var(--luma-space-sm);
+  --spacing-md: var(--luma-space-md);
+  --spacing-lg: var(--luma-space-lg);
+  --spacing-xl: var(--luma-space-xl);
+  --spacing-2xl: var(--luma-space-2xl);
+  --spacing-3xl: var(--luma-space-3xl);
+
+  --radius-sm: var(--luma-radius-sm);
+  --radius-md: var(--luma-radius-md);
+  --radius-lg: var(--luma-radius-lg);
+
+  --shadow-sm: var(--luma-shadow-sm);
+  --shadow-md: var(--luma-shadow-md);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    background: var(--luma-color-surface);
+    color: var(--luma-color-text);
+    font-family: var(--luma-font-sans);
+    font-size: var(--luma-font-size-md);
+    line-height: var(--luma-line-height-normal);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    line-height: var(--luma-line-height-tight);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  a {
+    color: var(--luma-color-primary);
+  }
+
+  a:focus-visible,
+  summary:focus-visible,
+  [tabindex]:focus-visible {
+    outline: var(--luma-focus-ring-width) solid var(--luma-color-focus-ring);
+    outline-offset: var(--luma-focus-ring-offset);
+  }
+}
+
+@layer components {
+  /* Page shell. Mobile-first: full-bleed with a comfortable gutter, capped on
+   * wide screens so lines never exceed a readable measure. */
+  .app-shell {
+    width: 100%;
+    max-width: 72rem;
+    margin-inline: auto;
+    padding-inline: var(--luma-space-md);
+  }
+
+  .prose-measure {
+    max-width: var(--luma-measure);
+  }
+
+  .page-heading {
+    margin: 0;
+    font-size: var(--luma-font-size-2xl);
+    font-weight: var(--luma-font-weight-semibold);
+  }
+
+  .section-heading {
+    margin: 0;
+    font-size: var(--luma-font-size-xl);
+    font-weight: var(--luma-font-weight-semibold);
+  }
+
+  .site-nav-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--luma-hit-target-min);
+    padding-inline: var(--luma-space-xs);
+    border-radius: var(--luma-radius-sm);
+    color: var(--luma-color-text);
+    font-weight: var(--luma-font-weight-medium);
+    text-decoration: none;
+  }
+
+  .site-nav-link:hover {
+    text-decoration: underline;
+  }
+
+  .site-nav-link[aria-current='page'] {
+    color: var(--luma-color-primary);
+    text-decoration: underline;
+    text-underline-offset: 0.35em;
+  }
+}

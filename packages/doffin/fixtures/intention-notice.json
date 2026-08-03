@@ -9,17 +9,10 @@
   ],
   "heading": "Intensjonskunngjøring: Elektronisk system for pasientovervåking og klinisk dokumentasjon",
   "description": "Oppdragsgiver Sykehusinnkjøp vil i henhold til anskaffelsesregelverkets § 21-5 kunngjøre at Helse Nord skal anskaffe regional avtale for kjøp av et elektronisk pasientovervåkningssystem og klinisk dokumentasjon. Bakgrunnen er at Oppdragsgiver mener det foreligger hjemmel i anskaffelsesforskriftens § 13-4 til å inngå kontrakt direkte da det bare er en bestemt leverandør som kan oppfylle Helse Nord sitt behov. Se vedlegg i kunngjøringen.",
-  "locationId": [
-    "NO073",
-    "NO072",
-    "NO071"
-  ],
+  "locationId": ["NO073", "NO072", "NO071"],
   "estimatedValue": null,
   "type": "ANNOUNCEMENT_OF_INTENT",
-  "allTypes": [
-    "ANNOUNCEMENT_OF_INTENT",
-    "RESULT"
-  ],
+  "allTypes": ["ANNOUNCEMENT_OF_INTENT", "RESULT"],
   "status": null,
   "issueDate": "2026-07-28T08:30:08Z",
   "deadline": null,

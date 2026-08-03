@@ -36,10 +36,7 @@ export type ShareAccessResult =
  * page and HTTP 410 (spec section 40), not a 404 that would let a caller
  * distinguish a real token from a guessed one.
  */
-export function evaluateShareAccess(
-  share: TenderShare | undefined,
-  now: Date,
-): ShareAccessResult {
+export function evaluateShareAccess(share: TenderShare | undefined, now: Date): ShareAccessResult {
   if (!share) return { kind: 'not_found' };
   if (share.revokedAt) return { kind: 'revoked' };
   if (share.expiresAt <= now) return { kind: 'expired' };

@@ -81,9 +81,6 @@ export function containsPhrase(haystack: string, needle: string): boolean {
  * Returns the phrases from `needles` that occur in `haystack`, preserving the
  * caller's original spelling so it can be shown back as match evidence.
  */
-export function findMatchingPhrases(
-  haystack: string,
-  needles: readonly string[],
-): string[] {
+export function findMatchingPhrases(haystack: string, needles: readonly string[]): string[] {
   return needles.filter((needle) => containsPhrase(haystack, needle));
 }

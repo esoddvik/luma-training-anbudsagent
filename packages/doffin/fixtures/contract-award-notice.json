@@ -9,19 +9,13 @@
   ],
   "heading": "Kontraktstildeling - Kontaktsenterløsning til Digitaliseringsdirektoratet",
   "description": "Digitaliseringsdirektoratet (Digdir) har behov for en kontaktsenterløsning for å motta og besvare brukerhenvendelser på telefon og chat.",
-  "locationId": [
-    "NO071",
-    "NO0A2"
-  ],
+  "locationId": ["NO071", "NO0A2"],
   "estimatedValue": {
     "currencyCode": "NOK",
     "amount": 4000000
   },
   "type": "ANNOUNCEMENT_OF_CONCLUSION_OF_CONTRACT",
-  "allTypes": [
-    "ANNOUNCEMENT_OF_CONCLUSION_OF_CONTRACT",
-    "RESULT"
-  ],
+  "allTypes": ["ANNOUNCEMENT_OF_CONCLUSION_OF_CONTRACT", "RESULT"],
   "status": null,
   "issueDate": "2026-07-31T07:32:02Z",
   "deadline": null,

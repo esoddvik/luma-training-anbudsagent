@@ -9,18 +9,13 @@
   ],
   "heading": "Markedsdialog – Byggentreprise for Renseanlegg for Tønsberg Renseanlegg IKS og Sandefjord kommune",
   "description": "Sandefjord kommune og Tønsberg Renseanlegg IKS inviterer til markedsdialog for byggentreprisene i forbindelse med oppgradering av renseanlegg.Kommunene har fått krav fra Statsforvalter i Vestfold og Telemark om å oppgradere renseanleggene til å fjerne nitrogen. Det er i den forbindelse politisk vedtatt at de to renseanleggene skal oppgraderes.  Prosjektene skal dermed omfatte;Utvidelse og oppgradering av Vallø renseanlegg. Tønsberg Renseanlegg IKS vil være oppdragsgiver / byggherre for dette prosjektetUtvidelse og oppgradering av Sandefjord renseanlegg på Enga. Sandefjord kommune vil være oppdragsgiver / byggherre for dette prosjektet.Denne markedsdialogen gjennomføres  for å få bedre innsikt i markedet før en eventuell anskaffelse.",
-  "locationId": [
-    "NO093"
-  ],
+  "locationId": ["NO093"],
   "estimatedValue": {
     "currencyCode": "NOK",
     "amount": 851000000
   },
   "type": "ADVISORY_NOTICE",
-  "allTypes": [
-    "PLANNING",
-    "ADVISORY_NOTICE"
-  ],
+  "allTypes": ["PLANNING", "ADVISORY_NOTICE"],
   "status": null,
   "issueDate": "2026-07-31T13:33:21Z",
   "deadline": null,

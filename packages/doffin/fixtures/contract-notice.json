@@ -9,28 +9,20 @@
   ],
   "heading": "26-019 Utlevering via lokale utleveringssteder",
   "description": "Det utlyses med dette en konkurranse på kjøp av tjenesten «utlevering via lokale utleveringssteder» som en landsdekkende tjeneste fra en eller flere leverandører. Det kan gis tilbud på hele landet. Hovedvekt ved evalueringen skal være de områdene/byene gitt i prisskjema.",
-  "locationId": [
-    "anyw"
-  ],
+  "locationId": ["anyw"],
   "estimatedValue": {
     "currencyCode": "NOK",
     "amount": 40000000
   },
   "type": "ANNOUNCEMENT_OF_COMPETITION",
-  "allTypes": [
-    "ANNOUNCEMENT_OF_COMPETITION",
-    "COMPETITION"
-  ],
+  "allTypes": ["ANNOUNCEMENT_OF_COMPETITION", "COMPETITION"],
   "status": "ACTIVE",
   "issueDate": "2026-07-30T12:36:32Z",
   "deadline": "2026-09-01T10:00:00Z",
   "publicationDate": "2026-08-03",
   "receivedTenders": null,
   "allReceivedTenders": null,
-  "cpvCodes": [
-    "60000000",
-    "60100000"
-  ],
+  "cpvCodes": ["60000000", "60100000"],
   "limitedDataFlag": null,
   "doffinClassicUrl": null,
   "lots": [

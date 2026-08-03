@@ -218,8 +218,22 @@ const QUEUE_STATUS_TIMEOUT_MS = 5_000;
  * `services/admin.ts` already carries `lastSuccessfulRunAt` and `lastRun`
  * beside the `queues` field fed from here. An alert reads both off one
  * response — depth for "is anything draining", ingest recency for "is
- * anything being produced". Neither field alone separates an idle Sunday from
- * a dead estate; §12's hourly sync is what makes the pair conclusive.
+ * anything being produced".
+ *
+ * **What the recency threshold is anchored to, and what it is not.** An
+ * earlier version of this comment said "§12's hourly sync". That was wrong,
+ * and the way it was wrong is the point: the spec states no sync cadence at
+ * all. Grepping it for frequency wording returns exactly one line, §38's
+ * «Digestjobb kan kjøre hvert 15. minutt», and nothing about Doffin sync. The
+ * hourly figure lives in `CRON.doffinSync` (`'0 * * * *'` in `jobs/names.ts`),
+ * justified in a code comment by Doffin's publication pattern and rate limit.
+ *
+ * So it is an engineering decision, not a requirement — which makes the
+ * coupling *looser* and more dangerous than a spec constraint would be. A
+ * future change to `CRON.doffinSync` violates nothing stated, passes every
+ * test, and silently invalidates whatever threshold the alert was tuned to.
+ * There is no sentence to cite and no test that would go red. Anyone moving
+ * that constant has to move the threshold by hand.
  *
  * Bounded rather than left to hang: a caller rendering "unavailable" is more
  * use to an operator than a dashboard that never paints. It throws on a

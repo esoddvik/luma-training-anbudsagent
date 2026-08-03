@@ -34,7 +34,9 @@ import { loadTendersByIds } from './tender-reads.js';
  * that happens to be adequate for a daily window. An immediate alert has no
  * period, so this reads the account's real creation date. A user who has been
  * registered a week therefore sees the same ladder level in both emails, which
- * is what spec §23.3 actually asks for.
+ * is what spec §23.1's promotion ladder actually asks for. (§23.3 is
+ * *permitted placement*, which is a different rule and the one this comment
+ * used to cite by mistake.)
  */
 
 export interface SendImmediateOptions {

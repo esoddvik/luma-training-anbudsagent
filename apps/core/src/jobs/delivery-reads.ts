@@ -132,7 +132,7 @@ export async function loadImmediateCandidate(
   };
 }
 
-/** When the account was created, for the promotion ladder (spec §23.3). */
+/** When the account was created, for the promotion ladder (spec §23.1). */
 export async function accountCreatedAt(db: Database, userId: string): Promise<Date | null> {
   const rows = await db
     .select({ createdAt: users.createdAt })

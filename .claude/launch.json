@@ -1,0 +1,24 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "web",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "web", "dev"],
+      "port": 3000,
+      "autoPort": true
+    },
+    {
+      "name": "core",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "core", "dev"],
+      "port": 8080
+    },
+    {
+      "name": "mcp",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "mcp", "dev"],
+      "port": 8081
+    }
+  ]
+}

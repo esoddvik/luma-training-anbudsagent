@@ -154,6 +154,37 @@ export interface QueueDepth {
  * The dead-letter queue is included, and its `ready` count is the number that
  * matters operationally: those are jobs that exhausted their retries and are
  * waiting for a human. `redrive` puts them back.
+ *
+ * **These numbers are a cache, and the thing that refreshes it is the thing
+ * that can fail.** Read the chain before building an alert on them:
+ * `getQueues` selects `queued_count`, `ready_count`, `active_count` and
+ * `failed_count` as *columns on `pgboss.queue`*, not as an aggregate over the
+ * job table. Those columns are written only by pg-boss's `cacheQueueStats`,
+ * which runs from the monitor loop, which runs from the supervisor, which
+ * `PgBoss.start()` starts **only when `supervise` is true** — and `supervise`
+ * is `worker` here. Refresh is roughly every 60 seconds
+ * (`monitorIntervalSeconds`, `superviseIntervalSeconds`).
+ *
+ * Three consequences, in increasing order of how much they would hurt:
+ *
+ * 1. A reading can be up to about a minute old. Fine for a dashboard.
+ * 2. A `WORKER_ENABLED=false` replica still reports truthfully, because the
+ *    cache lives in the shared database and some worker refreshes it. Queue
+ *    depth is a property of the database, not of the process reading it.
+ * 3. **If no instance is a worker, these numbers freeze silently.** Nothing
+ *    refreshes them, every field keeps its last value, and a queue that has
+ *    never been monitored reads as all-zero — indistinguishable from empty and
+ *    healthy. So spec §47's "stalled queue" alert must not be built on these
+ *    counts alone: the failure it needs to detect is the same failure that
+ *    stops the metric updating, and the alert would sit quiet through exactly
+ *    the outage it exists for. Anchor that alert on evidence produced by the
+ *    work itself — `ingestion_runs` advancing, `notification_deliveries`
+ *    being written — which is what the runbook already tells the operator to
+ *    watch.
+ *
+ * `QueueResult.updatedOn` is not a freshness stamp for any of this; it is when
+ * the queue's *configuration* changed. The stats timestamp is `monitor_on`,
+ * which `getQueues` does not return.
  */
 export async function queueStatus(boss: PgBoss): Promise<QueueDepth[]> {
   const names: string[] = [...ALL_JOB_NAMES, DEAD_LETTER_QUEUE];

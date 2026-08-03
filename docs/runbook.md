@@ -56,6 +56,19 @@ The scheduler ticks every fifteen minutes and sends to each profile at its own l
 
 **A crash between claiming and sending loses one digest.** This is the intended trade: the alternative is sending two. The tenders stay unsent and appear in the next digest, so nothing is lost permanently.
 
+## Queue depth, and why you must not alert on it
+
+The admin dashboard shows ready, active and failed counts per queue. **Do not build the stalled-queue alert on those numbers.** They are read from cached columns on pg-boss's own `queue` table, and that cache is written by a monitor loop that runs only on an instance configured as a worker.
+
+The consequence is precise and bad. If no instance is running as a worker, the counts stop updating and keep whatever value they last had. A queue that was never monitored reads as all zeros, which is indistinguishable from a queue that is empty and healthy. So the failure that the alert exists to catch — no worker processing anything — is the same failure that stops the metric moving. An alert anchored on it would sit quiet through exactly the outage it was written for.
+
+Two further traps in the same area:
+
+- `updatedOn` on a queue record looks like a freshness stamp and is not. It records when the queue's *configuration* last changed, so it will happily render a recent-looking timestamp beside counts that are hours stale. The real statistics timestamp is `monitor_on`, which the API used here does not return.
+- The numbers are a shared-database property, not a per-process one, so a producer-only replica reports the same values as a worker. That is correct and deliberate — the caveat above is about staleness, not about which instance is asking.
+
+**Anchor the alert on evidence the work itself produces**, not on a metric about the work: `ingestion_runs` gaining a row on schedule, `notification_deliveries` being written when a digest hour passes, the newest tender's `last_synced_at` advancing. Those come from the jobs actually running, so they cannot go quiet and healthy at the same time. They are also what the sections above already tell you to check by hand.
+
 ## Email
 
 Three Postmark streams: `transactional`, `tender-notifications`, `luma-marketing`. The mapping from template to stream is enforced by types, so a magic link cannot go out on the marketing stream.

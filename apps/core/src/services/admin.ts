@@ -39,10 +39,32 @@ export interface IngestStatusReport {
   readonly lastSuccessfulRunAt: Date | null;
   readonly checkpoint: { lastPublicationDate: string | null; overlapDays: number } | null;
   /**
-   * Queue depth per job (spec §45 "køstatus", §38). `null` — not `[]` — when
-   * this process runs no worker, so the dashboard can say "unavailable"
-   * instead of drawing an all-zero chart that looks like a healthy idle
-   * system.
+   * Queue depth per job (spec §45 "køstatus", §38).
+   *
+   * `null` — not `[]` — when no reader is wired or the read threw, so the
+   * dashboard can say "unavailable" instead of drawing an all-zero chart that
+   * looks like a healthy idle system.
+   *
+   * **These counts are a cache, and it is refreshed only by a supervising
+   * worker.** `boss.getQueues` reads `ready_count` / `active_count` /
+   * `failed_count` as columns on `pgboss.queue`, written by pg-boss's monitor
+   * on a ~60 s interval that runs only when `supervise` is true. With a worker
+   * up they are truthful to within a minute. With *no* worker anywhere they
+   * freeze at their last value, and a queue that has never been monitored
+   * reads as all-zero — which is indistinguishable from empty and healthy.
+   *
+   * Two consequences, both deliberate:
+   *
+   * - Spec §47's stalled-queue alert must **not** be built on these numbers.
+   *   The condition it needs to detect (nothing is processing) is the same
+   *   condition that stops the metric updating, so it would stay quiet through
+   *   the outage it exists for. Anchor it on evidence the work itself leaves
+   *   behind — `ingestion_runs` advancing, `notification_deliveries` being
+   *   written — which is what the runbook already tells an operator to watch.
+   * - No "as of" timestamp is rendered. `QueueResult.updatedOn` is when the
+   *   queue's *configuration* last changed, not when the counts were computed,
+   *   so showing it would put a plausible recent time next to stale numbers.
+   *   The honest stamp is `monitor_on`, which `getQueues` does not return.
    */
   readonly queues:
     readonly { name: string; ready: number; active: number; failed: number }[] | null;

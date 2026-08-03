@@ -247,6 +247,9 @@ importers:
       '@luma/domain':
         specifier: workspace:*
         version: link:../../packages/domain
+      '@luma/email':
+        specifier: workspace:*
+        version: link:../../packages/email
       '@luma/matching':
         specifier: workspace:*
         version: link:../../packages/matching

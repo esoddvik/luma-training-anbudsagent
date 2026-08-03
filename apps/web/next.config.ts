@@ -19,7 +19,10 @@ const nextConfig: NextConfig = {
   // package root: the root re-exports the migration runner, which resolves its
   // SQL folder with `new URL('../drizzle', import.meta.url)`, and a bundler
   // reads that as an import of a module called `../drizzle` and fails.
-  serverExternalPackages: ['postgres'],
+  // `postmark` is the Postmark SDK, used by the login form to send the magic
+  // link. Like `postgres` it opens sockets and reads no bundler-visible
+  // module graph, so it is required at runtime rather than bundled.
+  serverExternalPackages: ['postgres', 'postmark'],
   poweredByHeader: false,
   outputFileTracingRoot: workspaceRoot,
 };

@@ -1,4 +1,4 @@
-import { expect, shareToken, test } from './support';
+import { expect, profileKeyword, profileName, shareToken, sharerEmail, test } from './support';
 
 /**
  * The public shared view (spec section 17, launch blocker 51.11).
@@ -7,11 +7,15 @@ import { expect, shareToken, test } from './support';
  * those assertions run anywhere. The rest needs `E2E_SHARE_TOKEN` from a seeded
  * environment, along with the values the seed used for the sharer's e-mail and
  * the profile's keyword, so the page can be searched for them.
+ *
+ * Those three come from `./support` rather than from `process.env` here, so
+ * that the CI guard which insists they are set has one list to check. Reading
+ * them directly would put them outside it.
  */
 
-const SHARER_EMAIL = process.env['E2E_SHARER_EMAIL'];
-const PROFILE_KEYWORD = process.env['E2E_PROFILE_KEYWORD'];
-const PROFILE_NAME = process.env['E2E_PROFILE_NAME'];
+const SHARER_EMAIL = sharerEmail;
+const PROFILE_KEYWORD = profileKeyword;
+const PROFILE_NAME = profileName;
 
 test.describe('delt-visning uten gyldig lenke', () => {
   test('viser en nøytral norsk side for et ukjent token', async ({ page }) => {

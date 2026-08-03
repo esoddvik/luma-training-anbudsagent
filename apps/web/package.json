@@ -17,6 +17,7 @@
     "@luma/content": "workspace:*",
     "@luma/db": "workspace:*",
     "@luma/domain": "workspace:*",
+    "@luma/email": "workspace:*",
     "@luma/matching": "workspace:*",
     "@luma/ui": "workspace:*",
     "drizzle-orm": "catalog:",

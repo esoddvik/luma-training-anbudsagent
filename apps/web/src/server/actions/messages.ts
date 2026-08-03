@@ -1,3 +1,5 @@
+import { MAGIC_LINK_GENERIC_RESPONSE_NB } from '@luma/auth';
+
 /**
  * Confirmation and error messages for server actions.
  *
@@ -55,6 +57,19 @@ export const ACTION_MESSAGES_NB = {
   'samtykke-trukket': {
     tone: 'success',
     text: 'Markedsføringssamtykket er trukket tilbake. Anbudsvarslene fortsetter som før.',
+  },
+  /**
+   * The answer to every login-link request that was not rate limited.
+   *
+   * The text is `MAGIC_LINK_GENERIC_RESPONSE_NB` from `@luma/auth`, imported
+   * rather than retyped: spec section 10's defence against account enumeration
+   * only works if the sentence is the same one whether or not the address is
+   * registered, and a copy in this file is a copy that can drift.
+   */
+  'lenke-sendt': { tone: 'success', text: MAGIC_LINK_GENERIC_RESPONSE_NB },
+  'for-mange-lenker': {
+    tone: 'warning',
+    text: 'Vi har allerede sendt flere innloggingslenker til denne adressen. Vent litt før du prøver igjen.',
   },
   ugyldig: {
     tone: 'danger',

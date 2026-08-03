@@ -1,8 +1,11 @@
 import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
-import Link from 'next/link';
-import { Cluster } from '@luma/ui';
+import { Badge, Cluster } from '@luma/ui';
 import { requireAdmin } from '@/server/session';
+// Across the route-group boundary on purpose: `(app)` and `(admin)` are two
+// shells around the same tab bar, and "which tab is current" is a rule that
+// should not exist twice. See the note in the component.
+import { NavTabs } from '../(app)/_components/nav-tabs';
 
 /**
  * Layout for internal administration.
@@ -39,22 +42,14 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   await requireAdmin();
 
   return (
-    <div className="flex flex-col gap-lg">
-      <p className="m-0 text-sm font-semibold uppercase tracking-wide text-text-muted">
-        Internt administrasjonsgrensesnitt
-      </p>
-      <Cluster
-        as="nav"
-        gap="xs"
-        aria-label="Administrasjonsmeny"
-        className="border-b border-line pb-xs"
-      >
-        {NAV_ITEMS.map((item) => (
-          <Link key={item.href} href={item.href} className="site-nav-link">
-            {item.label}
-          </Link>
-        ))}
+    <div className="flex flex-col gap-xl">
+      {/* The marker is a badge rather than a line of muted text because the one
+          thing a person must never be unsure about on these pages is whether
+          they are looking at the internal tool. */}
+      <Cluster gap="xs">
+        <Badge variant="warning">Internt administrasjonsgrensesnitt</Badge>
       </Cluster>
+      <NavTabs items={NAV_ITEMS} label="Administrasjonsmeny" />
       {children}
     </div>
   );

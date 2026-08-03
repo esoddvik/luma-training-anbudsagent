@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react';
-import Link from 'next/link';
-import { Cluster } from '@luma/ui';
 import { requireUser } from '@/server/session';
+import { NavTabs } from './_components/nav-tabs';
 
 /**
  * Layout for the authenticated part of the service.
@@ -33,14 +32,8 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   await requireUser();
 
   return (
-    <div className="flex flex-col gap-lg">
-      <Cluster as="nav" gap="xs" aria-label="Tjenestemeny" className="border-b border-line pb-xs">
-        {NAV_ITEMS.map((item) => (
-          <Link key={item.href} href={item.href} className="site-nav-link">
-            {item.label}
-          </Link>
-        ))}
-      </Cluster>
+    <div className="flex flex-col gap-xl">
+      <NavTabs items={NAV_ITEMS} label="Tjenestemeny" />
       {children}
     </div>
   );

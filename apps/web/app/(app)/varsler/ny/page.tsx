@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Badge, Card, Cluster, Stack } from '@luma/ui';
+import { Badge, buttonClassName, Card, Cluster, Stack } from '@luma/ui';
 import { INDUSTRY_TEMPLATE_SEEDS } from '@luma/content';
 import { ActionMessage } from '@/components/action-message';
 import { ProfileForm } from '@/components/profile-form';
@@ -8,6 +8,7 @@ import { createProfileAction } from '@/server/actions/profile-actions';
 import { getWebDb } from '@/server/db';
 import { listIndustryTemplates, type IndustryTemplateOption } from '@/server/profiles';
 import { requireUser } from '@/server/session';
+import { PageHeader } from '../../_components/page-header';
 
 export const metadata: Metadata = {
   title: 'Ny varslingsprofil',
@@ -47,14 +48,17 @@ export default async function Page({ searchParams }: PageProps) {
 
   return (
     <Stack gap="lg">
-      <Stack gap="xs">
-        <h1 className="page-heading">Ny varslingsprofil</h1>
-        <p className="prose-measure m-0 text-text-muted">
-          Velg bransjemalen som ligner mest på virksomheten din, så fyller vi ut CPV-koder og
-          søkeord for deg. Du kan endre alt etterpå. Vil du heller starte blankt, hopper du rett ned
-          til skjemaet.
-        </p>
-      </Stack>
+      <PageHeader
+        eyebrow="Varslingsprofiler"
+        title="Ny varslingsprofil"
+        lede={
+          <p className="m-0">
+            Velg bransjemalen som ligner mest på virksomheten din, så fyller vi ut CPV-koder og
+            søkeord for deg. Du kan endre alt etterpå. Vil du heller starte blankt, hopper du rett
+            ned til skjemaet.
+          </p>
+        }
+      />
 
       <ActionMessage code={params['melding']} />
 
@@ -63,12 +67,21 @@ export default async function Page({ searchParams }: PageProps) {
           <h2 id="maler-overskrift" className="section-heading">
             Bransjemaler
           </h2>
-          <Stack as="ul" gap="sm" className="m-0 list-none p-0">
+          {/* A grid rather than a column: these are options to compare, and six
+              full-width bands make the reader scroll past the choice instead of
+              seeing it. One column on a phone, two from the small breakpoint. */}
+          <ul className="m-0 grid list-none grid-cols-1 gap-md p-0 sm:grid-cols-2">
             {options.map((template) => {
               const active = template.slug === selectedSlug;
               return (
-                <Card as="li" key={template.slug} tone={active ? 'raised' : 'flat'}>
-                  <Stack gap="xs">
+                <Card
+                  as="li"
+                  key={template.slug}
+                  tone={active ? 'raised' : 'secondary'}
+                  interactive
+                  className="relative"
+                >
+                  <Stack gap="xs" className="h-full">
                     <Cluster gap="xs">
                       <h3 className="m-0 text-base font-semibold">{template.name}</h3>
                       {active ? <Badge variant="success">Valgt</Badge> : null}
@@ -78,8 +91,22 @@ export default async function Page({ searchParams }: PageProps) {
                       {template.cpvInclude.length} CPV-koder og {template.keywordsInclude.length}{' '}
                       søkeord fylles ut.
                     </p>
-                    <p className="m-0">
-                      <Link href={`/varsler/ny?mal=${template.slug}`}>
+                    <p className="m-0 mt-auto pt-xs">
+                      {/* The `::after` overlay makes the whole card the click
+                          target, which is what `interactive` promises: the card
+                          lifts under the pointer, so clicking the card body has
+                          to do something. The button keeps the accessible name
+                          and the focus ring, so keyboard and screen-reader users
+                          get one control per template rather than a card-sized
+                          link that reads out the whole card. */}
+                      <Link
+                        href={`/varsler/ny?mal=${template.slug}`}
+                        className={buttonClassName({
+                          variant: active ? 'ghost' : 'secondary',
+                          size: 'sm',
+                          className: "after:absolute after:inset-0 after:content-['']",
+                        })}
+                      >
                         {active ? 'Bruk denne malen på nytt' : `Bruk «${template.name}»`}
                       </Link>
                     </p>
@@ -87,7 +114,7 @@ export default async function Page({ searchParams }: PageProps) {
                 </Card>
               );
             })}
-          </Stack>
+          </ul>
           {selectedSlug !== undefined && selected === undefined ? (
             <p className="m-0 text-sm text-text-muted">
               Fant ikke bransjemalen du ba om. Skjemaet under er tomt, og du kan fylle det ut selv.

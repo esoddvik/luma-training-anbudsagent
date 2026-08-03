@@ -38,6 +38,17 @@ export interface TenderCardProps {
   readonly cpvCodes?: readonly string[];
   readonly state?: UserTenderState;
   readonly now: Date;
+  /**
+   * Heading level for the tender title.
+   *
+   * Defaults to 3, which is right wherever the list sits under a section
+   * heading. Pages that render a list directly under their `h1` must pass 2,
+   * or the document skips a level — which is a WCAG 1.3.1 failure and, more
+   * practically, makes a screen-reader user think they missed a section.
+   * It is a prop rather than a guess because the correct level is a property
+   * of the page, and this component cannot see the page.
+   */
+  readonly headingLevel?: 2 | 3;
   /** Rendered under the card body; the pages pass their save/dismiss forms. */
   readonly children?: ReactNode;
 }
@@ -51,8 +62,10 @@ export function TenderCard({
   cpvCodes = [],
   state,
   now,
+  headingLevel = 3,
   children,
 }: TenderCardProps) {
+  const Heading = headingLevel === 2 ? 'h2' : 'h3';
   const planned = tender.noticeCategory === 'planned';
   const deadline = describeDeadline({
     deadlineAt: tender.deadlineAt,
@@ -78,9 +91,9 @@ export function TenderCard({
           )}
         </Cluster>
 
-        <h3 className="m-0 text-lg font-semibold">
+        <Heading className="m-0 text-lg font-semibold">
           <Link href={`/anbud/${tender.id}`}>{tender.title}</Link>
-        </h3>
+        </Heading>
 
         <p className="m-0 text-sm text-text-muted">{tender.buyerName}</p>
 
@@ -141,10 +154,12 @@ export function TenderCard({
 export function MatchCard({
   match,
   now,
+  headingLevel,
   children,
 }: {
   readonly match: MatchListItem;
   readonly now: Date;
+  readonly headingLevel?: 2 | 3;
   readonly children?: ReactNode;
 }) {
   return (
@@ -157,6 +172,7 @@ export function MatchCard({
       cpvCodes={match.cpvCodes}
       state={match.state}
       now={now}
+      headingLevel={headingLevel}
     >
       {children}
     </TenderCard>

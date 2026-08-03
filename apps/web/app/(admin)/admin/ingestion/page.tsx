@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Stack } from '@luma/ui';
+import { PlaceholderPage } from '../../_components/placeholder-page';
 
 export const metadata: Metadata = {
   title: 'Doffin-innhenting',
@@ -7,15 +7,10 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <Stack gap="lg">
-      <h1 className="page-heading">Doffin-innhenting</h1>
-      <Stack gap="md" className="prose-measure">
-        <p className="m-0">
-          Status for innhenting fra Doffin: antall hentet, opprettet, oppdatert og feilet per
-          kjøring, med mulighet for å kjøre innhenting på nytt.
-        </p>
-        <p className="m-0">Kobles til ingest-jobbene.</p>
-      </Stack>
-    </Stack>
+    <PlaceholderPage
+      title="Doffin-innhenting"
+      lede="Status for innhenting fra Doffin: antall hentet, opprettet, oppdatert og feilet per kjøring, med mulighet for å kjøre innhenting på nytt."
+      note="Kobles til ingest-jobbene."
+    />
   );
 }

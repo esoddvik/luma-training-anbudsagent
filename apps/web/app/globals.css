@@ -35,6 +35,23 @@
   --color-primary-soft: var(--luma-color-primary-soft);
   --color-primary-soft-text: var(--luma-color-primary-soft-text);
 
+  /* Luma Training's signature #FF6B35, for decorative accents that have no
+   * text on them: thin rules, dividers, icon chips, gradient stops.
+   *
+   * `bg-brand` may only ever be paired with `text-brand-on`. White on this
+   * orange is 2.8:1 and fails AA; `--luma-color-brand-on` is the one pairing
+   * `@luma/ui`'s contrast suite covers.
+   *
+   * READ THIS BEFORE USING IT: `text-brand` is a bug, always. It is a
+   * mid-weight orange used as a *foreground*, and on every surface this app
+   * renders it fails AA outright — use `text-primary`, which is the same hue
+   * darkened until it passes. The rule cannot be enforced mechanically:
+   * Tailwind's `--color-*` namespace generates the whole family from one
+   * declaration, so naming `brand` here necessarily mints `text-brand` and
+   * `border-brand` alongside `bg-brand`. Only review catches the first one. */
+  --color-brand: var(--luma-color-brand);
+  --color-brand-on: var(--luma-color-brand-on);
+
   --color-success: var(--luma-color-success);
   --color-success-soft: var(--luma-color-success-soft);
   --color-success-soft-text: var(--luma-color-success-soft-text);

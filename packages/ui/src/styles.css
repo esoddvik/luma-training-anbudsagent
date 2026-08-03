@@ -182,10 +182,33 @@
 
 .luma-card--raised {
   box-shadow: var(--luma-shadow-md);
+}
+
+/* Elevation-on-hover is opt-in, and deliberately not tied to a tone.
+ *
+ * The reference pairs `shadow-soft hover:shadow-hover` on cards that are
+ * themselves the click target. A tone says how a card sits in the visual
+ * hierarchy; it says nothing about whether the card does anything. Attaching
+ * the hover response to `--raised` gave a static `<dl>` of key facts the same
+ * hover behaviour as a selectable template card — a promise of interactivity
+ * the element cannot keep, and one a pointer user reads before they try. */
+.luma-card--interactive {
   transition: box-shadow 160ms ease;
 }
 
-.luma-card--raised:hover {
+/* The keyboard gets the same card-level signal as the pointer.
+ *
+ * On a stretched-link card the focus ring sits on the real control, which may
+ * be a small button inside a much larger card — correct, because the ring must
+ * mark what is actually focusable. But then a pointer user sees the whole card
+ * respond and a keyboard user sees only the button, which is the same
+ * information delivered twice as weakly. `:focus-within` raises the card too,
+ * alongside the ring rather than instead of it.
+ *
+ * Both states must keep the same elevation; `tokens.test.ts` compares the two
+ * declarations rather than trusting that they were written together. */
+.luma-card--interactive:hover,
+.luma-card--interactive:focus-within {
   box-shadow: var(--luma-shadow-hover);
 }
 
@@ -499,7 +522,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .luma-button,
-  .luma-card--raised,
+  .luma-card--interactive,
   .luma-skip-link {
     transition: none;
   }

@@ -7,6 +7,7 @@ import { getWebDb } from '@/server/db';
 import { formatDateTime, isoDate } from '@/server/format';
 import { requireUser } from '@/server/session';
 import { listOwnShares } from '@/server/shares';
+import { PageHeader } from '../_components/page-header';
 
 export const metadata: Metadata = {
   title: 'Delinger',
@@ -44,13 +45,15 @@ export default async function Page({ searchParams }: PageProps) {
 
   return (
     <Stack gap="lg">
-      <Stack gap="xs">
-        <h1 className="page-heading">Delinger</h1>
-        <p className="prose-measure m-0 text-text-muted">
-          Delingslenker lar en kollega åpne et anbud uten å logge inn. Lenken viser aldri hvem som
-          delte den, hvilken varslingsprofil den kom fra eller hvilke kriterier profilen bruker.
-        </p>
-      </Stack>
+      <PageHeader
+        title="Delinger"
+        lede={
+          <p className="m-0">
+            Delingslenker lar en kollega åpne et anbud uten å logge inn. Lenken viser aldri hvem som
+            delte den, hvilken varslingsprofil den kom fra eller hvilke kriterier profilen bruker.
+          </p>
+        }
+      />
 
       <ActionMessage code={params['melding']} />
 
@@ -70,9 +73,9 @@ export default async function Page({ searchParams }: PageProps) {
           ) : (
             <Stack as="ul" gap="md" className="m-0 list-none p-0">
               {active.map((share) => (
-                <Card as="li" key={share.id}>
+                <Card as="li" key={share.id} tone="raised">
                   <Stack gap="sm">
-                    <h3 className="m-0 text-lg font-semibold">
+                    <h3 className="m-0 text-lg font-semibold leading-snug">
                       <Link href={`/anbud/${share.tenderId}`}>{share.tenderTitle}</Link>
                     </h3>
                     <p className="m-0 text-sm text-text-muted">{share.buyerName}</p>
@@ -105,7 +108,7 @@ export default async function Page({ searchParams }: PageProps) {
             </h2>
             <Stack as="ul" gap="sm" className="m-0 list-none p-0">
               {inactive.map((share) => (
-                <Card as="li" key={share.id} tone="flat">
+                <Card as="li" key={share.id} tone="secondary">
                   <Cluster gap="sm" justify="between">
                     <span>
                       <Link href={`/anbud/${share.tenderId}`}>{share.tenderTitle}</Link>

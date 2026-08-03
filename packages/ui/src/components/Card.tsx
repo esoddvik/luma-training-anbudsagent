@@ -17,12 +17,25 @@ export interface CardProps extends HTMLAttributes<HTMLElement> {
   readonly titleLevel?: 2 | 3 | 4;
   /** Element to render. `article` and `section` are the usual choices. */
   readonly as?: 'div' | 'article' | 'section' | 'li';
+  /**
+   * Set this only when the whole card is the click target — a selectable
+   * option, or a card wrapping a single link. It adds the hover elevation Luma
+   * uses on clickable cards.
+   *
+   * It is separate from `tone` on purpose: a tone describes where the card sits
+   * in the hierarchy, not whether it does anything, and a static card that
+   * reacts to hover promises an interaction it cannot deliver. This does not
+   * make the card focusable or clickable by itself — the real control still has
+   * to be a link or a button.
+   */
+  readonly interactive?: boolean;
 }
 
 export function Card({
   tone = 'default',
   heading,
   titleLevel = 3,
+  interactive = false,
   as: Element = 'div',
   className,
   children,
@@ -38,6 +51,7 @@ export function Card({
         tone === 'flat' && 'luma-card--flat',
         tone === 'raised' && 'luma-card--raised',
         tone === 'secondary' && 'luma-card--secondary',
+        interactive && 'luma-card--interactive',
         className,
       )}
     >

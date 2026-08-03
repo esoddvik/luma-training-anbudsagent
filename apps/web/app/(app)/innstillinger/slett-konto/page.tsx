@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Alert, Button, Card, Field, Input, Stack } from '@luma/ui';
+import { Alert, Button, buttonClassName, Card, Field, Input, Stack } from '@luma/ui';
 import { deleteAccountAction } from '@/server/actions/settings-actions';
 import { requireUser } from '@/server/session';
 import { privacyPolicyUrl } from '@/lib/legal';
+import { PageHeader } from '../../_components/page-header';
 
 export const metadata: Metadata = {
   title: 'Slett kontoen',
@@ -33,12 +34,15 @@ export default async function Page({ searchParams }: PageProps) {
 
   return (
     <Stack gap="lg">
-      <Stack gap="xs">
-        <h1 className="page-heading">Slett kontoen</h1>
-        <p className="m-0 text-text-muted">
-          <Link href="/innstillinger">Tilbake til innstillinger</Link>
-        </p>
-      </Stack>
+      <PageHeader
+        eyebrow="Innstillinger"
+        title="Slett kontoen"
+        actions={
+          <Link href="/innstillinger" className={buttonClassName({ variant: 'secondary' })}>
+            Tilbake til innstillinger
+          </Link>
+        }
+      />
 
       {failed ? (
         <Alert tone="danger" live="assertive" heading="Bekreftelsen stemte ikke" titleLevel={2}>

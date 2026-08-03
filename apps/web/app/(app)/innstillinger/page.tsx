@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Button, Card, Checkbox, Cluster, Stack } from '@luma/ui';
+import { Button, buttonClassName, Card, Checkbox, Cluster, Stack } from '@luma/ui';
 import { MARKETING_CONSENT_TEXT_NB, PROMOTION_SETTING_TEXT_NB } from '@luma/domain';
 import { ActionMessage } from '@/components/action-message';
 import {
@@ -12,6 +12,7 @@ import { formatDateTime, isoDate } from '@/server/format';
 import { requireUser } from '@/server/session';
 import { getAccountSettings } from '@/server/settings';
 import { privacyPolicyUrl } from '@/lib/legal';
+import { PageHeader } from '../_components/page-header';
 
 export const metadata: Metadata = {
   title: 'Innstillinger',
@@ -50,10 +51,7 @@ export default async function Page({ searchParams }: PageProps) {
 
   return (
     <Stack gap="lg">
-      <Stack gap="xs">
-        <h1 className="page-heading">Innstillinger</h1>
-        <p className="m-0 text-text-muted">Innlogget som {user.email}</p>
-      </Stack>
+      <PageHeader title="Innstillinger" lede={<p className="m-0">Innlogget som {user.email}</p>} />
 
       <ActionMessage code={params['melding']} />
 
@@ -159,7 +157,7 @@ export default async function Page({ searchParams }: PageProps) {
         </form>
       </Card>
 
-      <Card as="section" heading="Dine data" titleLevel={2} tone="flat">
+      <Card as="section" heading="Dine data" titleLevel={2} tone="secondary">
         <Stack gap="md">
           <Stack gap="sm">
             <h3 className="m-0 text-base font-semibold">Last ned dataene dine</h3>
@@ -169,7 +167,11 @@ export default async function Page({ searchParams }: PageProps) {
               og samtykkehistorikk.
             </p>
             <p className="m-0">
-              <a href="/innstillinger/eksport" download>
+              <a
+                href="/innstillinger/eksport"
+                download
+                className={buttonClassName({ variant: 'secondary', size: 'sm' })}
+              >
                 Last ned dataene dine som JSON
               </a>
             </p>
@@ -184,13 +186,18 @@ export default async function Page({ searchParams }: PageProps) {
               delingslenkene dine. Aktive delingslenker slutter å virke. Handlingen kan ikke angres.
             </p>
             <p className="m-0">
-              <Link href="/innstillinger/slett-konto">Gå til sletting av konto</Link>
+              <Link
+                href="/innstillinger/slett-konto"
+                className={buttonClassName({ variant: 'secondary', size: 'sm' })}
+              >
+                Gå til sletting av konto
+              </Link>
             </p>
           </Stack>
         </Stack>
       </Card>
 
-      <Card as="section" heading="Personvern og vilkår" titleLevel={2} tone="flat">
+      <Card as="section" heading="Personvern og vilkår" titleLevel={2} tone="secondary">
         <Cluster gap="md">
           <Link href="/personvern">Personvern i denne tjenesten</Link>
           <Link href="/vilkar">Bruksvilkår</Link>

@@ -7,6 +7,7 @@ import { TenderActions } from '@/components/tender-actions';
 import { getWebDb } from '@/server/db';
 import { requireUser } from '@/server/session';
 import { listSavedTenders } from '@/server/tenders';
+import { PageHeader } from '../_components/page-header';
 
 export const metadata: Metadata = {
   title: 'Lagrede anbud',
@@ -29,13 +30,15 @@ export default async function Page({ searchParams }: PageProps) {
 
   return (
     <Stack gap="lg">
-      <Stack gap="xs">
-        <h1 className="page-heading">Lagrede anbud</h1>
-        <p className="prose-measure m-0 text-text-muted">
-          Anbud du har lagret for å følge opp senere. Endres kunngjøringen — for eksempel fristen —
-          får du beskjed.
-        </p>
-      </Stack>
+      <PageHeader
+        title="Lagrede anbud"
+        lede={
+          <p className="m-0">
+            Anbud du har lagret for å følge opp senere. Endres kunngjøringen — for eksempel fristen
+            — får du beskjed.
+          </p>
+        }
+      />
 
       <ActionMessage code={params['melding']} />
 
@@ -49,7 +52,7 @@ export default async function Page({ searchParams }: PageProps) {
       ) : (
         <Stack as="ul" gap="md" className="m-0 list-none p-0">
           {saved.map((tender) => (
-            <TenderCard key={tender.id} tender={tender} state="saved" now={now}>
+            <TenderCard key={tender.id} tender={tender} state="saved" now={now} headingLevel={2}>
               <TenderActions tenderId={tender.id} state="saved" returnTo="/lagret" />
             </TenderCard>
           ))}

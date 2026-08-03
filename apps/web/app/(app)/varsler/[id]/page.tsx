@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { Alert, Badge, Button, Card, Cluster, Stack } from '@luma/ui';
+import { Alert, Badge, Button, buttonClassName, Card, Cluster, Stack } from '@luma/ui';
 import { ActionMessage } from '@/components/action-message';
 import { MatchPreview } from '@/components/match-preview';
 import { ProfileForm } from '@/components/profile-form';
@@ -13,6 +13,7 @@ import {
 import { getWebDb } from '@/server/db';
 import { loadProfile, previewMatches } from '@/server/profiles';
 import { requireUser } from '@/server/session';
+import { PageHeader } from '../../_components/page-header';
 
 export const metadata: Metadata = {
   title: 'Varslingsprofil',
@@ -57,21 +58,25 @@ export default async function Page({ params, searchParams }: PageProps) {
 
   return (
     <Stack gap="lg">
-      <Cluster gap="xs">
-        <Badge variant={profile.active ? 'success' : 'warning'}>
-          {profile.active ? 'Aktiv' : 'På pause'}
-        </Badge>
-        {profile.includePlannedProcurements ? (
-          <Badge variant="planlagt">Planlagte anskaffelser er med</Badge>
-        ) : null}
-      </Cluster>
-
-      <Stack gap="xs">
-        <h1 className="page-heading">{profile.name}</h1>
-        <p className="m-0 text-sm text-text-muted">
-          <Link href="/varsler">Tilbake til varslingsprofilene</Link>
-        </p>
-      </Stack>
+      <PageHeader
+        status={
+          <Cluster gap="xs">
+            <Badge variant={profile.active ? 'success' : 'warning'}>
+              {profile.active ? 'Aktiv' : 'På pause'}
+            </Badge>
+            {profile.includePlannedProcurements ? (
+              <Badge variant="planlagt">Planlagte anskaffelser er med</Badge>
+            ) : null}
+          </Cluster>
+        }
+        eyebrow="Varslingsprofil"
+        title={profile.name}
+        actions={
+          <Link href="/varsler" className={buttonClassName({ variant: 'secondary' })}>
+            Tilbake til varslingsprofilene
+          </Link>
+        }
+      />
 
       <ActionMessage code={query['melding']} />
 
@@ -89,7 +94,7 @@ export default async function Page({ params, searchParams }: PageProps) {
       {/* Spec 9.1 steg 11 og 12: forhåndsvisning før brukeren justerer profilen. */}
       <MatchPreview preview={preview} now={now} />
 
-      <Card as="section" heading="Styr varslingen" titleLevel={2} tone="flat">
+      <Card as="section" heading="Styr varslingen" titleLevel={2} tone="secondary">
         <Stack gap="md">
           <p className="prose-measure m-0 text-sm text-text-muted">
             Du kan sette profilen på pause uten å miste kriteriene, og du kan slette den helt.

@@ -1,6 +1,17 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Alert, Badge, Button, Card, Cluster, Field, Input, Select, Stack } from '@luma/ui';
+import {
+  Alert,
+  Badge,
+  Button,
+  buttonClassName,
+  Card,
+  Cluster,
+  Field,
+  Input,
+  Select,
+  Stack,
+} from '@luma/ui';
 import { ActionMessage } from '@/components/action-message';
 import { EmptyStatePromotion } from '@/components/luma-promotion';
 import { MatchCard } from '@/components/tender-card';
@@ -15,6 +26,7 @@ import { listProfiles } from '@/server/profiles';
 import { requireUser } from '@/server/session';
 import { promotionAllowed } from '@/server/settings';
 import { listMatchedBuyers, listMatches, type DashboardFilters } from '@/server/tenders';
+import { PageHeader } from '../_components/page-header';
 
 export const metadata: Metadata = {
   title: 'Oversikt',
@@ -37,6 +49,12 @@ export const metadata: Metadata = {
  * The filter form is a plain `method="get"` form, so filtering is an ordinary
  * navigation: it works without JavaScript, the result is linkable, and the back
  * button behaves the way people expect.
+ *
+ * Two surfaces on this page carry a tint, and neither is a tender. The filter
+ * panel and the note explaining what a planlagt anskaffelse is sit on the
+ * neutral supporting surface; the promotion block sits on the brand cream and
+ * says whose it is. Section 3's trust contract is why the tender cards stay
+ * plain: a result must never be dressed up to look like a message from Luma.
  */
 
 export const dynamic = 'force-dynamic';
@@ -82,14 +100,16 @@ export default async function Page({ searchParams }: PageProps) {
   const hasAnyResult = competitionMatches.length > 0 || plannedMatches.length > 0;
 
   return (
-    <Stack gap="lg">
-      <Stack gap="xs">
-        <h1 className="page-heading">Oversikt</h1>
-        <p className="prose-measure m-0 text-sm text-text-muted">
-          Nyeste kunngjøringer først. Hvert treff viser oppdragsgiver, frist, kategori og hvorfor
-          anbudet passer varslingsprofilen din.
-        </p>
-      </Stack>
+    <Stack gap="xl">
+      <PageHeader
+        title="Oversikt"
+        lede={
+          <p className="m-0 text-sm">
+            Nyeste kunngjøringer først. Hvert treff viser oppdragsgiver, frist, kategori og hvorfor
+            anbudet passer varslingsprofilen din.
+          </p>
+        }
+      />
 
       <ActionMessage code={params['melding']} />
 
@@ -110,9 +130,7 @@ export default async function Page({ searchParams }: PageProps) {
                   <h2 id="konkurranser-overskrift" className="section-heading">
                     Kunngjorte konkurranser
                   </h2>
-                  <span className="text-sm text-text-muted">
-                    {competitionMatches.length} treff vises
-                  </span>
+                  <Badge variant="neutral">{competitionMatches.length} treff vises</Badge>
                 </Cluster>
 
                 {competitionMatches.length === 0 ? (
@@ -146,10 +164,12 @@ export default async function Page({ searchParams }: PageProps) {
                   </h2>
                   <Badge variant="planlagt">Ikke kunngjort ennå</Badge>
                 </Cluster>
-                <p className="prose-measure m-0 text-sm text-text-muted">
-                  Dette er varslede anskaffelser. Konkurransen er ikke publisert, så de har ingen
-                  tilbudsfrist ennå. Bruk tiden til å forberede deg.
-                </p>
+                <Card tone="secondary" className="prose-measure">
+                  <p className="m-0 text-sm">
+                    Dette er varslede anskaffelser. Konkurransen er ikke publisert, så de har ingen
+                    tilbudsfrist ennå. Bruk tiden til å forberede deg.
+                  </p>
+                </Card>
 
                 {plannedMatches.length === 0 ? (
                   <Alert tone="neutral">
@@ -172,7 +192,12 @@ export default async function Page({ searchParams }: PageProps) {
                       ))}
                     </Stack>
                     <p className="m-0">
-                      <Link href="/planlagte">Se alle planlagte anskaffelser</Link>
+                      <Link
+                        href="/planlagte"
+                        className={buttonClassName({ variant: 'ghost', size: 'sm' })}
+                      >
+                        Se alle planlagte anskaffelser
+                      </Link>
                     </p>
                   </>
                 )}
@@ -199,7 +224,7 @@ function FilterForm({
   readonly filters: DashboardFilters;
 }) {
   return (
-    <Card as="section" tone="flat" heading="Filtrer treffene" titleLevel={2}>
+    <Card as="section" tone="secondary" heading="Filtrer treffene" titleLevel={2}>
       <form method="get" action="/oversikt">
         <Stack gap="md">
           <div className="grid grid-cols-1 gap-md sm:grid-cols-2 lg:grid-cols-3">
@@ -291,7 +316,7 @@ function FilterForm({
             <Button type="submit" variant="primary">
               Bruk filtrene
             </Button>
-            <Link href="/oversikt" className="site-nav-link">
+            <Link href="/oversikt" className={buttonClassName({ variant: 'ghost' })}>
               Nullstill filtrene
             </Link>
           </Cluster>
@@ -315,7 +340,9 @@ function NoProfilesEmptyState({ promotion }: { readonly promotion: boolean }) {
             etterpå.
           </p>
           <p className="m-0">
-            <Link href="/varsler/ny">Opprett din første varslingsprofil</Link>
+            <Link href="/varsler/ny" className={buttonClassName({ variant: 'primary' })}>
+              Opprett din første varslingsprofil
+            </Link>
           </p>
         </Stack>
       </Alert>

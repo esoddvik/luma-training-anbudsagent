@@ -26,6 +26,7 @@ import {
 import { requireUser } from '@/server/session';
 import { promotionAllowed } from '@/server/settings';
 import { getTenderDetail, type TenderDetail } from '@/server/tenders';
+import { PageHeader } from '../../_components/page-header';
 
 /**
  * The tender detail page (spec section 16).
@@ -83,17 +84,18 @@ export default async function TenderPage({ params, searchParams }: TenderPagePro
 
   return (
     <Stack gap="lg">
-      <Cluster gap="xs">
-        <Badge variant={planned ? 'planlagt' : 'treff'}>
-          {NOTICE_CATEGORY_LABEL_NB[detail.tender.noticeCategory]}
-        </Badge>
-        <Badge variant="neutral">{TENDER_STATUS_LABEL_NB[detail.tender.status]}</Badge>
-      </Cluster>
-
-      <Stack gap="xs">
-        <h1 className="page-heading">{detail.tender.title}</h1>
-        <p className="m-0 text-text-muted">{detail.tender.buyerName}</p>
-      </Stack>
+      <PageHeader
+        status={
+          <Cluster gap="xs">
+            <Badge variant={planned ? 'planlagt' : 'treff'}>
+              {NOTICE_CATEGORY_LABEL_NB[detail.tender.noticeCategory]}
+            </Badge>
+            <Badge variant="neutral">{TENDER_STATUS_LABEL_NB[detail.tender.status]}</Badge>
+          </Cluster>
+        }
+        title={detail.tender.title}
+        lede={<p className="m-0">{detail.tender.buyerName}</p>}
+      />
 
       <ActionMessage code={query['melding']} />
 
@@ -122,7 +124,7 @@ export default async function TenderPage({ params, searchParams }: TenderPagePro
       ) : null}
 
       <Card as="section" heading="Om anbudet" titleLevel={2}>
-        <dl className="m-0 grid grid-cols-1 gap-md sm:grid-cols-2">
+        <dl className="m-0 grid grid-cols-1 gap-lg sm:grid-cols-2">
           <Detail label="Oppdragsgiver">{detail.tender.buyerName}</Detail>
           <Detail label="Organisasjonsnummer">
             {detail.tender.buyerOrganizationNumber ?? NOT_PROVIDED_NB}
@@ -213,9 +215,9 @@ export default async function TenderPage({ params, searchParams }: TenderPagePro
 /** Spec section 4.5: every tender must show where the data came from and when. */
 function SourceCard({ detail }: { readonly detail: TenderDetail }) {
   return (
-    <Card as="section" heading="Kilde og sporbarhet" titleLevel={2} tone="flat">
+    <Card as="section" heading="Kilde og sporbarhet" titleLevel={2} tone="secondary">
       <Stack gap="sm">
-        <dl className="m-0 grid grid-cols-1 gap-md sm:grid-cols-2">
+        <dl className="m-0 grid grid-cols-1 gap-lg sm:grid-cols-2">
           <Detail label="Doffin-ID">{detail.tender.sourceId}</Detail>
           <Detail label="Kunngjørings-ID">{detail.tender.noticeId ?? NOT_PROVIDED_NB}</Detail>
           <Detail label="Publisert">
@@ -263,7 +265,7 @@ function FeedbackForm({ detail }: { readonly detail: TenderDetail }) {
   const profileId = detail.matches[0]?.profileId;
 
   return (
-    <Card as="section" heading="Var dette treffet relevant?" titleLevel={2} tone="flat">
+    <Card as="section" heading="Var dette treffet relevant?" titleLevel={2}>
       <form action={submitFeedbackAction}>
         <Stack gap="md">
           <input type="hidden" name="tenderId" value={detail.tender.id} />
@@ -311,9 +313,9 @@ function FeedbackForm({ detail }: { readonly detail: TenderDetail }) {
 
 function Detail({ label, children }: { readonly label: string; readonly children: ReactNode }) {
   return (
-    <div>
-      <dt className="m-0 text-xs uppercase tracking-wide text-text-muted">{label}</dt>
-      <dd className="m-0">{children}</dd>
+    <div className="flex flex-col gap-2xs">
+      <dt className="m-0 text-xs font-semibold uppercase tracking-wide text-text-muted">{label}</dt>
+      <dd className="m-0 font-medium">{children}</dd>
     </div>
   );
 }

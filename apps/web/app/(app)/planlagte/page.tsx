@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Alert, Stack } from '@luma/ui';
+import { Alert, Badge, Card, Cluster, Stack } from '@luma/ui';
 import { ActionMessage } from '@/components/action-message';
 import { EmptyStatePromotion } from '@/components/luma-promotion';
 import { MatchCard } from '@/components/tender-card';
@@ -9,6 +9,7 @@ import { getWebDb } from '@/server/db';
 import { requireUser } from '@/server/session';
 import { promotionAllowed } from '@/server/settings';
 import { listMatches } from '@/server/tenders';
+import { PageHeader } from '../_components/page-header';
 
 export const metadata: Metadata = {
   title: 'Planlagte anskaffelser',
@@ -24,6 +25,12 @@ export const metadata: Metadata = {
  * open competition. The explanation of what "planlagt" means is at the top,
  * before the list, and each card repeats the missing deadline in words rather
  * than leaving the field blank.
+ *
+ * The explanation sits on the supporting-information surface rather than
+ * running as loose prose under the title. That is a visual restatement of the
+ * same rule: what these notices are, and are not, is grouped and set apart
+ * instead of blending into the page — and it is the neutral tint, never the
+ * promotion cream, so it cannot read as a message from Luma.
  */
 
 export const dynamic = 'force-dynamic';
@@ -45,20 +52,30 @@ export default async function Page({ searchParams }: PageProps) {
 
   return (
     <Stack gap="lg">
-      <Stack gap="xs">
-        <h1 className="page-heading">Planlagte anskaffelser</h1>
-        <p className="prose-measure m-0 text-text-muted">
-          En planlagt anskaffelse er en veiledende kunngjøring eller en intensjonskunngjøring.
-          Oppdragsgiver har varslet at anskaffelsen kommer, men{' '}
-          <strong>konkurransen er ikke publisert ennå</strong>. Derfor finnes det ingen tilbudsfrist
-          og ingen konkurransedokumenter å levere på.
-        </p>
-        <p className="prose-measure m-0 text-text-muted">
-          Verdien ligger i tiden du får: du kan ta kontakt med oppdragsgiver, sette av kapasitet og
-          forberede tilbudsarbeidet før konkurransen kommer. Du får varsel hvis den blir en
-          kunngjort konkurranse.
-        </p>
-      </Stack>
+      <PageHeader
+        title="Planlagte anskaffelser"
+        status={
+          <Cluster gap="xs">
+            <Badge variant="planlagt">Ikke kunngjort ennå</Badge>
+          </Cluster>
+        }
+      />
+
+      <Card as="section" tone="secondary" className="prose-measure">
+        <Stack gap="sm">
+          <p className="m-0">
+            En planlagt anskaffelse er en veiledende kunngjøring eller en intensjonskunngjøring.
+            Oppdragsgiver har varslet at anskaffelsen kommer, men{' '}
+            <strong>konkurransen er ikke publisert ennå</strong>. Derfor finnes det ingen
+            tilbudsfrist og ingen konkurransedokumenter å levere på.
+          </p>
+          <p className="m-0">
+            Verdien ligger i tiden du får: du kan ta kontakt med oppdragsgiver, sette av kapasitet
+            og forberede tilbudsarbeidet før konkurransen kommer. Du får varsel hvis den blir en
+            kunngjort konkurranse.
+          </p>
+        </Stack>
+      </Card>
 
       <ActionMessage code={params['melding']} />
 
@@ -82,7 +99,7 @@ export default async function Page({ searchParams }: PageProps) {
       ) : (
         <Stack as="ul" gap="md" className="m-0 list-none p-0">
           {matches.map((match) => (
-            <MatchCard key={match.matchId} match={match} now={now}>
+            <MatchCard key={match.matchId} match={match} now={now} headingLevel={2}>
               <TenderActions tenderId={match.tender.id} state={match.state} returnTo="/planlagte" />
             </MatchCard>
           ))}

@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Alert, Badge, Card, Cluster, Stack } from '@luma/ui';
+import { Alert, Badge, buttonClassName, Card, Cluster, Stack } from '@luma/ui';
 import { ActionMessage } from '@/components/action-message';
 import { getWebDb } from '@/server/db';
 import { ALERT_FREQUENCY_LABEL_NB, formatDate, isoDate } from '@/server/format';
 import { listProfiles } from '@/server/profiles';
 import { requireUser } from '@/server/session';
+import { PageHeader } from '../_components/page-header';
 
 export const metadata: Metadata = {
   title: 'Varslingsprofiler',
@@ -20,6 +21,10 @@ export const metadata: Metadata = {
  * (section 4.4). The list therefore leads with the state — active or paused —
  * because a paused profile that looks active is the failure people notice
  * weeks later, when they wonder why the alerts stopped.
+ *
+ * Creating a profile is the page's primary action and is styled as one. It used
+ * to be a text link among the prose, which is the wrong weight for the thing a
+ * user with no profiles has to do next.
  */
 
 export const dynamic = 'force-dynamic';
@@ -35,17 +40,20 @@ export default async function Page({ searchParams }: PageProps) {
 
   return (
     <Stack gap="lg">
-      <Cluster justify="between">
-        <h1 className="page-heading">Varslingsprofiler</h1>
-        <Link href="/varsler/ny" className="site-nav-link">
-          Ny varslingsprofil
-        </Link>
-      </Cluster>
-
-      <p className="prose-measure m-0 text-text-muted">
-        En varslingsprofil beskriver hvilke oppdrag virksomheten din ser etter. Du kan ha flere
-        profiler, sette dem på pause og slette dem. Eksklusjoner overstyrer alltid inklusjoner.
-      </p>
+      <PageHeader
+        title="Varslingsprofiler"
+        lede={
+          <p className="m-0">
+            En varslingsprofil beskriver hvilke oppdrag virksomheten din ser etter. Du kan ha flere
+            profiler, sette dem på pause og slette dem. Eksklusjoner overstyrer alltid inklusjoner.
+          </p>
+        }
+        actions={
+          <Link href="/varsler/ny" className={buttonClassName({ variant: 'primary' })}>
+            Ny varslingsprofil
+          </Link>
+        }
+      />
 
       <ActionMessage code={params['melding']} />
 
@@ -60,14 +68,16 @@ export default async function Page({ searchParams }: PageProps) {
               endre alt etterpå.
             </p>
             <p className="m-0">
-              <Link href="/varsler/ny">Opprett din første varslingsprofil</Link>
+              <Link href="/varsler/ny" className={buttonClassName({ variant: 'primary' })}>
+                Opprett din første varslingsprofil
+              </Link>
             </p>
           </Stack>
         </Alert>
       ) : (
         <Stack as="ul" gap="md" className="m-0 list-none p-0">
           {profiles.map((profile) => (
-            <Card as="li" key={profile.id}>
+            <Card as="li" key={profile.id} tone="raised">
               <Stack gap="sm">
                 <Cluster gap="xs">
                   <Badge variant={profile.active ? 'success' : 'warning'}>
@@ -79,15 +89,15 @@ export default async function Page({ searchParams }: PageProps) {
                   ) : null}
                 </Cluster>
 
-                <h2 className="m-0 text-lg font-semibold">
+                <h2 className="m-0 text-xl font-semibold leading-snug">
                   <Link href={`/varsler/${profile.id}`}>{profile.name}</Link>
                 </h2>
 
                 {profile.description ? (
-                  <p className="m-0 text-sm text-text-muted">{profile.description}</p>
+                  <p className="prose-measure m-0 text-sm text-text-muted">{profile.description}</p>
                 ) : null}
 
-                <p className="m-0 text-sm">
+                <p className="m-0 text-sm text-text-muted">
                   {profile.matchCount === 0
                     ? 'Ingen treff registrert ennå'
                     : `${profile.matchCount} treff registrert`}{' '}

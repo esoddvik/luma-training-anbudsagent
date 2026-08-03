@@ -95,5 +95,44 @@ export default tseslint.config(
       '@typescript-eslint/no-restricted-imports': 'off',
     },
   },
+  {
+    /**
+     * `text-brand` and `border-brand` exist and must not be used.
+     *
+     * `globals.css` declares `--color-brand` so that `bg-brand` is available
+     * for the decorative surfaces the signature orange is allowed on.
+     * Tailwind v4 generates the whole utility family from that one
+     * declaration, so naming the colour necessarily mints `text-brand` and
+     * `border-brand` alongside it — verified by building and grepping the
+     * compiled CSS, not assumed.
+     *
+     * `#FF6B35` on white is 2.84:1. As a foreground it fails WCAG AA for text
+     * and misses even the 3:1 non-text threshold, so both of those utilities
+     * render something unreadable while looking perfectly reasonable in the
+     * markup. The colour contrast suite in `@luma/ui` cannot see them, because
+     * it checks token pairs and these are class names.
+     *
+     * A comment was the first attempt at this rule and a comment is a review
+     * guard, not a gate that can go red. This is the gate. Use
+     * `text-primary` for text and `bg-brand` with `text-brand-on` for a
+     * branded surface.
+     */
+    files: ['apps/web/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'Literal[value=/(text|border)-brand(?!-on)/]',
+          message:
+            'text-brand and border-brand render #FF6B35 as a foreground at 2.84:1, which fails WCAG AA. Use text-primary for text, or bg-brand with text-brand-on for a branded surface.',
+        },
+        {
+          selector: 'TemplateElement[value.raw=/(text|border)-brand(?!-on)/]',
+          message:
+            'text-brand and border-brand render #FF6B35 as a foreground at 2.84:1, which fails WCAG AA. Use text-primary for text, or bg-brand with text-brand-on for a branded surface.',
+        },
+      ],
+    },
+  },
   prettier,
 );

@@ -331,6 +331,49 @@ describe('styles.css only references tokens', () => {
     expect(block).not.toContain('promotion');
   });
 
+  /**
+   * A tone says where a card sits in the hierarchy; it says nothing about
+   * whether the card does anything. Hanging a hover response off a tone gives
+   * static content — a `<dl>` of key facts, a form wrapper — the same pointer
+   * affordance as a selectable option, which is a promise the element cannot
+   * keep. Hover elevation belongs to the explicit `interactive` opt-in.
+   */
+  it('never attaches a hover response to a card tone', () => {
+    const toneHover = componentStyles.match(/\.luma-card--(?:flat|raised|secondary)[^{,]*:hover/g);
+    expect(toneHover ?? []).toEqual([]);
+  });
+
+  it('still offers hover elevation as an explicit opt-in', () => {
+    expect(componentStyles).toContain('.luma-card--interactive:hover');
+  });
+
+  /**
+   * A stretched-link card puts the focus ring on the real control, which can be
+   * a small button inside a large card. If only `:hover` raises the card, the
+   * pointer gets a 230px response and the keyboard gets a 44px one for the same
+   * state. This compares the two declarations instead of trusting that whoever
+   * touches one remembers the other — writing them as one selector list passes,
+   * splitting them and changing one does not.
+   */
+  it('gives :focus-within the same elevation as :hover on interactive cards', () => {
+    function elevationFor(state: string): string | undefined {
+      const pattern = /([^{}]+)\{([^{}]*)\}/g;
+      let match = pattern.exec(componentStyles);
+      while (match !== null) {
+        const selector = match[1] ?? '';
+        if (selector.includes(`.luma-card--interactive${state}`)) {
+          return /box-shadow\s*:\s*([^;]+);/.exec(match[2] ?? '')?.[1]?.trim();
+        }
+        match = pattern.exec(componentStyles);
+      }
+      return undefined;
+    }
+
+    const hover = elevationFor(':hover');
+    expect(hover, 'fant ingen box-shadow for :hover').toBeDefined();
+    expect(elevationFor(':focus-within'), 'tastaturet får ikke samme løft som pekeren').toBe(hover);
+  });
+
   it('still ships the hover lift inside that guard', () => {
     const lifted = hoverRulesWithTransform(componentStyles);
     expect(lifted.join(' ')).toContain('.luma-button--primary:hover');

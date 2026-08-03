@@ -1,0 +1,1394 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`the nine MVP templates > account-delete-confirmation-v1 > matches the HTML snapshot 1`] = `
+"<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
+<title>Kontoen din i Luma Anbudsvarsling er slettet</title>
+<style>@media (prefers-color-scheme: dark) {
+  .luma-page { background-color: #16171a !important; }
+  .luma-panel-cell, .luma-promotion-cell, .luma-planned-cell {
+    background-color: #212227 !important;
+    border-color: #3a3b42 !important;
+  }
+  .luma-text, .luma-text * { color: #f2f2f0 !important; }
+  .luma-muted, .luma-muted * { color: #b6b6b2 !important; }
+  .luma-link { color: #9dc0f0 !important; }
+}</style>
+</head>
+<body class="luma-page" style="margin:0;padding:0;background-color:#f4f4f2;color:#1a1a1a;-webkit-text-size-adjust:100%">
+<div style="display:none;font-size:1px;color:#f4f4f2;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden">Kontoen din i Luma Anbudsvarsling er slettet.</div>
+<table role="presentation" class="luma-page" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;background-color:#f4f4f2">
+<tr>
+<td align="center" style="padding:20px 12px">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;text-align:left">
+<tr>
+<td>
+<!--luma:section:header-->
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong>Luma Anbudsvarsling</strong></p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">En gratis tjeneste fra Luma Training</p>
+<!--luma:section:title-->
+<h1 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:22px;line-height:1.3;font-weight:600;color:#1a1a1a">Kontoen er slettet</h1>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">12. mars 2026 kl. 08:45</p>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">Kontoen din i Luma Anbudsvarsling er slettet. (12. mars 2026 kl. 08:45)</p>
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Dette er fjernet</h3>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px">Varslingsprofilene dine og kriteriene i dem</li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px">Treff, lagrede anbud og relevansfeedback</li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px">Delingslenker og MCP-tokener</li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px">Påmeldingen til anbudsvarsler</li></ul>
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Dette beholder vi</h3>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">Samtykkehistorikk, aksept av vilkår og eventuelle fakturaopplysninger beholdes så lenge regnskaps- og dokumentasjonsplikten krever det. Se personvernerklæringen for lagringstider.</p>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">Du får ingen flere anbudsvarsler fra oss.</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Du er velkommen til å opprette en ny konto senere. Tjenesten er gratis.</p>
+<!--luma:section:legal-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr><td style="border-top:2px solid #c9c7bb;font-size:0;line-height:0;height:1px">&nbsp;</td></tr></table>
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Hvorfor mottar jeg denne e-posten?</h3>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Du mottar denne e-posten fordi den gjelder kontoen din i Luma Anbudsvarsling.</p>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://luma-training.com/personvern?utm_source=anbudsvarsling&amp;utm_medium=landing" style="color:#1c4b8c;text-decoration:underline">Personvern</a></li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/vilkar?utm_source=anbudsvarsling&amp;utm_medium=landing" style="color:#1c4b8c;text-decoration:underline">Vilkår for bruk</a></li></ul>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Avsender: Luma Training AS, Storgata 1, 0155 Oslo</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Kontakt: <a class="luma-link" href="mailto:anbudsvarsling@luma-training.com" style="color:#1c4b8c">anbudsvarsling@luma-training.com</a></p></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</body>
+</html>
+"
+`;
+
+exports[`the nine MVP templates > account-delete-confirmation-v1 > matches the plain-text snapshot 1`] = `
+"Luma Anbudsvarsling
+En gratis tjeneste fra Luma Training
+
+Kontoen er slettet
+==================
+12. mars 2026 kl. 08:45
+
+Kontoen din i Luma Anbudsvarsling er slettet. (12. mars 2026 kl. 08:45)
+
+Dette er fjernet
+- Varslingsprofilene dine og kriteriene i dem
+- Treff, lagrede anbud og relevansfeedback
+- Delingslenker og MCP-tokener
+- Påmeldingen til anbudsvarsler
+
+Dette beholder vi
+Samtykkehistorikk, aksept av vilkår og eventuelle fakturaopplysninger
+beholdes så lenge regnskaps- og dokumentasjonsplikten krever det. Se
+personvernerklæringen for lagringstider.
+
+Du får ingen flere anbudsvarsler fra oss.
+Du er velkommen til å opprette en ny konto senere. Tjenesten er gratis.
+
+------------------------------------------------------------------------
+Hvorfor mottar jeg denne e-posten?
+Du mottar denne e-posten fordi den gjelder kontoen din i Luma
+Anbudsvarsling.
+
+Personvern:
+https://luma-training.com/personvern?utm_source=anbudsvarsling&utm_medium=landing
+Vilkår for bruk:
+https://anbudsvarsling.luma-training.com/vilkar?utm_source=anbudsvarsling&utm_medium=landing
+
+Avsender: Luma Training AS, Storgata 1, 0155 Oslo
+Kontakt: anbudsvarsling@luma-training.com
+"
+`;
+
+exports[`the nine MVP templates > account-delete-confirmation-v1 > matches the subject snapshot 1`] = `"Kontoen din i Luma Anbudsvarsling er slettet"`;
+
+exports[`the nine MVP templates > alert-confirmation-v1 > matches the HTML snapshot 1`] = `
+"<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
+<title>Varslingsprofilen «Bygg og rehabilitering» er aktiv</title>
+<style>@media (prefers-color-scheme: dark) {
+  .luma-page { background-color: #16171a !important; }
+  .luma-panel-cell, .luma-promotion-cell, .luma-planned-cell {
+    background-color: #212227 !important;
+    border-color: #3a3b42 !important;
+  }
+  .luma-text, .luma-text * { color: #f2f2f0 !important; }
+  .luma-muted, .luma-muted * { color: #b6b6b2 !important; }
+  .luma-link { color: #9dc0f0 !important; }
+}</style>
+</head>
+<body class="luma-page" style="margin:0;padding:0;background-color:#f4f4f2;color:#1a1a1a;-webkit-text-size-adjust:100%">
+<div style="display:none;font-size:1px;color:#f4f4f2;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden">Vi følger med på nye kunngjøringer på Doffin og sender deg treff som passer kriteriene dine.</div>
+<table role="presentation" class="luma-page" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;background-color:#f4f4f2">
+<tr>
+<td align="center" style="padding:20px 12px">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;text-align:left">
+<tr>
+<td>
+<!--luma:section:header-->
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong>Luma Anbudsvarsling</strong></p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">En gratis tjeneste fra Luma Training</p>
+<!--luma:section:title-->
+<h1 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:22px;line-height:1.3;font-weight:600;color:#1a1a1a">Varslingsprofilen er aktiv</h1>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">12. mars 2026</p>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">Vi følger med på nye kunngjøringer på Doffin og sender deg treff som passer kriteriene dine.</p>
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Kriteriene dine</h3>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin-bottom:10px"><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">CPV-koder</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">45214210, 45331000, 45422100</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Søkeord</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">rehabilitering, tømrer, skole</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Geografi</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">NO081, NO082</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Oppdragsgivere</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Ingen</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Verdiintervall</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">2 000 000–60 000 000 NOK</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Planlagte anskaffelser</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Inkludert</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Varslingsfrekvens</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Daglig sammendrag</td></tr></table>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/varsler?utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Se varslingsprofilen</a></p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Vi rangerer anbud etter hvor godt de passer varslingsprofilen din. Kurs, annonser eller kommersielle hensyn påvirker aldri hvilke anbud du får se.</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Tjenesten dekker kunngjøringer publisert på Doffin. Anskaffelser under terskelverdiene publiseres ikke alltid der, og spørsmål og svar i konkurranser skjer i oppdragsgivers konkurranseverktøy. Følg derfor alltid konkurransens egne kanaler når du jobber med et anbud. At du ikke får varsel, betyr ikke at det ikke finnes muligheter.</p>
+<!--luma:section:profile-admin-->
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Profiladministrasjon</h3>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/varsler?utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Administrer varslingsprofil</a></li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/innstillinger?handling=pause-varsler&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Pause varsler</a></li></ul>
+<!--luma:section:notification-settings-->
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Varslingsinnstillinger</h3>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/innstillinger?utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Varslingsinnstillinger</a></li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/innstillinger?handling=slaa-av-promotering&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Luma-informasjon i anbudsvarslene</a></li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/innstillinger?handling=avslutt-anbudsvarsling&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Avslutt anbudsvarsling</a></li></ul>
+<!--luma:section:legal-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr><td style="border-top:2px solid #c9c7bb;font-size:0;line-height:0;height:1px">&nbsp;</td></tr></table>
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Hvorfor mottar jeg denne e-posten?</h3>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Du mottar denne e-posten fordi du har opprettet en varslingsprofil i Luma Anbudsvarsling.</p>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://luma-training.com/personvern?utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Personvern</a></li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/vilkar?utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Vilkår for bruk</a></li></ul>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Avsender: Luma Training AS, Storgata 1, 0155 Oslo</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Kontakt: <a class="luma-link" href="mailto:anbudsvarsling@luma-training.com" style="color:#1c4b8c">anbudsvarsling@luma-training.com</a></p></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</body>
+</html>
+"
+`;
+
+exports[`the nine MVP templates > alert-confirmation-v1 > matches the plain-text snapshot 1`] = `
+"Luma Anbudsvarsling
+En gratis tjeneste fra Luma Training
+
+Varslingsprofilen er aktiv
+==========================
+12. mars 2026
+
+Vi følger med på nye kunngjøringer på Doffin og sender deg treff som
+passer kriteriene dine.
+
+Kriteriene dine
+CPV-koder: 45214210, 45331000, 45422100
+Søkeord: rehabilitering, tømrer, skole
+Geografi: NO081, NO082
+Oppdragsgivere: Ingen
+Verdiintervall: 2 000 000–60 000 000 NOK
+Planlagte anskaffelser: Inkludert
+Varslingsfrekvens: Daglig sammendrag
+
+Se varslingsprofilen:
+https://anbudsvarsling.luma-training.com/varsler?utm_source=anbudsvarsling&utm_medium=digest
+
+Vi rangerer anbud etter hvor godt de passer varslingsprofilen din. Kurs,
+annonser eller kommersielle hensyn påvirker aldri hvilke anbud du får
+se.
+
+Tjenesten dekker kunngjøringer publisert på Doffin. Anskaffelser under
+terskelverdiene publiseres ikke alltid der, og spørsmål og svar i
+konkurranser skjer i oppdragsgivers konkurranseverktøy. Følg derfor
+alltid konkurransens egne kanaler når du jobber med et anbud. At du ikke
+får varsel, betyr ikke at det ikke finnes muligheter.
+
+Profiladministrasjon
+Administrer varslingsprofil:
+https://anbudsvarsling.luma-training.com/varsler?utm_source=anbudsvarsling&utm_medium=digest
+Pause varsler:
+https://anbudsvarsling.luma-training.com/innstillinger?handling=pause-varsler&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=digest
+
+Varslingsinnstillinger
+Varslingsinnstillinger:
+https://anbudsvarsling.luma-training.com/innstillinger?utm_source=anbudsvarsling&utm_medium=digest
+Luma-informasjon i anbudsvarslene:
+https://anbudsvarsling.luma-training.com/innstillinger?handling=slaa-av-promotering&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=digest
+Avslutt anbudsvarsling:
+https://anbudsvarsling.luma-training.com/innstillinger?handling=avslutt-anbudsvarsling&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=digest
+
+------------------------------------------------------------------------
+Hvorfor mottar jeg denne e-posten?
+Du mottar denne e-posten fordi du har opprettet en varslingsprofil i
+Luma Anbudsvarsling.
+
+Personvern:
+https://luma-training.com/personvern?utm_source=anbudsvarsling&utm_medium=digest
+Vilkår for bruk:
+https://anbudsvarsling.luma-training.com/vilkar?utm_source=anbudsvarsling&utm_medium=digest
+
+Avsender: Luma Training AS, Storgata 1, 0155 Oslo
+Kontakt: anbudsvarsling@luma-training.com
+"
+`;
+
+exports[`the nine MVP templates > alert-confirmation-v1 > matches the subject snapshot 1`] = `"Varslingsprofilen «Bygg og rehabilitering» er aktiv"`;
+
+exports[`the nine MVP templates > auth-magic-link-v1 > matches the HTML snapshot 1`] = `
+"<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
+<title>Logg inn i Luma Anbudsvarsling</title>
+<style>@media (prefers-color-scheme: dark) {
+  .luma-page { background-color: #16171a !important; }
+  .luma-panel-cell, .luma-promotion-cell, .luma-planned-cell {
+    background-color: #212227 !important;
+    border-color: #3a3b42 !important;
+  }
+  .luma-text, .luma-text * { color: #f2f2f0 !important; }
+  .luma-muted, .luma-muted * { color: #b6b6b2 !important; }
+  .luma-link { color: #9dc0f0 !important; }
+}</style>
+</head>
+<body class="luma-page" style="margin:0;padding:0;background-color:#f4f4f2;color:#1a1a1a;-webkit-text-size-adjust:100%">
+<div style="display:none;font-size:1px;color:#f4f4f2;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden">Lenken er gyldig i 15 minutter.</div>
+<table role="presentation" class="luma-page" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;background-color:#f4f4f2">
+<tr>
+<td align="center" style="padding:20px 12px">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;text-align:left">
+<tr>
+<td>
+<!--luma:section:header-->
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong>Luma Anbudsvarsling</strong></p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">En gratis tjeneste fra Luma Training</p>
+<!--luma:section:title-->
+<h1 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:22px;line-height:1.3;font-weight:600;color:#1a1a1a">Logg inn</h1>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">12. mars 2026</p>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">Bruk lenken under for å logge inn i Luma Anbudsvarsling.</p>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong><a class="luma-link" href="https://anbudsvarsling.luma-training.com/logg-inn/bekreft/9f2c41a8b7de4c0fa1b23c8d5e6f7a09" style="color:#1c4b8c;text-decoration:underline">Logg inn</a></strong></p>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">Lenken er gyldig i 15 minutter. Lenken kan brukes én gang.</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Fungerer ikke knappen? Kopier denne adressen inn i nettleseren:</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/logg-inn/bekreft/9f2c41a8b7de4c0fa1b23c8d5e6f7a09" style="color:#1c4b8c;text-decoration:underline">https://anbudsvarsling.luma-training.com/logg-inn/bekreft/9f2c41a8b7de4c0fa1b23c8d5e6f7a09</a></p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Har du ikke bedt om denne e-posten, kan du se bort fra den. Da skjer det ingenting med kontoen din.</p>
+<!--luma:section:legal-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr><td style="border-top:2px solid #c9c7bb;font-size:0;line-height:0;height:1px">&nbsp;</td></tr></table>
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Hvorfor mottar jeg denne e-posten?</h3>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Du mottar denne e-posten fordi den gjelder kontoen din i Luma Anbudsvarsling.</p>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://luma-training.com/personvern?utm_source=anbudsvarsling&amp;utm_medium=landing" style="color:#1c4b8c;text-decoration:underline">Personvern</a></li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/vilkar?utm_source=anbudsvarsling&amp;utm_medium=landing" style="color:#1c4b8c;text-decoration:underline">Vilkår for bruk</a></li></ul>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Avsender: Luma Training AS, Storgata 1, 0155 Oslo</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Kontakt: <a class="luma-link" href="mailto:anbudsvarsling@luma-training.com" style="color:#1c4b8c">anbudsvarsling@luma-training.com</a></p></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</body>
+</html>
+"
+`;
+
+exports[`the nine MVP templates > auth-magic-link-v1 > matches the plain-text snapshot 1`] = `
+"Luma Anbudsvarsling
+En gratis tjeneste fra Luma Training
+
+Logg inn
+========
+12. mars 2026
+
+Bruk lenken under for å logge inn i Luma Anbudsvarsling.
+
+Logg inn:
+https://anbudsvarsling.luma-training.com/logg-inn/bekreft/9f2c41a8b7de4c0fa1b23c8d5e6f7a09
+
+Lenken er gyldig i 15 minutter. Lenken kan brukes én gang.
+
+Har du ikke bedt om denne e-posten, kan du se bort fra den. Da skjer det
+ingenting med kontoen din.
+
+------------------------------------------------------------------------
+Hvorfor mottar jeg denne e-posten?
+Du mottar denne e-posten fordi den gjelder kontoen din i Luma
+Anbudsvarsling.
+
+Personvern:
+https://luma-training.com/personvern?utm_source=anbudsvarsling&utm_medium=landing
+Vilkår for bruk:
+https://anbudsvarsling.luma-training.com/vilkar?utm_source=anbudsvarsling&utm_medium=landing
+
+Avsender: Luma Training AS, Storgata 1, 0155 Oslo
+Kontakt: anbudsvarsling@luma-training.com
+"
+`;
+
+exports[`the nine MVP templates > auth-magic-link-v1 > matches the subject snapshot 1`] = `"Logg inn i Luma Anbudsvarsling"`;
+
+exports[`the nine MVP templates > order-request-received-v1 > matches the HTML snapshot 1`] = `
+"<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
+<title>Vi har mottatt bestillingen din</title>
+<style>@media (prefers-color-scheme: dark) {
+  .luma-page { background-color: #16171a !important; }
+  .luma-panel-cell, .luma-promotion-cell, .luma-planned-cell {
+    background-color: #212227 !important;
+    border-color: #3a3b42 !important;
+  }
+  .luma-text, .luma-text * { color: #f2f2f0 !important; }
+  .luma-muted, .luma-muted * { color: #b6b6b2 !important; }
+  .luma-link { color: #9dc0f0 !important; }
+}</style>
+</head>
+<body class="luma-page" style="margin:0;padding:0;background-color:#f4f4f2;color:#1a1a1a;-webkit-text-size-adjust:100%">
+<div style="display:none;font-size:1px;color:#f4f4f2;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden">Produkt: Påfyll – månedlig fagbrev</div>
+<table role="presentation" class="luma-page" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;background-color:#f4f4f2">
+<tr>
+<td align="center" style="padding:20px 12px">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;text-align:left">
+<tr>
+<td>
+<!--luma:section:header-->
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong>Luma Anbudsvarsling</strong></p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">En gratis tjeneste fra Luma Training</p>
+<!--luma:section:title-->
+<h1 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:22px;line-height:1.3;font-weight:600;color:#1a1a1a">Bestillingen er mottatt</h1>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">12. mars 2026</p>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">Takk for bestillingen. Vi behandler den manuelt og tar kontakt hvis noe er uklart.</p>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin-bottom:10px"><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Produkt</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Påfyll – månedlig fagbrev</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Fakturamottaker</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Nordvik Bygg AS</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Organisasjonsnummer</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">912345678</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Fakturaadresse</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Industriveien 12, 1481 Hagan, Norge</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Faktura-e-post</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">faktura@nordvikbygg.no</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Kontaktperson</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Ingrid Nordvik</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Deres referanse</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Avd. 400</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Bestillingsnummer</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">PO-2026-118</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Status</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Mottatt</td></tr></table>
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Betaling med faktura</h3>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px">Pris ekskl. mva.</li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px">Vi sender faktura til oppgitt fakturaadresse.</li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px">Tilgangen aktiveres etter behandling.</li></ul>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Anbudsvarslingen er og forblir gratis. Denne bestillingen gjelder bare produktet over.</p>
+<!--luma:section:legal-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr><td style="border-top:2px solid #c9c7bb;font-size:0;line-height:0;height:1px">&nbsp;</td></tr></table>
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Hvorfor mottar jeg denne e-posten?</h3>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Du mottar denne e-posten fordi den gjelder kontoen din i Luma Anbudsvarsling.</p>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://luma-training.com/personvern?utm_source=anbudsvarsling&amp;utm_medium=landing" style="color:#1c4b8c;text-decoration:underline">Personvern</a></li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/vilkar?utm_source=anbudsvarsling&amp;utm_medium=landing" style="color:#1c4b8c;text-decoration:underline">Vilkår for bruk</a></li></ul>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Avsender: Luma Training AS, Storgata 1, 0155 Oslo</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Kontakt: <a class="luma-link" href="mailto:anbudsvarsling@luma-training.com" style="color:#1c4b8c">anbudsvarsling@luma-training.com</a></p></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</body>
+</html>
+"
+`;
+
+exports[`the nine MVP templates > order-request-received-v1 > matches the plain-text snapshot 1`] = `
+"Luma Anbudsvarsling
+En gratis tjeneste fra Luma Training
+
+Bestillingen er mottatt
+=======================
+12. mars 2026
+
+Takk for bestillingen. Vi behandler den manuelt og tar kontakt hvis noe
+er uklart.
+
+Produkt: Påfyll – månedlig fagbrev
+Fakturamottaker: Nordvik Bygg AS
+Organisasjonsnummer: 912345678
+Fakturaadresse: Industriveien 12, 1481 Hagan, Norge
+Faktura-e-post: faktura@nordvikbygg.no
+Kontaktperson: Ingrid Nordvik
+Deres referanse: Avd. 400
+Bestillingsnummer: PO-2026-118
+Status: Mottatt
+
+Betaling med faktura
+- Pris ekskl. mva.
+- Vi sender faktura til oppgitt fakturaadresse.
+- Tilgangen aktiveres etter behandling.
+
+Anbudsvarslingen er og forblir gratis. Denne bestillingen gjelder bare
+produktet over.
+
+------------------------------------------------------------------------
+Hvorfor mottar jeg denne e-posten?
+Du mottar denne e-posten fordi den gjelder kontoen din i Luma
+Anbudsvarsling.
+
+Personvern:
+https://luma-training.com/personvern?utm_source=anbudsvarsling&utm_medium=landing
+Vilkår for bruk:
+https://anbudsvarsling.luma-training.com/vilkar?utm_source=anbudsvarsling&utm_medium=landing
+
+Avsender: Luma Training AS, Storgata 1, 0155 Oslo
+Kontakt: anbudsvarsling@luma-training.com
+"
+`;
+
+exports[`the nine MVP templates > order-request-received-v1 > matches the subject snapshot 1`] = `"Vi har mottatt bestillingen din"`;
+
+exports[`the nine MVP templates > paid-access-activated-v1 > matches the HTML snapshot 1`] = `
+"<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
+<title>Tilgangen din er aktivert</title>
+<style>@media (prefers-color-scheme: dark) {
+  .luma-page { background-color: #16171a !important; }
+  .luma-panel-cell, .luma-promotion-cell, .luma-planned-cell {
+    background-color: #212227 !important;
+    border-color: #3a3b42 !important;
+  }
+  .luma-text, .luma-text * { color: #f2f2f0 !important; }
+  .luma-muted, .luma-muted * { color: #b6b6b2 !important; }
+  .luma-link { color: #9dc0f0 !important; }
+}</style>
+</head>
+<body class="luma-page" style="margin:0;padding:0;background-color:#f4f4f2;color:#1a1a1a;-webkit-text-size-adjust:100%">
+<div style="display:none;font-size:1px;color:#f4f4f2;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden">Tilgangen til Påfyll – månedlig fagbrev er nå aktivert.</div>
+<table role="presentation" class="luma-page" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;background-color:#f4f4f2">
+<tr>
+<td align="center" style="padding:20px 12px">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;text-align:left">
+<tr>
+<td>
+<!--luma:section:header-->
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong>Luma Anbudsvarsling</strong></p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">En gratis tjeneste fra Luma Training</p>
+<!--luma:section:title-->
+<h1 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:22px;line-height:1.3;font-weight:600;color:#1a1a1a">Tilgangen er aktivert</h1>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">12. mars 2026</p>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">Tilgangen til Påfyll – månedlig fagbrev er nå aktivert.</p>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong><a class="luma-link" href="https://luma-training.com/paafyll/min-tilgang?utm_source=anbudsvarsling&amp;utm_medium=landing" style="color:#1c4b8c;text-decoration:underline">Kom i gang</a></strong></p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Faktura sendes til fakturaadressen du oppga i bestillingen.</p>
+<!--luma:section:legal-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr><td style="border-top:2px solid #c9c7bb;font-size:0;line-height:0;height:1px">&nbsp;</td></tr></table>
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Hvorfor mottar jeg denne e-posten?</h3>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Du mottar denne e-posten fordi den gjelder kontoen din i Luma Anbudsvarsling.</p>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://luma-training.com/personvern?utm_source=anbudsvarsling&amp;utm_medium=landing" style="color:#1c4b8c;text-decoration:underline">Personvern</a></li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/vilkar?utm_source=anbudsvarsling&amp;utm_medium=landing" style="color:#1c4b8c;text-decoration:underline">Vilkår for bruk</a></li></ul>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Avsender: Luma Training AS, Storgata 1, 0155 Oslo</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Kontakt: <a class="luma-link" href="mailto:anbudsvarsling@luma-training.com" style="color:#1c4b8c">anbudsvarsling@luma-training.com</a></p></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</body>
+</html>
+"
+`;
+
+exports[`the nine MVP templates > paid-access-activated-v1 > matches the plain-text snapshot 1`] = `
+"Luma Anbudsvarsling
+En gratis tjeneste fra Luma Training
+
+Tilgangen er aktivert
+=====================
+12. mars 2026
+
+Tilgangen til Påfyll – månedlig fagbrev er nå aktivert.
+
+Kom i gang:
+https://luma-training.com/paafyll/min-tilgang?utm_source=anbudsvarsling&utm_medium=landing
+
+Faktura sendes til fakturaadressen du oppga i bestillingen.
+
+------------------------------------------------------------------------
+Hvorfor mottar jeg denne e-posten?
+Du mottar denne e-posten fordi den gjelder kontoen din i Luma
+Anbudsvarsling.
+
+Personvern:
+https://luma-training.com/personvern?utm_source=anbudsvarsling&utm_medium=landing
+Vilkår for bruk:
+https://anbudsvarsling.luma-training.com/vilkar?utm_source=anbudsvarsling&utm_medium=landing
+
+Avsender: Luma Training AS, Storgata 1, 0155 Oslo
+Kontakt: anbudsvarsling@luma-training.com
+"
+`;
+
+exports[`the nine MVP templates > paid-access-activated-v1 > matches the subject snapshot 1`] = `"Tilgangen din er aktivert"`;
+
+exports[`the nine MVP templates > tender-daily-digest-v1 > matches the HTML snapshot 1`] = `
+"<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
+<title>3 nye anbud i dag – «Bygg og rehabilitering»</title>
+<style>@media (prefers-color-scheme: dark) {
+  .luma-page { background-color: #16171a !important; }
+  .luma-panel-cell, .luma-promotion-cell, .luma-planned-cell {
+    background-color: #212227 !important;
+    border-color: #3a3b42 !important;
+  }
+  .luma-text, .luma-text * { color: #f2f2f0 !important; }
+  .luma-muted, .luma-muted * { color: #b6b6b2 !important; }
+  .luma-link { color: #9dc0f0 !important; }
+}</style>
+</head>
+<body class="luma-page" style="margin:0;padding:0;background-color:#f4f4f2;color:#1a1a1a;-webkit-text-size-adjust:100%">
+<div style="display:none;font-size:1px;color:#f4f4f2;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden">Du har 3 nye anbud som passer varslingsprofilen «Bygg og rehabilitering».</div>
+<table role="presentation" class="luma-page" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;background-color:#f4f4f2">
+<tr>
+<td align="center" style="padding:20px 12px">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;text-align:left">
+<tr>
+<td>
+<!--luma:section:header-->
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong>Luma Anbudsvarsling</strong></p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">En gratis tjeneste fra Luma Training</p>
+<!--luma:section:title-->
+<h1 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:22px;line-height:1.3;font-weight:600;color:#1a1a1a">Nye anbud i dag</h1>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">12. mars 2026</p>
+<!--luma:section:count-->
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">Du har 3 nye anbud som passer varslingsprofilen «Bygg og rehabilitering».</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Treffscoren viser hvor godt anbudet passer varslingsprofilen din. Den sier ingenting om sannsynligheten for å vinne.</p>
+<!--luma:section:competitions-->
+<!--luma:tender-card:22222222-2222-4222-8222-000000000001-->
+<table role="presentation" class="luma-panel" width="100%" cellpadding="0" cellspacing="0" border="0" data-luma-card="competition" data-luma-tender-id="22222222-2222-4222-8222-000000000001" style="width:100%;border-collapse:separate;margin-bottom:14px">
+<tr><td class="luma-panel-cell" style="padding:16px 18px;background-color:#ffffff;border:1px solid #dcdcd6;border-radius:4px;color:#1a1a1a">
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong><a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000001?utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Rehabilitering av Bjørnsletta skole – bygg og tekniske fag</a></strong></p>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin-bottom:10px"><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Oppdragsgiver</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Oslo kommune, Utdanningsetaten</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Frist</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">15. april 2026 kl. 12:00</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Treffnivå</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Høy relevans</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Publisert</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">10. mars 2026</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Anslått verdi</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">42 000 000–48 000 000 NOK</td></tr></table>
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Derfor passer dette varslingsprofilen din</h3>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px">Matcher CPV-kodene i varslingsprofilen: 45214210, 45331000</li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px">Ligger i området du følger: Oslo</li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px">Inneholder søkeordene dine: rehabilitering, skole</li></ul>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000001?utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Se anbudet</a> &nbsp;·&nbsp; <a class="luma-link" href="https://doffin.no/notices/2026-401233" style="color:#1c4b8c;text-decoration:underline">Åpne kunngjøringen på Doffin</a> &nbsp;·&nbsp; <a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000001?handling=lagre&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Lagre</a> &nbsp;·&nbsp; <a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000001?handling=avvis&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Avvis</a></p>
+</td></tr>
+</table>
+<!--luma:tender-card:22222222-2222-4222-8222-000000000002-->
+<table role="presentation" class="luma-panel" width="100%" cellpadding="0" cellspacing="0" border="0" data-luma-card="competition" data-luma-tender-id="22222222-2222-4222-8222-000000000002" style="width:100%;border-collapse:separate;margin-bottom:14px">
+<tr><td class="luma-panel-cell" style="padding:16px 18px;background-color:#ffffff;border:1px solid #dcdcd6;border-radius:4px;color:#1a1a1a">
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong><a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000002?utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Rammeavtale for tømrertjenester</a></strong></p>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin-bottom:10px"><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Oppdragsgiver</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Bærum kommune</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Frist</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">2. april 2026 kl. 14:00</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Treffnivå</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Verdt å undersøke</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Publisert</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">11. mars 2026</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Anslått verdi</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">fra 8 000 000 NOK</td></tr></table>
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Derfor passer dette varslingsprofilen din</h3>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px">Matcher CPV-kodene i varslingsprofilen: 45422100</li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px">Ligger i området du følger: Akershus</li></ul>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000002?utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Se anbudet</a> &nbsp;·&nbsp; <a class="luma-link" href="https://doffin.no/notices/2026-401288" style="color:#1c4b8c;text-decoration:underline">Åpne kunngjøringen på Doffin</a> &nbsp;·&nbsp; <a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000002?handling=lagre&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Lagre</a> &nbsp;·&nbsp; <a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000002?handling=avvis&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Avvis</a></p>
+</td></tr>
+</table>
+<!--luma:section:planned:start-->
+<h2 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:18px;line-height:1.3;font-weight:600;color:#1a1a1a">Planlagte anskaffelser (1)</h2>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">Konkurransene er ikke publisert ennå. Godt tidspunkt å begynne forberedelsene.</p>
+<!--luma:planned-card:33333333-3333-4333-8333-000000000001-->
+<table role="presentation" class="luma-planned" width="100%" cellpadding="0" cellspacing="0" border="0" data-luma-card="planned" data-luma-tender-id="33333333-3333-4333-8333-000000000001" style="width:100%;border-collapse:separate;margin-bottom:14px">
+<tr><td class="luma-planned-cell" style="padding:16px 18px;background-color:#f7f5ef;border:1px solid #d8d2be;border-radius:4px;color:#1a1a1a">
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong><a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/33333333-3333-4333-8333-000000000001?utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Veiledende kunngjøring: nytt sykehjem i Groruddalen</a></strong></p>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin-bottom:10px"><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Oppdragsgiver</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Oslo kommune, Omsorgsbygg</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Frist</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Planlagt anskaffelse</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Treffnivå</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Verdt å undersøke</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Publisert</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">9. mars 2026</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Anslått verdi</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">fra 300 000 000 NOK</td></tr></table>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Konkurransen er ikke publisert ennå, så det finnes ingen frist.</p>
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Derfor passer dette varslingsprofilen din</h3>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px">Planlagt anskaffelse i en kategori du følger: Veiledende kunngjøring</li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px">Ligger i området du følger: Oslo</li></ul>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/33333333-3333-4333-8333-000000000001?utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Se anbudet</a> &nbsp;·&nbsp; <a class="luma-link" href="https://doffin.no/notices/2026-401301" style="color:#1c4b8c;text-decoration:underline">Åpne kunngjøringen på Doffin</a> &nbsp;·&nbsp; <a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/33333333-3333-4333-8333-000000000001?handling=lagre&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Lagre</a> &nbsp;·&nbsp; <a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/33333333-3333-4333-8333-000000000001?handling=avvis&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Avvis</a></p>
+</td></tr>
+</table>
+<!--luma:section:planned:end-->
+<!--luma:section:changes-->
+<h2 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:18px;line-height:1.3;font-weight:600;color:#1a1a1a">Endringer i lagrede anbud</h2>
+
+<table role="presentation" class="luma-panel" width="100%" cellpadding="0" cellspacing="0" border="0" data-luma-card="change" data-luma-tender-id="22222222-2222-4222-8222-000000000002" style="width:100%;border-collapse:separate;margin-bottom:14px">
+<tr><td class="luma-panel-cell" style="padding:16px 18px;background-color:#ffffff;border:1px solid #dcdcd6;border-radius:4px;color:#1a1a1a">
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong><a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000002?utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Rammeavtale for tømrertjenester</a></strong></p>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px">Fristen er flyttet (12. mars 2026)</li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px">Konkurransegrunnlaget er oppdatert (12. mars 2026)</li></ul>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000002?utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Se anbudet</a></p>
+</td></tr>
+</table>
+<!--luma:section:profile-admin-->
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Profiladministrasjon</h3>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/varsler?utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Administrer varslingsprofil</a></li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/innstillinger?handling=pause-varsler&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Pause varsler</a></li></ul>
+<!--luma:promotion:start-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr><td style="border-top:2px solid #c9c7bb;font-size:0;line-height:0;height:1px">&nbsp;</td></tr></table>
+
+<table role="presentation" class="luma-promotion" width="100%" cellpadding="0" cellspacing="0" border="0" data-luma-block="promotion" data-luma-recommendation-id="66666666-6666-4666-8666-000000000002" style="width:100%;border-collapse:separate;margin-bottom:14px">
+<tr><td class="luma-promotion-cell" style="padding:16px 18px;background-color:#f0efe9;border:1px solid #c9c7bb;border-radius:4px;color:#1a1a1a">
+<h2 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:18px;line-height:1.3;font-weight:600;color:#1a1a1a">Faglig påfyll fra Luma Training</h2>
+<span style="display:inline-block;padding:2px 8px;margin-bottom:8px;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:12px;line-height:1.4;color:#5b5b57;background-color:#ffffff;border:1px solid #c9c7bb;border-radius:3px" class="luma-muted">Betalt tilbud</span>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong>Påfyll: månedlig fagbrev om offentlige anskaffelser</strong></p>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">Ett brev i måneden med gjennomgang av konkrete konkurranser, tildelingskriterier og hva som skiller et godt tilbud fra et middelmådig. 395 kroner per måned eks. mva.</p>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><a class="luma-link" href="https://luma-training.com/paafyll?utm_source=anbudsvarsling&amp;utm_medium=digest&amp;utm_campaign=66666666-6666-4666-8666-000000000002" style="color:#1c4b8c;text-decoration:underline">Les mer</a></p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Dette er informasjon om kurs eller faglig innhold fra Luma Training. Det påvirker ikke hvilke anbud du får se.</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Du kan slå av denne delen uten å stoppe anbudsvarslene. <a class="luma-link" href="https://anbudsvarsling.luma-training.com/innstillinger?handling=slaa-av-promotering&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Slå av Luma-informasjon i anbudsvarslene</a></p>
+</td></tr>
+</table>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr><td style="border-top:2px solid #c9c7bb;font-size:0;line-height:0;height:1px">&nbsp;</td></tr></table>
+<!--luma:promotion:end-->
+<!--luma:section:notification-settings-->
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Varslingsinnstillinger</h3>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/innstillinger?utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Varslingsinnstillinger</a></li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/innstillinger?handling=slaa-av-promotering&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Luma-informasjon i anbudsvarslene</a></li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/innstillinger?handling=avslutt-anbudsvarsling&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Avslutt anbudsvarsling</a></li></ul>
+<!--luma:section:legal-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr><td style="border-top:2px solid #c9c7bb;font-size:0;line-height:0;height:1px">&nbsp;</td></tr></table>
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Hvorfor mottar jeg denne e-posten?</h3>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Du mottar denne e-posten fordi du har opprettet en varslingsprofil i Luma Anbudsvarsling.</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Tjenesten dekker kunngjøringer publisert på Doffin. At du ikke får varsel, betyr ikke at det ikke finnes muligheter.</p>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://luma-training.com/personvern?utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Personvern</a></li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/vilkar?utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Vilkår for bruk</a></li></ul>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Avsender: Luma Training AS, Storgata 1, 0155 Oslo</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Kontakt: <a class="luma-link" href="mailto:anbudsvarsling@luma-training.com" style="color:#1c4b8c">anbudsvarsling@luma-training.com</a></p></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</body>
+</html>
+"
+`;
+
+exports[`the nine MVP templates > tender-daily-digest-v1 > matches the plain-text snapshot 1`] = `
+"Luma Anbudsvarsling
+En gratis tjeneste fra Luma Training
+
+Nye anbud i dag
+===============
+12. mars 2026
+
+Du har 3 nye anbud som passer varslingsprofilen «Bygg og
+rehabilitering».
+
+Treffscoren viser hvor godt anbudet passer varslingsprofilen din. Den
+sier ingenting om sannsynligheten for å vinne.
+
+Rehabilitering av Bjørnsletta skole – bygg og tekniske fag
+----------------------------------------------------------
+Oppdragsgiver: Oslo kommune, Utdanningsetaten
+Frist: 15. april 2026 kl. 12:00
+Treffnivå: Høy relevans
+Publisert: 10. mars 2026
+Anslått verdi: 42 000 000–48 000 000 NOK
+
+Derfor passer dette varslingsprofilen din:
+- Matcher CPV-kodene i varslingsprofilen: 45214210, 45331000
+- Ligger i området du følger: Oslo
+- Inneholder søkeordene dine: rehabilitering, skole
+
+Se anbudet:
+https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000001?utm_source=anbudsvarsling&utm_medium=digest
+Åpne kunngjøringen på Doffin:
+https://doffin.no/notices/2026-401233
+Lagre:
+https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000001?handling=lagre&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=digest
+Avvis:
+https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000001?handling=avvis&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=digest
+
+Rammeavtale for tømrertjenester
+-------------------------------
+Oppdragsgiver: Bærum kommune
+Frist: 2. april 2026 kl. 14:00
+Treffnivå: Verdt å undersøke
+Publisert: 11. mars 2026
+Anslått verdi: fra 8 000 000 NOK
+
+Derfor passer dette varslingsprofilen din:
+- Matcher CPV-kodene i varslingsprofilen: 45422100
+- Ligger i området du følger: Akershus
+
+Se anbudet:
+https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000002?utm_source=anbudsvarsling&utm_medium=digest
+Åpne kunngjøringen på Doffin:
+https://doffin.no/notices/2026-401288
+Lagre:
+https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000002?handling=lagre&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=digest
+Avvis:
+https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000002?handling=avvis&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=digest
+
+Planlagte anskaffelser (1)
+==========================
+Konkurransene er ikke publisert ennå. Godt tidspunkt å begynne
+forberedelsene.
+
+Veiledende kunngjøring: nytt sykehjem i Groruddalen
+---------------------------------------------------
+Oppdragsgiver: Oslo kommune, Omsorgsbygg
+Frist: Planlagt anskaffelse
+Treffnivå: Verdt å undersøke
+Publisert: 9. mars 2026
+Anslått verdi: fra 300 000 000 NOK
+Konkurransen er ikke publisert ennå, så det finnes ingen frist.
+
+Derfor passer dette varslingsprofilen din:
+- Planlagt anskaffelse i en kategori du følger: Veiledende kunngjøring
+- Ligger i området du følger: Oslo
+
+Se anbudet:
+https://anbudsvarsling.luma-training.com/anbud/33333333-3333-4333-8333-000000000001?utm_source=anbudsvarsling&utm_medium=digest
+Åpne kunngjøringen på Doffin:
+https://doffin.no/notices/2026-401301
+Lagre:
+https://anbudsvarsling.luma-training.com/anbud/33333333-3333-4333-8333-000000000001?handling=lagre&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=digest
+Avvis:
+https://anbudsvarsling.luma-training.com/anbud/33333333-3333-4333-8333-000000000001?handling=avvis&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=digest
+
+Endringer i lagrede anbud
+=========================
+
+Rammeavtale for tømrertjenester
+-------------------------------
+- Fristen er flyttet (12. mars 2026)
+- Konkurransegrunnlaget er oppdatert (12. mars 2026)
+
+Se anbudet:
+https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000002?utm_source=anbudsvarsling&utm_medium=digest
+
+Profiladministrasjon
+Administrer varslingsprofil:
+https://anbudsvarsling.luma-training.com/varsler?utm_source=anbudsvarsling&utm_medium=digest
+Pause varsler:
+https://anbudsvarsling.luma-training.com/innstillinger?handling=pause-varsler&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=digest
+
+------------------------------------------------------------------------
+Faglig påfyll fra Luma Training
+[Betalt tilbud]
+
+Påfyll: månedlig fagbrev om offentlige anskaffelser
+Ett brev i måneden med gjennomgang av konkrete konkurranser,
+tildelingskriterier og hva som skiller et godt tilbud fra et
+middelmådig. 395 kroner per måned eks. mva.
+
+Les mer:
+https://luma-training.com/paafyll?utm_source=anbudsvarsling&utm_medium=digest&utm_campaign=66666666-6666-4666-8666-000000000002
+
+Dette er informasjon om kurs eller faglig innhold fra Luma Training. Det
+påvirker ikke hvilke anbud du får se.
+Du kan slå av denne delen uten å stoppe anbudsvarslene.
+Slå av Luma-informasjon i anbudsvarslene:
+https://anbudsvarsling.luma-training.com/innstillinger?handling=slaa-av-promotering&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=digest
+------------------------------------------------------------------------
+
+Varslingsinnstillinger
+Varslingsinnstillinger:
+https://anbudsvarsling.luma-training.com/innstillinger?utm_source=anbudsvarsling&utm_medium=digest
+Luma-informasjon i anbudsvarslene:
+https://anbudsvarsling.luma-training.com/innstillinger?handling=slaa-av-promotering&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=digest
+Avslutt anbudsvarsling:
+https://anbudsvarsling.luma-training.com/innstillinger?handling=avslutt-anbudsvarsling&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=digest
+
+------------------------------------------------------------------------
+Hvorfor mottar jeg denne e-posten?
+Du mottar denne e-posten fordi du har opprettet en varslingsprofil i
+Luma Anbudsvarsling.
+
+Tjenesten dekker kunngjøringer publisert på Doffin. At du ikke får
+varsel, betyr ikke at det ikke finnes muligheter.
+
+Personvern:
+https://luma-training.com/personvern?utm_source=anbudsvarsling&utm_medium=digest
+Vilkår for bruk:
+https://anbudsvarsling.luma-training.com/vilkar?utm_source=anbudsvarsling&utm_medium=digest
+
+Avsender: Luma Training AS, Storgata 1, 0155 Oslo
+Kontakt: anbudsvarsling@luma-training.com
+"
+`;
+
+exports[`the nine MVP templates > tender-daily-digest-v1 > matches the subject snapshot 1`] = `"3 nye anbud i dag – «Bygg og rehabilitering»"`;
+
+exports[`the nine MVP templates > tender-immediate-v1 > matches the HTML snapshot 1`] = `
+"<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
+<title>Nytt anbud: Rehabilitering av Bjørnsletta skole – bygg og tekniske fag</title>
+<style>@media (prefers-color-scheme: dark) {
+  .luma-page { background-color: #16171a !important; }
+  .luma-panel-cell, .luma-promotion-cell, .luma-planned-cell {
+    background-color: #212227 !important;
+    border-color: #3a3b42 !important;
+  }
+  .luma-text, .luma-text * { color: #f2f2f0 !important; }
+  .luma-muted, .luma-muted * { color: #b6b6b2 !important; }
+  .luma-link { color: #9dc0f0 !important; }
+}</style>
+</head>
+<body class="luma-page" style="margin:0;padding:0;background-color:#f4f4f2;color:#1a1a1a;-webkit-text-size-adjust:100%">
+<div style="display:none;font-size:1px;color:#f4f4f2;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden">Oslo kommune, Utdanningsetaten</div>
+<table role="presentation" class="luma-page" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;background-color:#f4f4f2">
+<tr>
+<td align="center" style="padding:20px 12px">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;text-align:left">
+<tr>
+<td>
+<!--luma:section:header-->
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong>Luma Anbudsvarsling</strong></p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">En gratis tjeneste fra Luma Training</p>
+<!--luma:section:title-->
+<h1 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:22px;line-height:1.3;font-weight:600;color:#1a1a1a">Nytt anbud som passer varslingsprofilen din</h1>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">12. mars 2026</p>
+<!--luma:section:count-->
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">Du har ett nytt anbud som passer varslingsprofilen «Bygg og rehabilitering».</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Treffscoren viser hvor godt anbudet passer varslingsprofilen din. Den sier ingenting om sannsynligheten for å vinne.</p>
+<!--luma:section:competitions-->
+<!--luma:tender-card:22222222-2222-4222-8222-000000000001-->
+<table role="presentation" class="luma-panel" width="100%" cellpadding="0" cellspacing="0" border="0" data-luma-card="competition" data-luma-tender-id="22222222-2222-4222-8222-000000000001" style="width:100%;border-collapse:separate;margin-bottom:14px">
+<tr><td class="luma-panel-cell" style="padding:16px 18px;background-color:#ffffff;border:1px solid #dcdcd6;border-radius:4px;color:#1a1a1a">
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong><a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000001?utm_source=anbudsvarsling&amp;utm_medium=immediate" style="color:#1c4b8c;text-decoration:underline">Rehabilitering av Bjørnsletta skole – bygg og tekniske fag</a></strong></p>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin-bottom:10px"><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Oppdragsgiver</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Oslo kommune, Utdanningsetaten</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Frist</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">15. april 2026 kl. 12:00</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Treffnivå</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Høy relevans</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Publisert</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">10. mars 2026</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Anslått verdi</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">42 000 000–48 000 000 NOK</td></tr></table>
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Derfor passer dette varslingsprofilen din</h3>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px">Matcher CPV-kodene i varslingsprofilen: 45214210, 45331000</li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px">Ligger i området du følger: Oslo</li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px">Inneholder søkeordene dine: rehabilitering, skole</li></ul>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000001?utm_source=anbudsvarsling&amp;utm_medium=immediate" style="color:#1c4b8c;text-decoration:underline">Se anbudet</a> &nbsp;·&nbsp; <a class="luma-link" href="https://doffin.no/notices/2026-401233" style="color:#1c4b8c;text-decoration:underline">Åpne kunngjøringen på Doffin</a> &nbsp;·&nbsp; <a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000001?handling=lagre&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=immediate" style="color:#1c4b8c;text-decoration:underline">Lagre</a> &nbsp;·&nbsp; <a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000001?handling=avvis&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=immediate" style="color:#1c4b8c;text-decoration:underline">Avvis</a></p>
+</td></tr>
+</table>
+<!--luma:section:profile-admin-->
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Profiladministrasjon</h3>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/varsler?utm_source=anbudsvarsling&amp;utm_medium=immediate" style="color:#1c4b8c;text-decoration:underline">Administrer varslingsprofil</a></li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/innstillinger?handling=pause-varsler&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=immediate" style="color:#1c4b8c;text-decoration:underline">Pause varsler</a></li></ul>
+<!--luma:promotion:start-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr><td style="border-top:2px solid #c9c7bb;font-size:0;line-height:0;height:1px">&nbsp;</td></tr></table>
+
+<table role="presentation" class="luma-promotion" width="100%" cellpadding="0" cellspacing="0" border="0" data-luma-block="promotion" data-luma-recommendation-id="66666666-6666-4666-8666-000000000002" style="width:100%;border-collapse:separate;margin-bottom:14px">
+<tr><td class="luma-promotion-cell" style="padding:16px 18px;background-color:#f0efe9;border:1px solid #c9c7bb;border-radius:4px;color:#1a1a1a">
+<h2 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:18px;line-height:1.3;font-weight:600;color:#1a1a1a">Faglig påfyll fra Luma Training</h2>
+<span style="display:inline-block;padding:2px 8px;margin-bottom:8px;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:12px;line-height:1.4;color:#5b5b57;background-color:#ffffff;border:1px solid #c9c7bb;border-radius:3px" class="luma-muted">Betalt tilbud</span>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong>Påfyll: månedlig fagbrev om offentlige anskaffelser</strong></p>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">Ett brev i måneden med gjennomgang av konkrete konkurranser, tildelingskriterier og hva som skiller et godt tilbud fra et middelmådig. 395 kroner per måned eks. mva.</p>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><a class="luma-link" href="https://luma-training.com/paafyll?utm_source=anbudsvarsling&amp;utm_medium=digest&amp;utm_campaign=66666666-6666-4666-8666-000000000002" style="color:#1c4b8c;text-decoration:underline">Les mer</a></p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Dette er informasjon om kurs eller faglig innhold fra Luma Training. Det påvirker ikke hvilke anbud du får se.</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Du kan slå av denne delen uten å stoppe anbudsvarslene. <a class="luma-link" href="https://anbudsvarsling.luma-training.com/innstillinger?handling=slaa-av-promotering&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=immediate" style="color:#1c4b8c;text-decoration:underline">Slå av Luma-informasjon i anbudsvarslene</a></p>
+</td></tr>
+</table>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr><td style="border-top:2px solid #c9c7bb;font-size:0;line-height:0;height:1px">&nbsp;</td></tr></table>
+<!--luma:promotion:end-->
+<!--luma:section:notification-settings-->
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Varslingsinnstillinger</h3>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/innstillinger?utm_source=anbudsvarsling&amp;utm_medium=immediate" style="color:#1c4b8c;text-decoration:underline">Varslingsinnstillinger</a></li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/innstillinger?handling=slaa-av-promotering&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=immediate" style="color:#1c4b8c;text-decoration:underline">Luma-informasjon i anbudsvarslene</a></li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/innstillinger?handling=avslutt-anbudsvarsling&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=immediate" style="color:#1c4b8c;text-decoration:underline">Avslutt anbudsvarsling</a></li></ul>
+<!--luma:section:legal-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr><td style="border-top:2px solid #c9c7bb;font-size:0;line-height:0;height:1px">&nbsp;</td></tr></table>
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Hvorfor mottar jeg denne e-posten?</h3>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Du mottar denne e-posten fordi du har opprettet en varslingsprofil i Luma Anbudsvarsling.</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Tjenesten dekker kunngjøringer publisert på Doffin. At du ikke får varsel, betyr ikke at det ikke finnes muligheter.</p>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://luma-training.com/personvern?utm_source=anbudsvarsling&amp;utm_medium=immediate" style="color:#1c4b8c;text-decoration:underline">Personvern</a></li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/vilkar?utm_source=anbudsvarsling&amp;utm_medium=immediate" style="color:#1c4b8c;text-decoration:underline">Vilkår for bruk</a></li></ul>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Avsender: Luma Training AS, Storgata 1, 0155 Oslo</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Kontakt: <a class="luma-link" href="mailto:anbudsvarsling@luma-training.com" style="color:#1c4b8c">anbudsvarsling@luma-training.com</a></p></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</body>
+</html>
+"
+`;
+
+exports[`the nine MVP templates > tender-immediate-v1 > matches the plain-text snapshot 1`] = `
+"Luma Anbudsvarsling
+En gratis tjeneste fra Luma Training
+
+Nytt anbud som passer varslingsprofilen din
+===========================================
+12. mars 2026
+
+Du har ett nytt anbud som passer varslingsprofilen «Bygg og
+rehabilitering».
+
+Treffscoren viser hvor godt anbudet passer varslingsprofilen din. Den
+sier ingenting om sannsynligheten for å vinne.
+
+Rehabilitering av Bjørnsletta skole – bygg og tekniske fag
+----------------------------------------------------------
+Oppdragsgiver: Oslo kommune, Utdanningsetaten
+Frist: 15. april 2026 kl. 12:00
+Treffnivå: Høy relevans
+Publisert: 10. mars 2026
+Anslått verdi: 42 000 000–48 000 000 NOK
+
+Derfor passer dette varslingsprofilen din:
+- Matcher CPV-kodene i varslingsprofilen: 45214210, 45331000
+- Ligger i området du følger: Oslo
+- Inneholder søkeordene dine: rehabilitering, skole
+
+Se anbudet:
+https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000001?utm_source=anbudsvarsling&utm_medium=immediate
+Åpne kunngjøringen på Doffin:
+https://doffin.no/notices/2026-401233
+Lagre:
+https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000001?handling=lagre&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=immediate
+Avvis:
+https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000001?handling=avvis&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=immediate
+
+Profiladministrasjon
+Administrer varslingsprofil:
+https://anbudsvarsling.luma-training.com/varsler?utm_source=anbudsvarsling&utm_medium=immediate
+Pause varsler:
+https://anbudsvarsling.luma-training.com/innstillinger?handling=pause-varsler&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=immediate
+
+------------------------------------------------------------------------
+Faglig påfyll fra Luma Training
+[Betalt tilbud]
+
+Påfyll: månedlig fagbrev om offentlige anskaffelser
+Ett brev i måneden med gjennomgang av konkrete konkurranser,
+tildelingskriterier og hva som skiller et godt tilbud fra et
+middelmådig. 395 kroner per måned eks. mva.
+
+Les mer:
+https://luma-training.com/paafyll?utm_source=anbudsvarsling&utm_medium=digest&utm_campaign=66666666-6666-4666-8666-000000000002
+
+Dette er informasjon om kurs eller faglig innhold fra Luma Training. Det
+påvirker ikke hvilke anbud du får se.
+Du kan slå av denne delen uten å stoppe anbudsvarslene.
+Slå av Luma-informasjon i anbudsvarslene:
+https://anbudsvarsling.luma-training.com/innstillinger?handling=slaa-av-promotering&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=immediate
+------------------------------------------------------------------------
+
+Varslingsinnstillinger
+Varslingsinnstillinger:
+https://anbudsvarsling.luma-training.com/innstillinger?utm_source=anbudsvarsling&utm_medium=immediate
+Luma-informasjon i anbudsvarslene:
+https://anbudsvarsling.luma-training.com/innstillinger?handling=slaa-av-promotering&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=immediate
+Avslutt anbudsvarsling:
+https://anbudsvarsling.luma-training.com/innstillinger?handling=avslutt-anbudsvarsling&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=immediate
+
+------------------------------------------------------------------------
+Hvorfor mottar jeg denne e-posten?
+Du mottar denne e-posten fordi du har opprettet en varslingsprofil i
+Luma Anbudsvarsling.
+
+Tjenesten dekker kunngjøringer publisert på Doffin. At du ikke får
+varsel, betyr ikke at det ikke finnes muligheter.
+
+Personvern:
+https://luma-training.com/personvern?utm_source=anbudsvarsling&utm_medium=immediate
+Vilkår for bruk:
+https://anbudsvarsling.luma-training.com/vilkar?utm_source=anbudsvarsling&utm_medium=immediate
+
+Avsender: Luma Training AS, Storgata 1, 0155 Oslo
+Kontakt: anbudsvarsling@luma-training.com
+"
+`;
+
+exports[`the nine MVP templates > tender-immediate-v1 > matches the subject snapshot 1`] = `"Nytt anbud: Rehabilitering av Bjørnsletta skole – bygg og tekniske fag"`;
+
+exports[`the nine MVP templates > tender-material-change-v1 > matches the HTML snapshot 1`] = `
+"<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
+<title>Endring i anbudet: Rammeavtale for tømrertjenester</title>
+<style>@media (prefers-color-scheme: dark) {
+  .luma-page { background-color: #16171a !important; }
+  .luma-panel-cell, .luma-promotion-cell, .luma-planned-cell {
+    background-color: #212227 !important;
+    border-color: #3a3b42 !important;
+  }
+  .luma-text, .luma-text * { color: #f2f2f0 !important; }
+  .luma-muted, .luma-muted * { color: #b6b6b2 !important; }
+  .luma-link { color: #9dc0f0 !important; }
+}</style>
+</head>
+<body class="luma-page" style="margin:0;padding:0;background-color:#f4f4f2;color:#1a1a1a;-webkit-text-size-adjust:100%">
+<div style="display:none;font-size:1px;color:#f4f4f2;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden">Fristen er flyttet</div>
+<table role="presentation" class="luma-page" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;background-color:#f4f4f2">
+<tr>
+<td align="center" style="padding:20px 12px">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;text-align:left">
+<tr>
+<td>
+<!--luma:section:header-->
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong>Luma Anbudsvarsling</strong></p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">En gratis tjeneste fra Luma Training</p>
+<!--luma:section:title-->
+<h1 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:22px;line-height:1.3;font-weight:600;color:#1a1a1a">Endring i et anbud du følger</h1>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">12. mars 2026</p>
+<!--luma:section:competitions-->
+<!--luma:tender-card:22222222-2222-4222-8222-000000000002-->
+<table role="presentation" class="luma-panel" width="100%" cellpadding="0" cellspacing="0" border="0" data-luma-card="change" data-luma-tender-id="22222222-2222-4222-8222-000000000002" style="width:100%;border-collapse:separate;margin-bottom:14px">
+<tr><td class="luma-panel-cell" style="padding:16px 18px;background-color:#ffffff;border:1px solid #dcdcd6;border-radius:4px;color:#1a1a1a">
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong><a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000002?utm_source=anbudsvarsling&amp;utm_medium=immediate" style="color:#1c4b8c;text-decoration:underline">Rammeavtale for tømrertjenester</a></strong></p>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin-bottom:10px"><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Oppdragsgiver</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Bærum kommune</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Frist</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">2. april 2026 kl. 14:00</td></tr></table>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">Oppdragsgiver har endret kunngjøringen. Dette er registrert siden sist:</p>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px">Fristen er flyttet (Før: 26. mars 2026 kl. 12:00; Nå: 2. april 2026 kl. 12:00) – 12. mars 2026</li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px">Konkurransegrunnlaget er oppdatert – 12. mars 2026</li></ul>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000002?utm_source=anbudsvarsling&amp;utm_medium=immediate" style="color:#1c4b8c;text-decoration:underline">Se anbudet</a> &nbsp;·&nbsp; <a class="luma-link" href="https://doffin.no/notices/2026-401288" style="color:#1c4b8c;text-decoration:underline">Åpne kunngjøringen på Doffin</a></p>
+</td></tr>
+</table>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Kontrollér alltid kunngjøringen på Doffin før du planlegger videre.</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Spørsmål og svar i konkurransen skjer i oppdragsgivers eget konkurranseverktøy og fanges ikke opp her. Følg derfor alltid konkurransens egne kanaler.</p>
+<!--luma:section:profile-admin-->
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Profiladministrasjon</h3>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/varsler?utm_source=anbudsvarsling&amp;utm_medium=immediate" style="color:#1c4b8c;text-decoration:underline">Administrer varslingsprofil</a></li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/innstillinger?handling=pause-varsler&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=immediate" style="color:#1c4b8c;text-decoration:underline">Pause varsler</a></li></ul>
+<!--luma:promotion:start-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr><td style="border-top:2px solid #c9c7bb;font-size:0;line-height:0;height:1px">&nbsp;</td></tr></table>
+
+<table role="presentation" class="luma-promotion" width="100%" cellpadding="0" cellspacing="0" border="0" data-luma-block="promotion" data-luma-recommendation-id="66666666-6666-4666-8666-000000000002" style="width:100%;border-collapse:separate;margin-bottom:14px">
+<tr><td class="luma-promotion-cell" style="padding:16px 18px;background-color:#f0efe9;border:1px solid #c9c7bb;border-radius:4px;color:#1a1a1a">
+<h2 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:18px;line-height:1.3;font-weight:600;color:#1a1a1a">Faglig påfyll fra Luma Training</h2>
+<span style="display:inline-block;padding:2px 8px;margin-bottom:8px;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:12px;line-height:1.4;color:#5b5b57;background-color:#ffffff;border:1px solid #c9c7bb;border-radius:3px" class="luma-muted">Betalt tilbud</span>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong>Påfyll: månedlig fagbrev om offentlige anskaffelser</strong></p>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">Ett brev i måneden med gjennomgang av konkrete konkurranser, tildelingskriterier og hva som skiller et godt tilbud fra et middelmådig. 395 kroner per måned eks. mva.</p>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><a class="luma-link" href="https://luma-training.com/paafyll?utm_source=anbudsvarsling&amp;utm_medium=digest&amp;utm_campaign=66666666-6666-4666-8666-000000000002" style="color:#1c4b8c;text-decoration:underline">Les mer</a></p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Dette er informasjon om kurs eller faglig innhold fra Luma Training. Det påvirker ikke hvilke anbud du får se.</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Du kan slå av denne delen uten å stoppe anbudsvarslene. <a class="luma-link" href="https://anbudsvarsling.luma-training.com/innstillinger?handling=slaa-av-promotering&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=immediate" style="color:#1c4b8c;text-decoration:underline">Slå av Luma-informasjon i anbudsvarslene</a></p>
+</td></tr>
+</table>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr><td style="border-top:2px solid #c9c7bb;font-size:0;line-height:0;height:1px">&nbsp;</td></tr></table>
+<!--luma:promotion:end-->
+<!--luma:section:notification-settings-->
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Varslingsinnstillinger</h3>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/innstillinger?utm_source=anbudsvarsling&amp;utm_medium=immediate" style="color:#1c4b8c;text-decoration:underline">Varslingsinnstillinger</a></li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/innstillinger?handling=slaa-av-promotering&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=immediate" style="color:#1c4b8c;text-decoration:underline">Luma-informasjon i anbudsvarslene</a></li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/innstillinger?handling=avslutt-anbudsvarsling&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=immediate" style="color:#1c4b8c;text-decoration:underline">Avslutt anbudsvarsling</a></li></ul>
+<!--luma:section:legal-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr><td style="border-top:2px solid #c9c7bb;font-size:0;line-height:0;height:1px">&nbsp;</td></tr></table>
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Hvorfor mottar jeg denne e-posten?</h3>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Du mottar denne e-posten fordi du har opprettet en varslingsprofil i Luma Anbudsvarsling.</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Tjenesten dekker kunngjøringer publisert på Doffin. At du ikke får varsel, betyr ikke at det ikke finnes muligheter.</p>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://luma-training.com/personvern?utm_source=anbudsvarsling&amp;utm_medium=immediate" style="color:#1c4b8c;text-decoration:underline">Personvern</a></li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/vilkar?utm_source=anbudsvarsling&amp;utm_medium=immediate" style="color:#1c4b8c;text-decoration:underline">Vilkår for bruk</a></li></ul>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Avsender: Luma Training AS, Storgata 1, 0155 Oslo</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Kontakt: <a class="luma-link" href="mailto:anbudsvarsling@luma-training.com" style="color:#1c4b8c">anbudsvarsling@luma-training.com</a></p></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</body>
+</html>
+"
+`;
+
+exports[`the nine MVP templates > tender-material-change-v1 > matches the plain-text snapshot 1`] = `
+"Luma Anbudsvarsling
+En gratis tjeneste fra Luma Training
+
+Endring i et anbud du følger
+============================
+12. mars 2026
+
+Rammeavtale for tømrertjenester
+-------------------------------
+Oppdragsgiver: Bærum kommune
+Frist: 2. april 2026 kl. 14:00
+
+Oppdragsgiver har endret kunngjøringen. Dette er registrert siden sist:
+- Fristen er flyttet (Før: 26. mars 2026 kl. 12:00; Nå: 2. april 2026 kl. 12:00) – 12. mars 2026
+- Konkurransegrunnlaget er oppdatert – 12. mars 2026
+
+Se anbudet:
+https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000002?utm_source=anbudsvarsling&utm_medium=immediate
+Åpne kunngjøringen på Doffin:
+https://doffin.no/notices/2026-401288
+
+Kontrollér alltid kunngjøringen på Doffin før du planlegger videre.
+
+Spørsmål og svar i konkurransen skjer i oppdragsgivers eget
+konkurranseverktøy og fanges ikke opp her. Følg derfor alltid
+konkurransens egne kanaler.
+
+Profiladministrasjon
+Administrer varslingsprofil:
+https://anbudsvarsling.luma-training.com/varsler?utm_source=anbudsvarsling&utm_medium=immediate
+Pause varsler:
+https://anbudsvarsling.luma-training.com/innstillinger?handling=pause-varsler&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=immediate
+
+------------------------------------------------------------------------
+Faglig påfyll fra Luma Training
+[Betalt tilbud]
+
+Påfyll: månedlig fagbrev om offentlige anskaffelser
+Ett brev i måneden med gjennomgang av konkrete konkurranser,
+tildelingskriterier og hva som skiller et godt tilbud fra et
+middelmådig. 395 kroner per måned eks. mva.
+
+Les mer:
+https://luma-training.com/paafyll?utm_source=anbudsvarsling&utm_medium=digest&utm_campaign=66666666-6666-4666-8666-000000000002
+
+Dette er informasjon om kurs eller faglig innhold fra Luma Training. Det
+påvirker ikke hvilke anbud du får se.
+Du kan slå av denne delen uten å stoppe anbudsvarslene.
+Slå av Luma-informasjon i anbudsvarslene:
+https://anbudsvarsling.luma-training.com/innstillinger?handling=slaa-av-promotering&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=immediate
+------------------------------------------------------------------------
+
+Varslingsinnstillinger
+Varslingsinnstillinger:
+https://anbudsvarsling.luma-training.com/innstillinger?utm_source=anbudsvarsling&utm_medium=immediate
+Luma-informasjon i anbudsvarslene:
+https://anbudsvarsling.luma-training.com/innstillinger?handling=slaa-av-promotering&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=immediate
+Avslutt anbudsvarsling:
+https://anbudsvarsling.luma-training.com/innstillinger?handling=avslutt-anbudsvarsling&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=immediate
+
+------------------------------------------------------------------------
+Hvorfor mottar jeg denne e-posten?
+Du mottar denne e-posten fordi du har opprettet en varslingsprofil i
+Luma Anbudsvarsling.
+
+Tjenesten dekker kunngjøringer publisert på Doffin. At du ikke får
+varsel, betyr ikke at det ikke finnes muligheter.
+
+Personvern:
+https://luma-training.com/personvern?utm_source=anbudsvarsling&utm_medium=immediate
+Vilkår for bruk:
+https://anbudsvarsling.luma-training.com/vilkar?utm_source=anbudsvarsling&utm_medium=immediate
+
+Avsender: Luma Training AS, Storgata 1, 0155 Oslo
+Kontakt: anbudsvarsling@luma-training.com
+"
+`;
+
+exports[`the nine MVP templates > tender-material-change-v1 > matches the subject snapshot 1`] = `"Endring i anbudet: Rammeavtale for tømrertjenester"`;
+
+exports[`the nine MVP templates > tender-weekly-digest-v1 > matches the HTML snapshot 1`] = `
+"<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
+<title>3 nye anbud denne uken – «Bygg og rehabilitering»</title>
+<style>@media (prefers-color-scheme: dark) {
+  .luma-page { background-color: #16171a !important; }
+  .luma-panel-cell, .luma-promotion-cell, .luma-planned-cell {
+    background-color: #212227 !important;
+    border-color: #3a3b42 !important;
+  }
+  .luma-text, .luma-text * { color: #f2f2f0 !important; }
+  .luma-muted, .luma-muted * { color: #b6b6b2 !important; }
+  .luma-link { color: #9dc0f0 !important; }
+}</style>
+</head>
+<body class="luma-page" style="margin:0;padding:0;background-color:#f4f4f2;color:#1a1a1a;-webkit-text-size-adjust:100%">
+<div style="display:none;font-size:1px;color:#f4f4f2;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden">Du har 3 nye anbud som passer varslingsprofilen «Bygg og rehabilitering».</div>
+<table role="presentation" class="luma-page" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;background-color:#f4f4f2">
+<tr>
+<td align="center" style="padding:20px 12px">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;text-align:left">
+<tr>
+<td>
+<!--luma:section:header-->
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong>Luma Anbudsvarsling</strong></p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">En gratis tjeneste fra Luma Training</p>
+<!--luma:section:title-->
+<h1 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:22px;line-height:1.3;font-weight:600;color:#1a1a1a">Nye anbud denne uken</h1>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">11.–12. mars 2026</p>
+<!--luma:section:count-->
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">Du har 3 nye anbud som passer varslingsprofilen «Bygg og rehabilitering».</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Treffscoren viser hvor godt anbudet passer varslingsprofilen din. Den sier ingenting om sannsynligheten for å vinne.</p>
+<!--luma:section:competitions-->
+<!--luma:tender-card:22222222-2222-4222-8222-000000000001-->
+<table role="presentation" class="luma-panel" width="100%" cellpadding="0" cellspacing="0" border="0" data-luma-card="competition" data-luma-tender-id="22222222-2222-4222-8222-000000000001" style="width:100%;border-collapse:separate;margin-bottom:14px">
+<tr><td class="luma-panel-cell" style="padding:16px 18px;background-color:#ffffff;border:1px solid #dcdcd6;border-radius:4px;color:#1a1a1a">
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong><a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000001?utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Rehabilitering av Bjørnsletta skole – bygg og tekniske fag</a></strong></p>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin-bottom:10px"><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Oppdragsgiver</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Oslo kommune, Utdanningsetaten</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Frist</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">15. april 2026 kl. 12:00</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Treffnivå</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Høy relevans</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Publisert</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">10. mars 2026</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Anslått verdi</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">42 000 000–48 000 000 NOK</td></tr></table>
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Derfor passer dette varslingsprofilen din</h3>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px">Matcher CPV-kodene i varslingsprofilen: 45214210, 45331000</li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px">Ligger i området du følger: Oslo</li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px">Inneholder søkeordene dine: rehabilitering, skole</li></ul>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000001?utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Se anbudet</a> &nbsp;·&nbsp; <a class="luma-link" href="https://doffin.no/notices/2026-401233" style="color:#1c4b8c;text-decoration:underline">Åpne kunngjøringen på Doffin</a> &nbsp;·&nbsp; <a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000001?handling=lagre&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Lagre</a> &nbsp;·&nbsp; <a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000001?handling=avvis&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Avvis</a></p>
+</td></tr>
+</table>
+<!--luma:tender-card:22222222-2222-4222-8222-000000000002-->
+<table role="presentation" class="luma-panel" width="100%" cellpadding="0" cellspacing="0" border="0" data-luma-card="competition" data-luma-tender-id="22222222-2222-4222-8222-000000000002" style="width:100%;border-collapse:separate;margin-bottom:14px">
+<tr><td class="luma-panel-cell" style="padding:16px 18px;background-color:#ffffff;border:1px solid #dcdcd6;border-radius:4px;color:#1a1a1a">
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong><a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000002?utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Rammeavtale for tømrertjenester</a></strong></p>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin-bottom:10px"><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Oppdragsgiver</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Bærum kommune</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Frist</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">2. april 2026 kl. 14:00</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Treffnivå</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Verdt å undersøke</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Publisert</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">11. mars 2026</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Anslått verdi</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">fra 8 000 000 NOK</td></tr></table>
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Derfor passer dette varslingsprofilen din</h3>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px">Matcher CPV-kodene i varslingsprofilen: 45422100</li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px">Ligger i området du følger: Akershus</li></ul>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000002?utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Se anbudet</a> &nbsp;·&nbsp; <a class="luma-link" href="https://doffin.no/notices/2026-401288" style="color:#1c4b8c;text-decoration:underline">Åpne kunngjøringen på Doffin</a> &nbsp;·&nbsp; <a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000002?handling=lagre&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Lagre</a> &nbsp;·&nbsp; <a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000002?handling=avvis&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Avvis</a></p>
+</td></tr>
+</table>
+<!--luma:section:planned:start-->
+<h2 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:18px;line-height:1.3;font-weight:600;color:#1a1a1a">Planlagte anskaffelser (1)</h2>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">Konkurransene er ikke publisert ennå. Godt tidspunkt å begynne forberedelsene.</p>
+<!--luma:planned-card:33333333-3333-4333-8333-000000000001-->
+<table role="presentation" class="luma-planned" width="100%" cellpadding="0" cellspacing="0" border="0" data-luma-card="planned" data-luma-tender-id="33333333-3333-4333-8333-000000000001" style="width:100%;border-collapse:separate;margin-bottom:14px">
+<tr><td class="luma-planned-cell" style="padding:16px 18px;background-color:#f7f5ef;border:1px solid #d8d2be;border-radius:4px;color:#1a1a1a">
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong><a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/33333333-3333-4333-8333-000000000001?utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Veiledende kunngjøring: nytt sykehjem i Groruddalen</a></strong></p>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin-bottom:10px"><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Oppdragsgiver</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Oslo kommune, Omsorgsbygg</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Frist</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Planlagt anskaffelse</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Treffnivå</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">Verdt å undersøke</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Publisert</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">9. mars 2026</td></tr><tr><td style="padding:2px 12px 2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57;vertical-align:top;white-space:nowrap" class="luma-muted">Anslått verdi</td><td style="padding:2px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#1a1a1a;vertical-align:top" class="luma-text">fra 300 000 000 NOK</td></tr></table>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Konkurransen er ikke publisert ennå, så det finnes ingen frist.</p>
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Derfor passer dette varslingsprofilen din</h3>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px">Planlagt anskaffelse i en kategori du følger: Veiledende kunngjøring</li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px">Ligger i området du følger: Oslo</li></ul>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/33333333-3333-4333-8333-000000000001?utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Se anbudet</a> &nbsp;·&nbsp; <a class="luma-link" href="https://doffin.no/notices/2026-401301" style="color:#1c4b8c;text-decoration:underline">Åpne kunngjøringen på Doffin</a> &nbsp;·&nbsp; <a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/33333333-3333-4333-8333-000000000001?handling=lagre&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Lagre</a> &nbsp;·&nbsp; <a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/33333333-3333-4333-8333-000000000001?handling=avvis&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Avvis</a></p>
+</td></tr>
+</table>
+<!--luma:section:planned:end-->
+<!--luma:section:changes-->
+<h2 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:18px;line-height:1.3;font-weight:600;color:#1a1a1a">Endringer i lagrede anbud</h2>
+
+<table role="presentation" class="luma-panel" width="100%" cellpadding="0" cellspacing="0" border="0" data-luma-card="change" data-luma-tender-id="22222222-2222-4222-8222-000000000002" style="width:100%;border-collapse:separate;margin-bottom:14px">
+<tr><td class="luma-panel-cell" style="padding:16px 18px;background-color:#ffffff;border:1px solid #dcdcd6;border-radius:4px;color:#1a1a1a">
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong><a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000002?utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Rammeavtale for tømrertjenester</a></strong></p>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px">Fristen er flyttet (12. mars 2026)</li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px">Konkurransegrunnlaget er oppdatert (12. mars 2026)</li></ul>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000002?utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Se anbudet</a></p>
+</td></tr>
+</table>
+<!--luma:section:profile-admin-->
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Profiladministrasjon</h3>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/varsler?utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Administrer varslingsprofil</a></li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/innstillinger?handling=pause-varsler&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Pause varsler</a></li></ul>
+<!--luma:promotion:start-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr><td style="border-top:2px solid #c9c7bb;font-size:0;line-height:0;height:1px">&nbsp;</td></tr></table>
+
+<table role="presentation" class="luma-promotion" width="100%" cellpadding="0" cellspacing="0" border="0" data-luma-block="promotion" data-luma-recommendation-id="66666666-6666-4666-8666-000000000002" style="width:100%;border-collapse:separate;margin-bottom:14px">
+<tr><td class="luma-promotion-cell" style="padding:16px 18px;background-color:#f0efe9;border:1px solid #c9c7bb;border-radius:4px;color:#1a1a1a">
+<h2 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:18px;line-height:1.3;font-weight:600;color:#1a1a1a">Faglig påfyll fra Luma Training</h2>
+<span style="display:inline-block;padding:2px 8px;margin-bottom:8px;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:12px;line-height:1.4;color:#5b5b57;background-color:#ffffff;border:1px solid #c9c7bb;border-radius:3px" class="luma-muted">Betalt tilbud</span>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong>Påfyll: månedlig fagbrev om offentlige anskaffelser</strong></p>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">Ett brev i måneden med gjennomgang av konkrete konkurranser, tildelingskriterier og hva som skiller et godt tilbud fra et middelmådig. 395 kroner per måned eks. mva.</p>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><a class="luma-link" href="https://luma-training.com/paafyll?utm_source=anbudsvarsling&amp;utm_medium=digest&amp;utm_campaign=66666666-6666-4666-8666-000000000002" style="color:#1c4b8c;text-decoration:underline">Les mer</a></p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Dette er informasjon om kurs eller faglig innhold fra Luma Training. Det påvirker ikke hvilke anbud du får se.</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Du kan slå av denne delen uten å stoppe anbudsvarslene. <a class="luma-link" href="https://anbudsvarsling.luma-training.com/innstillinger?handling=slaa-av-promotering&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Slå av Luma-informasjon i anbudsvarslene</a></p>
+</td></tr>
+</table>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr><td style="border-top:2px solid #c9c7bb;font-size:0;line-height:0;height:1px">&nbsp;</td></tr></table>
+<!--luma:promotion:end-->
+<!--luma:section:notification-settings-->
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Varslingsinnstillinger</h3>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/innstillinger?utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Varslingsinnstillinger</a></li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/innstillinger?handling=slaa-av-promotering&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Luma-informasjon i anbudsvarslene</a></li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/innstillinger?handling=avslutt-anbudsvarsling&amp;t=tok_7d1f2b6c9a&amp;utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Avslutt anbudsvarsling</a></li></ul>
+<!--luma:section:legal-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr><td style="border-top:2px solid #c9c7bb;font-size:0;line-height:0;height:1px">&nbsp;</td></tr></table>
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Hvorfor mottar jeg denne e-posten?</h3>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Du mottar denne e-posten fordi du har opprettet en varslingsprofil i Luma Anbudsvarsling.</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Tjenesten dekker kunngjøringer publisert på Doffin. At du ikke får varsel, betyr ikke at det ikke finnes muligheter.</p>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://luma-training.com/personvern?utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Personvern</a></li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://anbudsvarsling.luma-training.com/vilkar?utm_source=anbudsvarsling&amp;utm_medium=digest" style="color:#1c4b8c;text-decoration:underline">Vilkår for bruk</a></li></ul>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Avsender: Luma Training AS, Storgata 1, 0155 Oslo</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Kontakt: <a class="luma-link" href="mailto:anbudsvarsling@luma-training.com" style="color:#1c4b8c">anbudsvarsling@luma-training.com</a></p></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</body>
+</html>
+"
+`;
+
+exports[`the nine MVP templates > tender-weekly-digest-v1 > matches the plain-text snapshot 1`] = `
+"Luma Anbudsvarsling
+En gratis tjeneste fra Luma Training
+
+Nye anbud denne uken
+====================
+11.–12. mars 2026
+
+Du har 3 nye anbud som passer varslingsprofilen «Bygg og
+rehabilitering».
+
+Treffscoren viser hvor godt anbudet passer varslingsprofilen din. Den
+sier ingenting om sannsynligheten for å vinne.
+
+Rehabilitering av Bjørnsletta skole – bygg og tekniske fag
+----------------------------------------------------------
+Oppdragsgiver: Oslo kommune, Utdanningsetaten
+Frist: 15. april 2026 kl. 12:00
+Treffnivå: Høy relevans
+Publisert: 10. mars 2026
+Anslått verdi: 42 000 000–48 000 000 NOK
+
+Derfor passer dette varslingsprofilen din:
+- Matcher CPV-kodene i varslingsprofilen: 45214210, 45331000
+- Ligger i området du følger: Oslo
+- Inneholder søkeordene dine: rehabilitering, skole
+
+Se anbudet:
+https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000001?utm_source=anbudsvarsling&utm_medium=digest
+Åpne kunngjøringen på Doffin:
+https://doffin.no/notices/2026-401233
+Lagre:
+https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000001?handling=lagre&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=digest
+Avvis:
+https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000001?handling=avvis&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=digest
+
+Rammeavtale for tømrertjenester
+-------------------------------
+Oppdragsgiver: Bærum kommune
+Frist: 2. april 2026 kl. 14:00
+Treffnivå: Verdt å undersøke
+Publisert: 11. mars 2026
+Anslått verdi: fra 8 000 000 NOK
+
+Derfor passer dette varslingsprofilen din:
+- Matcher CPV-kodene i varslingsprofilen: 45422100
+- Ligger i området du følger: Akershus
+
+Se anbudet:
+https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000002?utm_source=anbudsvarsling&utm_medium=digest
+Åpne kunngjøringen på Doffin:
+https://doffin.no/notices/2026-401288
+Lagre:
+https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000002?handling=lagre&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=digest
+Avvis:
+https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000002?handling=avvis&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=digest
+
+Planlagte anskaffelser (1)
+==========================
+Konkurransene er ikke publisert ennå. Godt tidspunkt å begynne
+forberedelsene.
+
+Veiledende kunngjøring: nytt sykehjem i Groruddalen
+---------------------------------------------------
+Oppdragsgiver: Oslo kommune, Omsorgsbygg
+Frist: Planlagt anskaffelse
+Treffnivå: Verdt å undersøke
+Publisert: 9. mars 2026
+Anslått verdi: fra 300 000 000 NOK
+Konkurransen er ikke publisert ennå, så det finnes ingen frist.
+
+Derfor passer dette varslingsprofilen din:
+- Planlagt anskaffelse i en kategori du følger: Veiledende kunngjøring
+- Ligger i området du følger: Oslo
+
+Se anbudet:
+https://anbudsvarsling.luma-training.com/anbud/33333333-3333-4333-8333-000000000001?utm_source=anbudsvarsling&utm_medium=digest
+Åpne kunngjøringen på Doffin:
+https://doffin.no/notices/2026-401301
+Lagre:
+https://anbudsvarsling.luma-training.com/anbud/33333333-3333-4333-8333-000000000001?handling=lagre&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=digest
+Avvis:
+https://anbudsvarsling.luma-training.com/anbud/33333333-3333-4333-8333-000000000001?handling=avvis&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=digest
+
+Endringer i lagrede anbud
+=========================
+
+Rammeavtale for tømrertjenester
+-------------------------------
+- Fristen er flyttet (12. mars 2026)
+- Konkurransegrunnlaget er oppdatert (12. mars 2026)
+
+Se anbudet:
+https://anbudsvarsling.luma-training.com/anbud/22222222-2222-4222-8222-000000000002?utm_source=anbudsvarsling&utm_medium=digest
+
+Profiladministrasjon
+Administrer varslingsprofil:
+https://anbudsvarsling.luma-training.com/varsler?utm_source=anbudsvarsling&utm_medium=digest
+Pause varsler:
+https://anbudsvarsling.luma-training.com/innstillinger?handling=pause-varsler&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=digest
+
+------------------------------------------------------------------------
+Faglig påfyll fra Luma Training
+[Betalt tilbud]
+
+Påfyll: månedlig fagbrev om offentlige anskaffelser
+Ett brev i måneden med gjennomgang av konkrete konkurranser,
+tildelingskriterier og hva som skiller et godt tilbud fra et
+middelmådig. 395 kroner per måned eks. mva.
+
+Les mer:
+https://luma-training.com/paafyll?utm_source=anbudsvarsling&utm_medium=digest&utm_campaign=66666666-6666-4666-8666-000000000002
+
+Dette er informasjon om kurs eller faglig innhold fra Luma Training. Det
+påvirker ikke hvilke anbud du får se.
+Du kan slå av denne delen uten å stoppe anbudsvarslene.
+Slå av Luma-informasjon i anbudsvarslene:
+https://anbudsvarsling.luma-training.com/innstillinger?handling=slaa-av-promotering&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=digest
+------------------------------------------------------------------------
+
+Varslingsinnstillinger
+Varslingsinnstillinger:
+https://anbudsvarsling.luma-training.com/innstillinger?utm_source=anbudsvarsling&utm_medium=digest
+Luma-informasjon i anbudsvarslene:
+https://anbudsvarsling.luma-training.com/innstillinger?handling=slaa-av-promotering&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=digest
+Avslutt anbudsvarsling:
+https://anbudsvarsling.luma-training.com/innstillinger?handling=avslutt-anbudsvarsling&t=tok_7d1f2b6c9a&utm_source=anbudsvarsling&utm_medium=digest
+
+------------------------------------------------------------------------
+Hvorfor mottar jeg denne e-posten?
+Du mottar denne e-posten fordi du har opprettet en varslingsprofil i
+Luma Anbudsvarsling.
+
+Tjenesten dekker kunngjøringer publisert på Doffin. At du ikke får
+varsel, betyr ikke at det ikke finnes muligheter.
+
+Personvern:
+https://luma-training.com/personvern?utm_source=anbudsvarsling&utm_medium=digest
+Vilkår for bruk:
+https://anbudsvarsling.luma-training.com/vilkar?utm_source=anbudsvarsling&utm_medium=digest
+
+Avsender: Luma Training AS, Storgata 1, 0155 Oslo
+Kontakt: anbudsvarsling@luma-training.com
+"
+`;
+
+exports[`the nine MVP templates > tender-weekly-digest-v1 > matches the subject snapshot 1`] = `"3 nye anbud denne uken – «Bygg og rehabilitering»"`;

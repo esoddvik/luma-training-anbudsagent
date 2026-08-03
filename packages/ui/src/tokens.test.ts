@@ -154,6 +154,15 @@ describe('tokens.css is the single source of truth', () => {
    *
    * This still proves nothing about what renders — see the note in the report.
    * It proves the scale escalates, which is the part that lives in the text.
+   *
+   * **The two assertions below protect different cards, so do not relax either
+   * as cosmetic.** `md < hover` is load-bearing for exactly one shipped
+   * element: the selected tjenestemal card on `/varsler/ny` is `raised` *and*
+   * `interactive`, so it rests on `--luma-shadow-md` and lifts to
+   * `--luma-shadow-hover`. Flatten `hover` to anything at or below `md` and
+   * that card silently stops responding. The other interactive cards are
+   * `secondary` and rest on `none`, where the ordering comparison is slack and
+   * the unparseable-value branch is what protects them.
    */
   it('escalates elevation across the scale in every theme block', () => {
     function blurRadius(value: string | undefined, label: string): number {

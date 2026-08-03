@@ -1,0 +1,31 @@
+# Local development infrastructure only.
+#
+# The applications themselves are NOT containerised for local dev — run them
+# with `pnpm dev` on the host so hot reload and the debugger work normally.
+# This file exists so everyone gets the same PostgreSQL version as production.
+#
+# pg-boss creates and owns its own schema (`pgboss`) inside this same database
+# on first worker start — there is no separate queue service or Redis to run.
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: luma-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: luma
+      POSTGRES_PASSWORD: luma
+      POSTGRES_DB: luma_anbudsvarsling
+    ports:
+      - '5432:5432'
+    volumes:
+      - luma-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U luma -d luma_anbudsvarsling']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+volumes:
+  luma-postgres-data:

@@ -13,6 +13,8 @@ export interface CreateLoggerOptions {
   level?: LogLevel;
   /** Human-readable output for local development. Never enable in production. */
   pretty?: boolean;
+  /** Discards all output. For tests, so a suite is not drowned in log lines. */
+  silent?: boolean;
 }
 
 interface RequestContext {
@@ -70,6 +72,10 @@ export function createLogger(options: CreateLoggerOptions): Logger {
     },
     timestamp: pino.stdTimeFunctions.isoTime,
   };
+
+  if (options.silent) {
+    return pino({ ...config, level: 'silent' });
+  }
 
   if (options.pretty) {
     return pino({

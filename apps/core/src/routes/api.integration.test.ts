@@ -1432,7 +1432,11 @@ describeDb('HTTP API', () => {
         ]);
       });
 
-      it('reports null, not an empty list, when this process runs no worker', async () => {
+      // Not "when this process runs no worker" — a producer-only replica still
+      // reads real depths, because queue state lives in the shared database.
+      // `null` means the reader was never wired, which is a test context or a
+      // misconfiguration, not a normal deployment.
+      it('reports null, not an empty list, when no reader is wired', async () => {
         const admin = await adminWith(undefined);
         expect(
           (await call('GET', '/api/v1/admin/ingest-status', { as: admin })).json().queues,

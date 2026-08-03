@@ -153,10 +153,19 @@ export interface ApiContext {
   /** See `DeferredWork`. Defaults to a logging no-op. */
   readonly deferred: DeferredWorkQueue;
   /**
-   * Absent when this process runs no worker (`WORKER_ENABLED=false`), in which
-   * case the dashboard reports queue status as unavailable rather than as
-   * empty. "No queues" and "not asked" must not render identically — the first
-   * is a healthy idle system and the second is a blind spot.
+   * Optional, and in the deployed wiring always present.
+   *
+   * An earlier version of this comment claimed it was absent when
+   * `WORKER_ENABLED=false`. That is wrong: `startQueue` connects pg-boss
+   * regardless, and the flag only decides whether this process registers
+   * *handlers*. Queue depth is a property of the shared database, not of the
+   * process reading it, so a producer-only replica reports the real numbers —
+   * which is the more useful answer, and the reason the wiring is not gated.
+   *
+   * So `null` means "not observed", and in practice that is a test context
+   * built without a reader, or a queue read that threw. It is deliberately not
+   * `[]`: an idle queue and an unobservable one are different facts, and a
+   * dashboard that renders them identically reports calm during an outage.
    */
   readonly queue?: QueueStatusReader;
 }

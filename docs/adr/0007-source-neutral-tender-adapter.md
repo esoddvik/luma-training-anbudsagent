@@ -3,11 +3,11 @@
 - **Status:** Accepted
 - **Date:** 2026-08-03
 - **Deciders:** Luma Training (product owner), engineering
-- **Spec reference:** §1, §5.3, §7.2, §12, §13, §46, §48, §49 (ADR 7)
+- **Spec reference:** §1, §5 item 3, §7.2, §12, §13, §46, §48, §49 (ADR 7)
 
 ## Context
 
-Doffin is the only data source in the MVP (§5.3). TED, covering Nordic and European notices, is an explicitly listed post-MVP item (§7.2) and §12 requires that the adapter interface stay source-neutral so a future `TedApiAdapter` can implement the same contract.
+Doffin is the only data source in the MVP (§5 item 3). TED, covering Nordic and European notices, is an explicitly listed post-MVP item (§7.2) and §12 requires that the adapter interface stay source-neutral so a future `TedApiAdapter` can implement the same contract.
 
 There is also a harder constraint. Spec §1 is emphatic: when details of the Doffin API are missing, create a clear adapter interface, use realistic fixture data, document the assumption, and **do not invent API fields**. §53 restates it as a definition-of-done item. This matters because Doffin's response shape is not fully known to us at the time of writing, and the cost of guessing is a normalization layer built on fiction that must be torn out when real data arrives.
 

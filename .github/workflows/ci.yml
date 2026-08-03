@@ -80,6 +80,11 @@ jobs:
       - name: Lint
         run: pnpm lint
 
+      # Resolves every §-citation in the repo against the specification's
+      # headings. Cheap, and needs no build, so it runs before typecheck.
+      - name: Check specification citations
+        run: pnpm check:citations
+
       - name: Typecheck
         run: pnpm typecheck
 

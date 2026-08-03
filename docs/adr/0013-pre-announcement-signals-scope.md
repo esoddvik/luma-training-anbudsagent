@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Date:** 2026-08-03
 - **Deciders:** Luma Training (product owner), engineering
-- **Spec reference:** §0 (items 3, 13, 15), §5.4, §7.2, §7.3, §13, §14, §50 (phase 8), §49 (ADR 13)
+- **Spec reference:** §0 (items 3, 13, 15), §5 item 4, §7.2, §7.3, §13, §14, §50 (phase 8), §49 (ADR 13)
 
 ## Context
 
@@ -15,7 +15,7 @@ There are three plausible sources of early signal, and they are not equally trac
 2. **Framework agreement expiry.** Award notices contain, where the buyer fills them in, the supplier and the contract duration. A framework awarded for four years in 2023 implies a re-competition around 2027. This is derived from data we already ingest and store (§13 requires award notices to be ingested and their raw payload preserved so phase 8 can be built without re-ingest).
 3. **Municipal decision signals.** Council meeting minutes, budgets and investment plans. These genuinely predict procurement earlier than anything on Doffin. They are also unstructured, published in dozens of incompatible formats across hundreds of municipalities, and require editorial work to interpret.
 
-§5.4 classifies municipal signals as a structural limitation, not a roadmap item, on the grounds that they require separate data collection and editorial work that lies outside a free service.
+§5 item 4 classifies municipal signals as a structural limitation, not a roadmap item, on the grounds that they require separate data collection and editorial work that lies outside a free service.
 
 ## Decision
 
@@ -81,13 +81,13 @@ No field names are assumed here. Per §1 and §53, we do not invent Doffin API f
 ### Negative / trade-offs
 
 - Coverage of early signal is bounded by what buyers choose to publish. Many procurements have no prior information notice at all, so the planned category is a partial view by construction.
-- Below-threshold procurements are often never published on Doffin at all (§5.2), which compounds the gap.
+- Below-threshold procurements are often never published on Doffin at all (§5 item 2), which compounds the gap.
 - Competitors who do editorial municipal monitoring can offer earlier signal. Accepted: that is a different, non-free product.
 - Phase 8 rests on an unverified assumption, recorded above as an explicit gate rather than as an implicit risk.
 
 ## Alternatives considered
 
-- **Scrape municipal websites and council minutes.** Rejected by §5.4 and §7.3. Hundreds of sources, no standard format, and the interpretation is editorial work, not parsing.
+- **Scrape municipal websites and council minutes.** Rejected by §5 item 4 and §7.3. Hundreds of sources, no standard format, and the interpretation is editorial work, not parsing.
 - **Infer upcoming procurements from historical patterns per buyer.** Rejected for the MVP: it is a statistical guess presented as a signal, which conflicts with §4.3's prohibition on presenting inference as certainty. Framework expiry, by contrast, is derived from a stated contract duration.
 - **Expose award notices as a product surface in the MVP.** Rejected: they are hard-excluded from matching in §14 and would dilute the digest with notices about competitions already lost.
 - **Skip ingesting award notices until phase 8.** Rejected by §13: they arrive in the same stream, and not storing them would force a re-ingest of historical data later, which the source may not even permit.
@@ -100,5 +100,5 @@ No field names are assumed here. Per §1 and §53, we do not invent Doffin API f
 - A test asserts award notices are nonetheless persisted with a complete `rawPayload`, and a round-trip test asserts no field loss between the source payload and stored JSON.
 - A test asserts a planned notice transitioning to an active competition, linked by `noticeId`, produces a `tender_change_events` row.
 - A UI and email test asserts planned procurements render in their own labelled section, never interleaved with active competitions, and never with an empty deadline field.
-- A test asserts the coverage text from §43, including the municipal-signals limitation from §5.4, is present on the landing page and the terms page.
+- A test asserts the coverage text from §43, including the municipal-signals limitation from §5 item 4, is present on the landing page and the terms page.
 - **Phase 8 gate:** a documented phase 1 task produces a written finding on supplier name and contract duration availability and fill rate in real award notices, and this ADR is updated with that finding before phase 8 is planned in detail. Until that update exists, no `supplier_watches` or `framework_expiry_estimates` schema is created.

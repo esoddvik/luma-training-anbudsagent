@@ -3,11 +3,11 @@
 - **Status:** Accepted
 - **Date:** 2026-08-03
 - **Deciders:** Luma Training (product owner), engineering
-- **Spec reference:** §5.3, §6, §8, §42, §43, §49 (ADR 12), §51, §52, §53
+- **Spec reference:** §5 item 3, §6, §8, §42, §43, §49 (ADR 12), §51, §52, §53
 
 ## Context
 
-The service covers notices published on Doffin, which is Norway (§5.3). The audience is Norwegian suppliers: tender managers, bid leads, project managers and managing directors in construction, facility services, technical services, consulting engineering and IT (§8). The source data is Norwegian. The domain vocabulary is Norwegian and legally loaded: konkurransegrunnlag, kvalifikasjonskrav, tildelingskriterier are terms with specific meanings under the Norwegian procurement regulations, and their English approximations are not equivalent.
+The service covers notices published on Doffin, which is Norway (§5 item 3). The audience is Norwegian suppliers: tender managers, bid leads, project managers and managing directors in construction, facility services, technical services, consulting engineering and IT (§8). The source data is Norwegian. The domain vocabulary is Norwegian and legally loaded: konkurransegrunnlag, kvalifikasjonskrav, tildelingskriterier are terms with specific meanings under the Norwegian procurement regulations, and their English approximations are not equivalent.
 
 Spec §6 requires all customer-facing content in Norwegian bokmål and explicitly instructs not to implement a language selector in the MVP. §51 blocker 8 and §52 criterion 17 both make "all customer text is Norwegian" a launch condition. §6 also permits English for internal technical elements: source code, API fields, database tables, TypeScript types, logs, ADRs, architecture documentation and internal admin tooling.
 

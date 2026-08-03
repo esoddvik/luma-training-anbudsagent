@@ -18,6 +18,7 @@
     "@fastify/helmet": "catalog:",
     "@fastify/rate-limit": "catalog:",
     "@luma/config": "workspace:*",
+    "@luma/content": "workspace:*",
     "@luma/db": "workspace:*",
     "@luma/doffin": "workspace:*",
     "@luma/domain": "workspace:*",

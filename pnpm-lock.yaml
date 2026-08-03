@@ -143,6 +143,9 @@ importers:
       '@luma/config':
         specifier: workspace:*
         version: link:../../packages/config
+      '@luma/content':
+        specifier: workspace:*
+        version: link:../../packages/content
       '@luma/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -414,6 +417,28 @@ importers:
       '@luma/domain':
         specifier: workspace:*
         version: link:../domain
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.20.1
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.10(@types/node@22.20.1)(vite@7.3.1(@types/node@22.20.1)(jiti@2.7.0)(lightningcss@1.32.0)(tsx@4.23.5))
+
+  packages/mcp-tools:
+    dependencies:
+      '@luma/domain':
+        specifier: workspace:*
+        version: link:../domain
+      '@luma/matching':
+        specifier: workspace:*
+        version: link:../matching
+      zod:
+        specifier: 'catalog:'
+        version: 4.4.3
     devDependencies:
       '@types/node':
         specifier: 'catalog:'

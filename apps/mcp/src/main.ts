@@ -16,7 +16,7 @@ import {
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { createDatabase, databaseDependencyCheck } from '@luma/db';
-import { authenticate } from '@luma/mcp-tools';
+import { authenticate, createRateLimiter } from '@luma/mcp-tools';
 import { createToolPorts, createTokenLookup } from './adapters/db-ports.js';
 import { SERVER_INFO, SERVER_INSTRUCTIONS_NB } from './instructions.js';
 import { allowedHostsFrom, isHostAllowed } from './host-allowlist.js';
@@ -59,6 +59,7 @@ async function main(): Promise<void> {
   });
 
   const allowedHosts = allowedHostsFrom(env.MCP_URL, env.MCP_ALLOWED_HOSTS);
+  const rateLimiter = createRateLimiter();
 
   const startedAt = Date.now();
 
@@ -126,6 +127,25 @@ async function main(): Promise<void> {
             code: 'unauthorized',
             message:
               'Ugyldig eller manglende MCP-token. Opprett et nytt token under Integrasjoner i Luma Anbudsvarsling.',
+          },
+        });
+        return;
+      }
+
+      // Rate limiting per token and per user (spec §30). After authentication
+      // because both keys come from the token, and an unauthenticated caller
+      // has already been turned away by the two checks above.
+      const limit = rateLimiter.check(auth.caller.tokenId, auth.caller.userId, new Date());
+      if (!limit.allowed) {
+        logger.warn(
+          { userId: auth.caller.userId, limitedBy: limit.limitedBy },
+          'mcp request rate limited',
+        );
+        response.setHeader('retry-after', String(limit.retryAfterSeconds));
+        sendJson(response, 429, {
+          error: {
+            code: 'rate_limited',
+            message: 'For mange forespørsler. Prøv igjen om litt.',
           },
         });
         return;

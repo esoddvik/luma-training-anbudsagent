@@ -120,3 +120,12 @@ export {
 export * from './schemas.js';
 export * from './tools/index.js';
 export { LUMA_RESOURCES, findResource, type LumaResource } from './resources.js';
+
+export {
+  createRateLimiter,
+  DEFAULT_TOKEN_LIMIT_PER_MINUTE,
+  DEFAULT_USER_LIMIT_PER_MINUTE,
+  type RateLimitDecision,
+  type RateLimiter,
+  type RateLimiterOptions,
+} from './rate-limit.js';

@@ -12,8 +12,9 @@ import type { Logger } from '@luma/observability';
  * One tick does three things per withdrawal:
  *
  * 1. Derives current marketing consent from the append-only log (ADR-0009).
- * 2. Records an `email_suppressions` row on the marketing stream — the table
- *    spec §27 defines for exactly this, and the one admin reads.
+ * 2. Records an `email_suppressions` row on the marketing stream. §27 requires
+ *    respecting suppression but defines no schema; the table itself is
+ *    `packages/db`'s, and it is the one admin reads.
  * 3. Pushes the suppression to Postmark with `suppressAddress`.
  *
  * **Marketing stream only, and that is not a detail.** A global suppression

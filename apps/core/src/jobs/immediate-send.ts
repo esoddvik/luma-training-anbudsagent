@@ -67,9 +67,14 @@ async function loadPreferences(db: Database, userId: string): Promise<Notificati
     .limit(1);
   const row = rows[0];
 
-  // Spec §22 defaults. `marketingEmailConsent` is false here on purpose: it is
-  // derived from the consent log and is irrelevant to a tender alert, which
-  // never goes on the marketing stream.
+  // Defaults, attributed precisely because two of these four have often been
+  // credited to §22 and are not there. §22's «Anbefalt standard» block states
+  // exactly two: `includeLumaPromotionsInTenderEmails = true` and
+  // `marketingEmailConsent = false`. The alert defaults below come from the
+  // column defaults in `notification_preferences` (`@luma/db`), not from the
+  // spec. `marketingEmailConsent` is false here regardless of the log: it is
+  // derived from `consent_events`, and it is irrelevant to a tender alert,
+  // which never goes on the marketing stream.
   return {
     tenderAlertsEnabled: row?.tenderAlertsEnabled ?? true,
     immediateAlertsEnabled: row?.immediateAlertsEnabled ?? false,

@@ -4,7 +4,7 @@ Spec §51 lists fourteen conditions that must be met before the service can be l
 
 **Status as of 2026-08-03: not launchable.** Several blockers are legal rather than technical and cannot be closed by engineering at all.
 
-**Login works end to end as of 2026-08-03**, with one half still missing: an issued magic link redeems correctly and establishes a session, but the form on `/logg-inn` does not yet ask the API to send one. The API side of that is complete and tested. See `spec-deviations.md`, "Known gaps", for that and the others.
+**Every gap that engineering could close is closed.** Login works end to end, the background job runtime runs, consent withdrawal reaches Postmark, and the §39 route list is complete. What remains in this table is legal text, a security review, and integrations that need real third-party accounts. See `spec-deviations.md` for the three gaps that are still genuinely open.
 
 Legend: **done** — implemented and covered by a test that would fail if it regressed. **partial** — the mechanism exists but is not yet joined to the running system. **open** — not started. **external** — not ours to close.
 
@@ -17,14 +17,14 @@ Legend: **done** — implemented and covered by a test that would fail if it reg
 | 3 | Coverage text published on the landing page and in the terms | **done** | The §43 dekningstekst is on the landing page and in the MCP `luma://service/begrensninger` resource. Still needs to appear in the terms once those exist. |
 | 4 | Consent text approved; consent with source and date works; withdrawal works | **partial / external** | Append-only consent events, source, timestamp and exact text version are implemented and enforced by a database trigger. Approval of the wording is Luma's. |
 | 5 | Postmark streams tested | **partial** | Three streams are modelled, and a typed mapping makes it impossible to send a magic link on the marketing stream. Nothing has been sent through real Postmark yet. |
-| 6 | Manual order flow documented and tested | **partial** | The `OrderRequest` model, the `BillingProvider` seam and the status transitions exist. The admin flow around them is not built. |
+| 6 | Manual order flow documented and tested | **done** | `OrderRequest`, the `BillingProvider` seam, enforced status transitions, the admin handling routes, and a real admin notification template so the billing address receives a work item rather than a copy of the customer's receipt. Every status change is written to `admin_audit_events`. |
 | 7 | Promotion separated, follows the ladder and regional routing, can be turned off | **done** | Ordering is asserted by a test verified to fail when the block is moved. The promotion-off digest is proven byte-identical to the promotion-on one minus the block. Oslo-only routing is tested. |
 | 8 | All customer text Norwegian; no placeholder legal text presented as finished | **partial** | Every string written so far is Norwegian, with tests asserting no English leaks into labels. The terms page is explicitly a placeholder and flagged as one. |
 | 9 | Doffin connection stable; the source's terms of use checked | **partial / external** | The adapter is verified against the live API, handles the rate limit and the 1000-hit ceiling, and is covered by tests. **Nobody has read Doffin's terms of use.** That is a real gap, not a formality. |
 | 10 | Planned procurements shown correctly as their own category | **done** | Derived from the notice type, tested against a real intention notice whose roll-up says otherwise, and surfaced as its own category end to end. |
 | 11 | Shared view leaks no personal data, verified in a security review | **partial** | The payload is built from a schema that strips undeclared fields, and tests assert the forbidden fields are absent. No independent security review has happened. |
-| 12 | MCP token revocable; the demo runs stably | **partial** | Token hashing, revocation and scope checks are implemented and tested. The demo has never been run against a real client. |
-| 13 | Attribution events recorded with consistent UTM | **partial** | UTM tagging is centralised and tested, including idempotency. The event recording is not yet joined to the surfaces that would emit it. |
+| 12 | MCP token revocable; the demo runs stably | **partial** | Token hashing, revocation and scope checks are implemented and tested against a real database, and the built container answers an unauthenticated call with 401. The demo has never been run against a real ChatGPT or Claude client, which is what the blocker asks. |
+| 13 | Attribution events recorded with consistent UTM | **done** | UTM tagging is centralised and idempotent. `share_created` and `share_viewed` now exist and are written where shares are created and viewed; a `share_viewed` row carries no viewer identity. The four `tool_to_*` types are recorded on the surfaces that emit them. |
 | 14 | Account deletion works | **done** | Hard delete with severance where retention requires it, tested at the database level, plus a user-facing flow that requires typing the account email, and a data export that excludes share tokens and session hashes. |
 
 ## Spec §52 acceptance criteria

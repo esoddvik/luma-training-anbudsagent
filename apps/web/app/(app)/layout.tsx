@@ -1,15 +1,21 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { Cluster } from '@luma/ui';
+import { requireUser } from '@/server/session';
 
 /**
  * Layout for the authenticated part of the service.
  *
- * TODO(auth): this is the authentication boundary. Every route under `(app)`
- * requires a signed-in user (spec section 10: passwordless e-post-innlogging).
- * The agent adding auth should resolve the session here and redirect to
- * `/logg-inn?retur=...` when there is none — no page below this layout does
- * its own session check.
+ * This is the authentication boundary. Every route under `(app)` requires a
+ * signed-in user (spec section 10: passwordless e-post-innlogging), and
+ * `requireUser()` resolves the session here so no page below has to remember
+ * to. It redirects to `/logg-inn` when there is none.
+ *
+ * A layout is not a security boundary on its own: Next.js does not re-run it
+ * for a server action, and a route handler bypasses it entirely. So every
+ * server action re-resolves the session itself, and every query in
+ * `src/server/` takes a user id and scopes by it. This check keeps the *pages*
+ * honest; the actions defend themselves.
  */
 
 const NAV_ITEMS = [
@@ -23,7 +29,9 @@ const NAV_ITEMS = [
   { href: '/innstillinger', label: 'Innstillinger' },
 ] as const;
 
-export default function AppLayout({ children }: { children: ReactNode }) {
+export default async function AppLayout({ children }: { children: ReactNode }) {
+  await requireUser();
+
   return (
     <div className="flex flex-col gap-lg">
       <Cluster as="nav" gap="xs" aria-label="Tjenestemeny" className="border-b border-line pb-xs">

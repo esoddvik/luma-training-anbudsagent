@@ -63,6 +63,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # ORDER MATTERS: format:check must stay ahead of typecheck and build.
+      # `next typegen` (run by apps/web's typecheck) and `next build` both
+      # regenerate apps/web/next-env.d.ts, which Next writes with double quotes
+      # and prettier rejects under the repo's singleQuote config. The file is
+      # gitignored so it is absent from a fresh checkout — running format:check
+      # first is what keeps this job green. Do not reorder these steps.
       - name: Check formatting
         run: pnpm format:check
 

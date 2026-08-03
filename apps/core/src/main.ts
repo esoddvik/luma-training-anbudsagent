@@ -5,7 +5,13 @@ import { loadDotEnv } from '@luma/config';
 loadDotEnv();
 
 import { getCoreEnv } from '@luma/config';
+import { createDatabase, databaseDependencyCheck } from '@luma/db';
+import { DoffinApiAdapter } from '@luma/doffin';
+import { createEmailClientFromEnv } from '@luma/email';
 import { createLogger } from '@luma/observability';
+import { runIngest } from './jobs/ingest.js';
+import { runMatching } from './jobs/match.js';
+import { apiConfigFromEnv, buildApiContext } from './services/api-context.js';
 import { buildServer } from './server.js';
 import { installShutdownHandlers } from './shutdown.js';
 
@@ -19,10 +25,47 @@ async function main(): Promise<void> {
     pretty: env.NODE_ENV === 'development',
   });
 
+  const database = createDatabase({ connectionString: env.DATABASE_URL });
+  const email = createEmailClientFromEnv({ logger });
+
+  // The live Doffin adapter is constructed here and reaches the API only
+  // through the `JobRunner` seam, so nothing under `routes/` or `services/`
+  // has an import edge to it.
+  const adapter = new DoffinApiAdapter({
+    baseUrl: env.DOFFIN_API_BASE_URL,
+    subscriptionKey: env.DOFFIN_SUBSCRIPTION_KEY,
+  });
+
+  const api = buildApiContext({
+    db: database.db,
+    email,
+    logger,
+    config: apiConfigFromEnv(env),
+    jobs: {
+      runIngest: async ({ adminUserId }) =>
+        runIngest({
+          db: database.db,
+          adapter,
+          logger,
+          now: new Date(),
+          triggeredByAdminId: adminUserId,
+        }),
+      runMatching: async (input) =>
+        runMatching({
+          db: database.db,
+          logger,
+          now: new Date(),
+          ...(input.tenderIds ? { tenderIds: input.tenderIds } : {}),
+          ...(input.alertProfileId ? { alertProfileId: input.alertProfileId } : {}),
+        }),
+    },
+  });
+
   const app = await buildServer({
     logger,
     allowedOrigins: [env.APP_URL],
-    readinessChecks: [],
+    readinessChecks: [databaseDependencyCheck(database.db)],
+    api,
   });
 
   // Railway injects PORT; the default matters only for local runs and Docker.
@@ -36,7 +79,8 @@ async function main(): Promise<void> {
     // database. Reversing this would abandon in-flight work.
     close: [
       { name: 'http', close: () => app.close() },
-      // Queue and database handles are registered here as they are wired in.
+      // The queue handle is registered here as it is wired in.
+      { name: 'database', close: () => database.close() },
     ],
   });
 }

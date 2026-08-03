@@ -2,15 +2,16 @@ import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Cluster } from '@luma/ui';
+import { requireAdmin } from '@/server/session';
 
 /**
  * Layout for internal administration.
  *
- * TODO(auth): this is the authorisation boundary. Every route under `(admin)`
- * requires an authenticated Luma Training administrator (spec section 45).
- * The agent adding auth should resolve the session and the admin role here and
- * return a 404 — not a 403 — for everyone else, so the surface is not
- * discoverable. No page below this layout does its own role check.
+ * This is the authorisation boundary. Every route under `(admin)` requires an
+ * authenticated Luma Training administrator (spec section 45), and
+ * `requireAdmin()` answers with a 404 — not a 403 — for everyone else, so the
+ * surface is not discoverable by probing. No page below does its own role
+ * check.
  */
 
 export const metadata: Metadata = {
@@ -34,7 +35,9 @@ const NAV_ITEMS = [
   { href: '/admin/mcp', label: 'MCP' },
 ] as const;
 
-export default function AdminLayout({ children }: { children: ReactNode }) {
+export default async function AdminLayout({ children }: { children: ReactNode }) {
+  await requireAdmin();
+
   return (
     <div className="flex flex-col gap-lg">
       <p className="m-0 text-sm font-semibold uppercase tracking-wide text-text-muted">

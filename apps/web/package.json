@@ -13,10 +13,18 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@luma/auth": "workspace:*",
+    "@luma/content": "workspace:*",
+    "@luma/db": "workspace:*",
+    "@luma/domain": "workspace:*",
+    "@luma/matching": "workspace:*",
     "@luma/ui": "workspace:*",
+    "drizzle-orm": "catalog:",
     "next": "catalog:",
+    "postgres": "catalog:",
     "react": "catalog:",
-    "react-dom": "catalog:"
+    "react-dom": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@playwright/test": "catalog:",

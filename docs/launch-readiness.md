@@ -4,6 +4,8 @@ Spec §51 lists fourteen conditions that must be met before the service can be l
 
 **Status as of 2026-08-03: not launchable.** Several blockers are legal rather than technical and cannot be closed by engineering at all.
 
+**The single largest functional gap is not in this table: nobody can sign in.** The web app reads the database directly in server components, and the API implements the whole magic-link flow, but nothing joins them — `apps/web` does not call `/api/v1` anywhere. Every authenticated screen is built and tested and currently unreachable by a real person. See `spec-deviations.md`, "Known gaps".
+
 Legend: **done** — implemented and covered by a test that would fail if it regressed. **partial** — the mechanism exists but is not yet joined to the running system. **open** — not started. **external** — not ours to close.
 
 ## Spec §51 launch blockers
@@ -23,7 +25,7 @@ Legend: **done** — implemented and covered by a test that would fail if it reg
 | 11 | Shared view leaks no personal data, verified in a security review | **partial** | The payload is built from a schema that strips undeclared fields, and tests assert the forbidden fields are absent. No independent security review has happened. |
 | 12 | MCP token revocable; the demo runs stably | **partial** | Token hashing, revocation and scope checks are implemented and tested. The demo has never been run against a real client. |
 | 13 | Attribution events recorded with consistent UTM | **partial** | UTM tagging is centralised and tested, including idempotency. The event recording is not yet joined to the surfaces that would emit it. |
-| 14 | Account deletion works | **partial** | The cascade and severance behaviour is implemented and tested at the database level. The user-facing flow is not built. |
+| 14 | Account deletion works | **done** | Hard delete with severance where retention requires it, tested at the database level, plus a user-facing flow that requires typing the account email, and a data export that excludes share tokens and session hashes. |
 
 ## Spec §52 acceptance criteria
 

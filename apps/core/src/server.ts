@@ -2,7 +2,7 @@ import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
-import Fastify, { type FastifyError } from 'fastify';
+import Fastify from 'fastify';
 import {
   buildHealthReport,
   newCorrelationId,
@@ -12,6 +12,9 @@ import {
   type DependencyCheck,
   type Logger,
 } from '@luma/observability';
+import { normalizeError, rateLimitError } from './routes/errors.js';
+import { registerApiRoutes } from './routes/index.js';
+import type { ApiContext } from './services/context.js';
 
 /**
  * The core HTTP server.
@@ -29,6 +32,12 @@ export interface BuildServerOptions {
   allowedOrigins: readonly string[];
   /** Trusted when running behind Railway's proxy so rate limits see real IPs. */
   trustProxy?: boolean;
+  /**
+   * Everything the `/api/v1` surface needs. Omitted, the server serves only
+   * `/health` and `/ready`, which is what the container health check and the
+   * existing server tests exercise.
+   */
+  api?: ApiContext;
 }
 
 const CORRELATION_HEADER = 'x-correlation-id';
@@ -69,6 +78,9 @@ export async function buildServer(options: BuildServerOptions) {
     global: true,
     max: 300,
     timeWindow: '1 minute',
+    // The default body is English prose written for developers. Every response
+    // this API produces is Norwegian with a machine-readable code (§39, ADR-12).
+    errorResponseBuilder: rateLimitError,
   });
 
   // Every request runs inside a correlation-id scope so that logs emitted deep
@@ -90,24 +102,33 @@ export async function buildServer(options: BuildServerOptions) {
     return reply.code(readinessHttpStatus(report)).send(report);
   });
 
+  // Both handlers are installed *before* the API plugin is registered, and the
+  // ordering is load bearing rather than stylistic. `await app.register(...)`
+  // boots Fastify, and a child context inherits the error handler that exists
+  // at the moment it is created. Registering the plugin first would leave every
+  // `/api/v1` failure answering with Fastify's default English body while the
+  // status code looked correct — a difference no status assertion would catch.
   app.setNotFoundHandler(async (_request, reply) =>
     reply.code(404).send({ error: { code: 'not_found', message: 'Ressursen finnes ikke.' } }),
   );
 
   // Spec section 39: machine-readable error codes, and never expose a database
-  // error to a caller.
-  app.setErrorHandler(async (error: FastifyError, request, reply) => {
-    const status = error.statusCode ?? 500;
-    if (status >= 500) {
+  // error to a caller. `normalizeError` owns that mapping; the only thing left
+  // here is deciding what to log.
+  app.setErrorHandler(async (error: unknown, request, reply) => {
+    const { status, payload, internal } = normalizeError(error);
+    if (internal) {
       request.log.error({ err: error }, 'unhandled request error');
-      return reply.code(status).send({
-        error: { code: 'internal_error', message: 'Det oppsto en uventet feil.' },
-      });
     }
-    return reply.code(status).send({
-      error: { code: error.code ?? 'bad_request', message: error.message },
-    });
+    return reply.code(status).send(payload);
   });
+
+  if (options.api) {
+    await registerApiRoutes(app, {
+      ctx: options.api,
+      allowedOrigins: options.allowedOrigins,
+    });
+  }
 
   return app;
 }

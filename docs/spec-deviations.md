@@ -32,6 +32,23 @@ A deviation is only legitimate if it is written down. If you find behaviour that
 | §16: routes under `/anbudsvarsling/...` | The prefix is dropped | The service deploys to its own subdomain, `anbudsvarsling.luma-training.com`, so the prefix would be duplicated in every URL. |
 | §48: `DOFFIN_API_KEY`, `DOFFIN_API_CLIENT_ID`, `DOFFIN_API_CLIENT_SECRET` | A single `DOFFIN_SUBSCRIPTION_KEY` | The API is an Azure API Management gateway authenticating with one `Ocp-Apim-Subscription-Key` header. There is no client id or secret. |
 | §48: `REDIS_URL` | Absent | Follows from the queue decision above. |
+| §17: `TenderShare.token` holds the token | The column holds a **peppered SHA-256 hash**, not the link | ADR-15 requires that database disclosure yield no working link, and storing the token would not give that. The plaintext link is returned once at creation and is then unrecoverable, including by the owner's own `/shares` listing. |
+| §16: routes | `/logg-inn/bekreft` added | The magic link has to land somewhere. §16 lists no route for it. |
+| §11: `AlertProfile.active` on creation | New profiles are created **paused** | §9.1 orders the journey preview (11) → adjust (12) → activate (13). Activating on creation would send a digest built from criteria nobody has looked at yet. |
+| §14 confidence bands | Only `high` triggers an immediate alert | §9.3 says "høy relevans" without defining it. Interrupting someone for a medium match gets the service muted, after which the high ones stop arriving too. |
+
+## Known gaps: specified, not built
+
+These are not deviations. They are parts of the specification that nothing implements yet, listed here because a gap that nobody wrote down is indistinguishable from a gap nobody noticed.
+
+- **The web app does not talk to the API.** Nothing under `apps/web` references `/api/v1` or sends the `x-luma-csrf` header. The dashboard reads the database directly in server components, which is by design, but login is a dead end: `/logg-inn/bekreft` exists as a route and does not yet POST the token to `/api/v1/auth/redeem`. **Until this is joined up, nobody can actually sign in.**
+- **`/api/v1/company` and `/api/v1/postmark/webhooks/:stream` are not implemented** (§39). The webhook path is already exempted from the CSRF guard for whoever adds it, since Postmark authenticates with its own credentials and is not a browser.
+- **Consent withdrawal does not reach Postmark.** §21 and ADR-9 require withdrawal to propagate to suppression. The API records the event and logs; no queue is wired into `apps/core`, so the reconciliation is still owed by a worker.
+- **`share_created` and `share_viewed` have nowhere to go.** §44.1 lists them, but `attribution_event_type` has only the four `tool_to_*` and `share_to_signup` values. `tender_shares.view_count` is the only view signal today. Adding them needs an enum value and a migration.
+- **Terms acceptance is not mirrored into `consent_events`.** It is recorded in `user_legal_acceptances`. §21 lists `terms_acceptance` and `privacy_acknowledgement` as consent types, so `GET /consents` currently reports `terms_acceptance: false` for a user who has accepted the terms. §20.1 insists terms acceptance is not marketing consent, which is why they were kept apart, but the reporting inconsistency is real.
+- **No admin notification template exists.** §28.2 requires notifying `BILLING_ADMIN_EMAIL` about a new order; §25's nine templates have no admin variant, so the billing address receives a copy of the customer's confirmation. It carries every invoicing field but is addressed to the customer.
+- **`SenderIdentity.postalAddress` is a hard-coded constant.** §48 defines no environment variable for it and the email footer requires it.
+- **The Playwright specs skip without seed data.** They read `E2E_SESSION_COOKIE`, `E2E_SHARE_TOKEN` and similar. A CI leg that does not set them passes having verified nothing — including the shared-view privacy check, which is the one worth having. Whichever job runs them must assert the variables are set.
 
 ## Still open
 

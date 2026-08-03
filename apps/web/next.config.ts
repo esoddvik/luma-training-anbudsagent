@@ -14,6 +14,12 @@ const nextConfig: NextConfig = {
   // @luma/ui ships ESM built from TypeScript source; Next has to run it
   // through its own compiler so the tokens CSS and JSX land in the app bundle.
   transpilePackages: ['@luma/ui'],
+  // `postgres` opens TCP sockets; it is required at runtime rather than
+  // bundled. Note that the app imports `@luma/db/schema` and never the
+  // package root: the root re-exports the migration runner, which resolves its
+  // SQL folder with `new URL('../drizzle', import.meta.url)`, and a bundler
+  // reads that as an import of a module called `../drizzle` and fails.
+  serverExternalPackages: ['postgres'],
   poweredByHeader: false,
   outputFileTracingRoot: workspaceRoot,
 };

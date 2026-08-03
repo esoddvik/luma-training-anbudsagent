@@ -87,6 +87,8 @@ Three traps in the same area:
 
 Nothing new has to be built for that. `GET /admin/ingest-status` already returns `lastRun` and `lastSuccessfulRunAt` for the §45 dashboard, so the alert is two fields off one existing response: **if `lastSuccessfulRunAt` has not moved in appreciably more than the sync interval, no worker is running.** Add no endpoint.
 
+What makes that conclusive is the known cadence. The sync runs hourly (`CRON.doffinSync`, `0 * * * *`), so "should have run within the hour" is a fact to compare against. Without it, a stale `lastSuccessfulRunAt` is indistinguishable from the quiet Sunday described above. **That couples the alert threshold to the cron expression, and nothing enforces the link** — if the schedule ever changes, the threshold has to move with it or the alert silently loosens or starts crying wolf.
+
 > **This section has now been rewritten twice**, first because the counts came from a cache that a stopped worker also stopped refreshing, then because the fix for that left the guidance covering only half the failure modes. Both revisions were found by tracing the call chain end to end rather than by rereading the code, which had already been read carefully each time. If you are extending the alerting, trace it again rather than trusting this paragraph.
 
 ## Email

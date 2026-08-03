@@ -84,6 +84,15 @@ export interface IngestStatusReport {
    *   ingest has not advanced in hours, the estate is dead however calm the
    *   queue looks. Alert on both; neither alone is sufficient.
    *
+   *   Ingest recency is only a stall signal against a known cadence, and that
+   *   cadence is `CRON.doffinSync` in `jobs/names.ts` — currently `0 * * * *`.
+   *   Note it is an engineering decision ("hourly is well inside the rate
+   *   limit"), **not** a spec requirement: §38 pins the digest scheduler at 15
+   *   minutes and says nothing about sync frequency. So a future change to
+   *   `CRON.doffinSync` is entirely legitimate, breaks no stated requirement,
+   *   and would silently invalidate whatever threshold the alert is tuned to.
+   *   Nothing enforces that link; if the cron moves, move the threshold.
+   *
    *   (Two earlier versions of this comment were each half right — one said
    *   the depth metric was unusable, which was true of `getQueues` and false
    *   here; the next said depth alone was the signal, which misses the

@@ -4,6 +4,16 @@ node_modules
 **/.next
 **/.turbo
 **/coverage
+
+# TypeScript's incremental build state. This one is not obvious and it breaks
+# the image in a way that looks like a source error.
+#
+# `dist` is excluded above so the container builds its own. But a copied
+# .tsbuildinfo tells tsc the output is already up to date, so tsc emits
+# nothing — leaving every package with no dist and every consumer failing on
+# "has no exported member". The symptom points at the source; the cause is
+# stale build state that was never meant to be in the image.
+**/*.tsbuildinfo
 .git
 .github
 .env

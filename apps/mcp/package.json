@@ -14,10 +14,12 @@
   },
   "dependencies": {
     "@luma/config": "workspace:*",
+    "@luma/db": "workspace:*",
     "@luma/domain": "workspace:*",
     "@luma/mcp-tools": "workspace:*",
     "@luma/observability": "workspace:*",
     "@modelcontextprotocol/sdk": "catalog:",
+    "drizzle-orm": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {

@@ -15,7 +15,11 @@ import {
 } from '@luma/observability';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
+import { createDatabase, databaseDependencyCheck } from '@luma/db';
+import { authenticate } from '@luma/mcp-tools';
+import { createToolPorts, createTokenLookup } from './adapters/db-ports.js';
 import { SERVER_INFO, SERVER_INSTRUCTIONS_NB } from './instructions.js';
+import { registerLumaSurface } from './register-tools.js';
 
 const DEFAULT_PORT = 8081;
 const MCP_PATH = '/mcp';
@@ -55,6 +59,10 @@ async function main(): Promise<void> {
 
   const startedAt = Date.now();
 
+  const { db, close: closeDb } = createDatabase();
+  const ports = createToolPorts(db);
+  const lookupToken = createTokenLookup(db);
+
   const http = createServer((request: IncomingMessage, response: ServerResponse) => {
     const correlationId = newCorrelationId();
     response.setHeader('x-correlation-id', correlationId);
@@ -68,8 +76,7 @@ async function main(): Promise<void> {
       }
 
       if (url.pathname === '/ready') {
-        // No dependency probes registered until the database layer is wired in.
-        const report = await runReadinessChecks('mcp', []);
+        const report = await runReadinessChecks('mcp', [databaseDependencyCheck(db)]);
         sendJson(response, readinessHttpStatus(report), report);
         return;
       }
@@ -81,9 +88,34 @@ async function main(): Promise<void> {
         return;
       }
 
+      // Authenticate before doing any work. The reason is not returned to the
+      // caller: a client that can tell "revoked" from "never existed" can probe
+      // for valid tokens, and there is nothing useful it would do with the
+      // distinction anyway.
+      const auth = await authenticate({
+        authorizationHeader: request.headers.authorization,
+        pepper: env.MCP_TOKEN_PEPPER,
+        lookup: lookupToken,
+        now: new Date(),
+      });
+
+      if (!auth.ok) {
+        logger.info({ reason: auth.reason }, 'mcp request rejected');
+        response.setHeader('www-authenticate', 'Bearer realm="luma-anbudsvarsling"');
+        sendJson(response, 401, {
+          error: {
+            code: 'unauthorized',
+            message:
+              'Ugyldig eller manglende MCP-token. Opprett et nytt token under Integrasjoner i Luma Anbudsvarsling.',
+          },
+        });
+        return;
+      }
+
       // A fresh server and transport per request keeps the service stateless
       // and prevents one client's stream from affecting another's.
       const server = buildMcpServer();
+      registerLumaSurface({ server, caller: auth.caller, ports, logger });
       const transport = new StreamableHTTPServerTransport({ enableJsonResponse: true });
 
       response.on('close', () => {
@@ -112,7 +144,14 @@ async function main(): Promise<void> {
 
   const close = (signal: NodeJS.Signals) => {
     logger.info({ signal }, 'shutting down');
-    http.close(() => process.exit(0));
+    // HTTP first, then the pool: closing the database while a request is still
+    // running would fail it for no reason.
+    http.close(() => {
+      void closeDb().then(
+        () => process.exit(0),
+        () => process.exit(1),
+      );
+    });
     setTimeout(() => process.exit(1), 15_000).unref();
   };
   process.on('SIGTERM', () => close('SIGTERM'));

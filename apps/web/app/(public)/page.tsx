@@ -208,7 +208,7 @@ export default function LandingPage() {
             registrert varslingsprofilen din.
           </p>
           <p className="m-0">
-            <Link href="/koble-til-ai">Les hva du kan gjøre med koblingen</Link> —{' '}
+            <Link href="/ai-verktoy">Les hva du kan gjøre med koblingen</Link> —{' '}
             <a
               href={lumaUrl('/kurs/vinn-flere-anbud-med-ai', {
                 medium: 'landingsside',

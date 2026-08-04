@@ -2,13 +2,13 @@ import type { Metadata } from 'next';
 import { Stack } from '@luma/ui';
 
 export const metadata: Metadata = {
-  title: 'Koble til AI-verktøyet ditt',
+  title: 'Anbudsvarsler i AI-verktøyet ditt',
 };
 
 export default function Page() {
   return (
     <Stack gap="lg">
-      <h1 className="page-heading">Koble til AI-verktøyet ditt</h1>
+      <h1 className="page-heading">Anbudsvarsler i AI-verktøyet ditt</h1>
       <Stack gap="md" className="prose-measure">
         <p className="m-0">
           Du kan koble varslingsprofilen din til ChatGPT, Claude eller et annet MCP-kompatibelt
@@ -16,9 +16,10 @@ export default function Page() {
           endringer uten å forlate samtalen.
         </p>
         <p className="m-0">
-          <strong>Du trenger en konto først.</strong> Koblingen bruker et tilgangstoken som er
-          knyttet til varslingsprofilen din, og tokenet oppretter du inne i tjenesten under
-          Integrasjoner. Registrer deg først, så finner du oppsettet der.
+          <strong>Selve tilkoblingen skjer inne i tjenesten.</strong> Den bruker et tilgangstoken
+          som er knyttet til varslingsprofilen din, og tokenet oppretter du under Integrasjoner
+          etter at du har registrert deg. Denne siden forklarer hva koblingen gjør, ikke hvordan du
+          setter den opp.
         </p>
         <p className="m-0">
           Selve oppsettsveiledningen — adressen til MCP-serveren og eksempelkonfigurasjon for

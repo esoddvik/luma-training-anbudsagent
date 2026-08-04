@@ -114,8 +114,8 @@ function SiteHeader() {
       <div className="app-shell flex flex-wrap items-center justify-between gap-sm py-sm">
         <BrandLockup />
         <Cluster as="nav" gap="xs" aria-label="Hovedmeny">
-          <Link href="/koble-til-ai" className="site-nav-link">
-            Koble til AI
+          <Link href="/ai-verktoy" className="site-nav-link">
+            AI-verktøy
           </Link>
           <Link href="/logg-inn" className="site-nav-link">
             Logg inn

@@ -16,8 +16,13 @@ export default function Page() {
           endringer uten å forlate samtalen.
         </p>
         <p className="m-0">
-          Oppsettsveiledningen med adresse til MCP-serveren og opprettelse av tilgangstoken kommer
-          her.
+          <strong>Du trenger en konto først.</strong> Koblingen bruker et tilgangstoken som er
+          knyttet til varslingsprofilen din, og tokenet oppretter du inne i tjenesten under
+          Integrasjoner. Registrer deg først, så finner du oppsettet der.
+        </p>
+        <p className="m-0">
+          Selve oppsettsveiledningen — adressen til MCP-serveren og eksempelkonfigurasjon for
+          ChatGPT og Claude — kommer her.
         </p>
       </Stack>
     </Stack>

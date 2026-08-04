@@ -82,12 +82,22 @@ export default function LandingPage() {
             </h1>
             <p className="prose-measure m-0 text-lg text-text-muted">{LANDING_INTRO[0]}</p>
             <p className="prose-measure m-0 text-lg text-text-muted">{LANDING_INTRO[1]}</p>
+            {/*
+             * One call to action, deliberately.
+             *
+             * A second button here offered «Koble til AI-verktøyet ditt» beside
+             * signup, as though the two were alternatives. They are not: an MCP
+             * connection needs a token, a token needs an account, and §9.5's
+             * setup journey begins with a user who already has one. Presenting
+             * them side by side told a first-time visitor they could choose the
+             * one they cannot do.
+             *
+             * The MCP capability is still on this page, further down, where it
+             * describes what registering gets you rather than competing with it.
+             */}
             <div className="flex flex-wrap gap-sm">
               <Link href="#registrering" className={buttonClassName({ variant: 'primary' })}>
                 {SIGNUP_SUBMIT}
-              </Link>
-              <Link href="/koble-til-ai" className={buttonClassName({ variant: 'secondary' })}>
-                Koble til AI-verktøyet ditt
               </Link>
             </div>
           </div>
@@ -187,8 +197,18 @@ export default function LandingPage() {
       <Card as="section" heading={MCP_HEADING} titleLevel={2}>
         <Stack gap="md" className="prose-measure">
           <p className="m-0">{MCP_TEXT}</p>
+          {/*
+           * States the order plainly. The connection needs a token, the token
+           * needs an account, so this is something registering unlocks — not a
+           * second way in. Saying so here is cheaper than letting someone
+           * follow the link and work it out from a page that cannot help them.
+           */}
           <p className="m-0">
-            <Link href="/koble-til-ai">Se hvordan du kobler til</Link> —{' '}
+            Du oppretter tilgangstokenet inne i tjenesten, så dette gjør du etter at du har
+            registrert varslingsprofilen din.
+          </p>
+          <p className="m-0">
+            <Link href="/koble-til-ai">Les hva du kan gjøre med koblingen</Link> —{' '}
             <a
               href={lumaUrl('/kurs/vinn-flere-anbud-med-ai', {
                 medium: 'landingsside',

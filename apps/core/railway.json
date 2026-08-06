@@ -5,6 +5,7 @@
     "buildCommand": "pnpm install --frozen-lockfile && pnpm turbo run build --filter=core..."
   },
   "deploy": {
+    "preDeployCommand": "pnpm db:migrate",
     "startCommand": "node apps/core/dist/main.js",
     "healthcheckPath": "/health",
     "healthcheckTimeout": 60,

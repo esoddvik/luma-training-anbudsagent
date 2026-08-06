@@ -386,6 +386,14 @@ marketing site and this service is only reachable on its raw Vercel hostname.
 
 ### What to add
 
+> **This is now live, and the marketing site named the variable
+> `ANBUDSVARSLING_ZONE_URL`.** The snippet below still reads
+> `ANBUDSVARSLING_ORIGIN` because that is what this document proposed; the
+> implementation is the authority. It also gates the whole `rewrites()` array on
+> the variable being set (`if (!zone) return []`), so that an unset variable
+> leaves the marketing site untouched rather than pointing `/anbudsvarsling/*`
+> at `undefined`. Read the real file before changing anything here.
+
 In the marketing site's `next.config.js` (or `.ts`):
 
 ```js
@@ -418,6 +426,48 @@ scheme and host, no trailing slash — for example
 `https://luma-anbudsvarsling.vercel.app`. Set it as an environment variable on
 the marketing site's project rather than hard-coding it, so a preview
 deployment can be pointed at a preview of this app.
+
+> **Give it the project alias, never a per-deployment URL.**
+> `https://luma-anbudsvarsling.vercel.app` follows every production deploy of
+> this app. A URL of the form
+> `https://luma-anbudsvarsling-<hash>-<team>.vercel.app` is immutable and pinned
+> to one build forever, so the zone silently freezes: this repo keeps deploying
+> green, and `luma-training.com/anbudsvarsling` keeps serving whatever was built
+> the day the variable was set. That is exactly what happened on 2026-08-06, and
+> it cost an afternoon before anyone looked at the rewrite.
+
+#### Setting it on Vercel, in the order that works
+
+`rewrites()` is evaluated **at build time**, not per request. Three consequences,
+each of which has already wasted someone's time:
+
+- **The value only takes effect on the next build.** Saving the variable changes
+  nothing on its own. Redeploy the marketing site afterwards.
+- **What the dashboard shows is the value for the *next* build, not the one
+  serving traffic.** A blank field with a working `/anbudsvarsling` means a
+  previous build baked a value that is still routing. Do not read the field as
+  the live state.
+- **Purging the CDN does nothing.** The route lives in the deployment's routing
+  manifest, not in a cache. If a stale zone survives a purge and a marketing-site
+  redeploy, the destination is wrong — stop purging and go read the variable.
+
+Add it as a **plain, non-sensitive** variable with **Production** ticked. Vercel
+hides a sensitive variable's value after saving, so a sensitive one cannot be
+read back to confirm what it holds — which turns the point above into a dead end,
+because a blank field is then indistinguishable from an unset one. Nothing here
+is a secret: it is a public hostname.
+
+**To confirm the zone is actually live**, ask for a URL that has never existed:
+
+```bash
+curl -s "https://www.luma-training.com/anbudsvarsling/probe-$RANDOM" | grep -oE 'dpl_[A-Za-z0-9]+'
+```
+
+Nothing can serve a brand-new path from cache, so the `dpl_…` that comes back is
+the deployment the rewrite genuinely resolves to. Compare it against the one on
+`https://luma-anbudsvarsling.vercel.app/anbudsvarsling`. Comparing rendered
+markup instead is unreliable — two builds share most asset filenames, and an
+asset that 200s through the marketing site may simply exist in both.
 
 ### Why there is no third rule for static assets
 

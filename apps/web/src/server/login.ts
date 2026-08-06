@@ -14,9 +14,10 @@ import {
   MAGIC_LINK_TTL_MINUTES,
   type MagicLinkStore,
 } from '@luma/auth';
-import { renderMagicLink } from '@luma/email';
+import { appUrlFor, renderMagicLink } from '@luma/email';
 import * as schema from '@luma/db/schema';
 import { safeReturnPath } from '@/lib/return-path';
+import { BASE_PATH } from '@/lib/site';
 import type { Database } from './db';
 import { authPepper, getWebDb } from './db';
 import { appUrl, baseEmailContext, getWebEmailClient } from './email';
@@ -278,17 +279,24 @@ async function issueOrNot(input: RequestLoginLinkInput): Promise<RequestLoginLin
     return { ok: true, message: MAGIC_LINK_GENERIC_RESPONSE_NB, emailSent: false };
   }
 
-  const url = new URL(LOGIN_CONFIRM_PATH, appUrl());
-  url.searchParams.set('token', issued.token);
   // Re-sanitised here rather than trusted from the caller: this string ends up
   // in an email that a person will click, so an open redirect smuggled through
   // `retur` would be a phishing hop wearing Luma's domain.
   const safeReturn = safeReturnPath(input.returnPath);
-  if (safeReturn) url.searchParams.set('retur', safeReturn);
+
+  // `appUrlFor`, not `new URL(LOGIN_CONFIRM_PATH, appUrl())`. The app is served
+  // under `/anbudsvarsling` on Luma Training's domain, so `APP_URL` carries
+  // that prefix, and resolving a leading-slash path against it throws the
+  // prefix away — sending the login link to the marketing site's 404 page with
+  // nothing logged anywhere. `appUrlFor`'s own test is the guard on it.
+  const magicLinkUrl = appUrlFor(appUrl(), LOGIN_CONFIRM_PATH, {
+    token: issued.token,
+    ...(safeReturn ? { retur: safeReturn } : {}),
+  });
 
   const rendered = renderMagicLink({
     ...baseEmailContext(email, now),
-    magicLinkUrl: url.toString(),
+    magicLinkUrl,
     validForMinutes: MAGIC_LINK_TTL_MINUTES,
   });
 
@@ -351,7 +359,16 @@ export async function completeLogin(token: string | undefined): Promise<LoginRes
   jar.set(
     SESSION_COOKIE_NAME,
     session.token,
-    sessionCookieOptions({ isProduction: process.env.NODE_ENV === 'production' }),
+    // Scoped to the base path. This app shares `luma-training.com` with Luma
+    // Training's marketing site, so a cookie at `/` would be sent with every
+    // request for every page of that site. `SameSite=Lax` still lets the click
+    // from the login email carry it, because the landing page is inside the
+    // prefix; deleting the cookie has to name the same path (see
+    // `deleteAccountAction`).
+    sessionCookieOptions({
+      isProduction: process.env.NODE_ENV === 'production',
+      path: BASE_PATH,
+    }),
   );
 
   return { ok: true, userId: redemption.userId };

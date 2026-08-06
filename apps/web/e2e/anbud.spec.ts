@@ -1,4 +1,4 @@
-import { expect, sessionCookie, signIn, tenderId, test } from './support';
+import { appPath, expect, sessionCookie, signIn, tenderId, test } from './support';
 
 /**
  * The tender detail page (spec section 16).
@@ -17,7 +17,7 @@ test.describe('anbudsdetaljsiden', () => {
 
   test.beforeEach(async ({ context, baseURL, page }) => {
     await signIn(context, baseURL!);
-    await page.goto(`/anbud/${tenderId}`);
+    await page.goto(appPath(`/anbud/${tenderId}`));
   });
 
   test('viser kilde og synkroniseringstidspunkt', async ({ page }) => {
@@ -105,7 +105,7 @@ test.describe('ukjent anbud', () => {
     page,
   }) => {
     await signIn(context, baseURL!);
-    const response = await page.goto('/anbud/00000000-0000-4000-8000-000000000000');
+    const response = await page.goto(appPath('/anbud/00000000-0000-4000-8000-000000000000'));
     expect(response?.status()).toBe(404);
     await expect(page.getByRole('heading', { name: 'Fant ikke siden' })).toBeVisible();
   });

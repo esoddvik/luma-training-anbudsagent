@@ -8,6 +8,7 @@ import { SESSION_COOKIE_NAME } from '@luma/auth';
 import * as schema from '@luma/db/schema';
 import { MARKETING_CONSENT_TEXT_NB } from '@luma/domain';
 import { z } from 'zod';
+import { BASE_PATH } from '@/lib/site';
 import { getWebDb, marketingConsentTextVersion, privacyPolicyVersion } from '../db';
 import { requireUser } from '../session';
 import { withMessage } from './messages';
@@ -141,7 +142,11 @@ export async function deleteAccountAction(formData: FormData): Promise<void> {
   await db.delete(schema.users).where(eq(schema.users.id, user.id));
 
   const jar = await cookies();
-  jar.delete(SESSION_COOKIE_NAME);
+  // Named with the path it was set on. `jar.delete(name)` deletes at `/`, and
+  // a cookie scoped to `/anbudsvarsling` is not that cookie — the browser
+  // would keep it, and the person whose account was just deleted would appear
+  // to still be signed in, holding a session for a row that no longer exists.
+  jar.delete({ name: SESSION_COOKIE_NAME, path: BASE_PATH });
 
   redirect('/?konto=slettet');
 }

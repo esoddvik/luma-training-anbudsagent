@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { appPath } from './support';
 import {
   COVERAGE_TEXT,
   LANDING_HEADING,
@@ -9,7 +10,7 @@ import {
 
 test.describe('landingssiden', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    await page.goto(appPath('/'));
   });
 
   test('viser hovedoverskriften fra seksjon 43', async ({ page }) => {

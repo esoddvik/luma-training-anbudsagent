@@ -17,8 +17,34 @@ import type { LinkContext } from './types.js';
  * Paths match the web routes in spec section 16.
  */
 
-function join(baseUrl: string, path: string, query?: Readonly<Record<string, string>>): string {
-  const url = new URL(path, baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`);
+/**
+ * Joins an in-app path onto `APP_URL` **without losing `APP_URL`'s own path**.
+ *
+ * The app is served under `/anbudsvarsling` on Luma Training's domain (spec
+ * §16), so `APP_URL` is `https://luma-training.com/anbudsvarsling` and the
+ * prefix lives in that value. Nothing outside `apps/web` knows Next has a
+ * `basePath` — `apps/core` builds magic links and share links from `APP_URL`
+ * alone — so this join is the only thing standing between a link and the
+ * marketing site's 404 page.
+ *
+ * The trap this exists to close: `new URL('/logg-inn/bekreft', APP_URL)`
+ * returns `https://luma-training.com/logg-inn/bekreft`. A leading slash in the
+ * path means "from the root of the origin", and the base's own path is
+ * discarded — silently, with a URL that looks entirely plausible. Both magic
+ * link builders were written that way, which meant every login link pointed
+ * outside the app and nobody could log in, with no error anywhere.
+ *
+ * So the leading slash is stripped and the base is given a trailing one before
+ * resolution, and a call site may pass `'/varsler'` or `'varsler'`
+ * interchangeably. `links.test.ts` fails if the prefix is ever dropped again.
+ */
+export function appUrlFor(
+  appUrl: string,
+  path: string,
+  query?: Readonly<Record<string, string>>,
+): string {
+  const base = appUrl.endsWith('/') ? appUrl : `${appUrl}/`;
+  const url = new URL(path.replace(/^\/+/, ''), base);
   for (const [key, value] of Object.entries(query ?? {})) {
     url.searchParams.set(key, value);
   }
@@ -68,7 +94,7 @@ export function buildLinks(context: LinkContext): EmailLinks {
   const { appUrl, medium, actionToken } = context;
   const token = actionToken ? { t: actionToken } : undefined;
   const app = (path: string, query?: Readonly<Record<string, string>>): string =>
-    lumaLink(join(appUrl, path, query), medium);
+    lumaLink(appUrlFor(appUrl, path, query), medium);
 
   return {
     tenderDetail: (tenderId) => app(`anbud/${encodeURIComponent(tenderId)}`),

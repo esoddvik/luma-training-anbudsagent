@@ -95,7 +95,10 @@ export function registerAuthRoutes(app: ApiInstance, ctx: ApiContext): void {
     const actor = actorOf(request);
     await logout(ctx, actor);
     return reply
-      .clearCookie(SESSION_COOKIE_NAME, clearedSessionCookieOptions(ctx.config.isProduction))
+      .clearCookie(
+        SESSION_COOKIE_NAME,
+        clearedSessionCookieOptions({ isProduction: ctx.config.isProduction }),
+      )
       .code(200)
       .send({ message: 'Du er logget ut.' });
   });
@@ -104,7 +107,10 @@ export function registerAuthRoutes(app: ApiInstance, ctx: ApiContext): void {
     const actor = actorOf(request);
     const revoked = await logoutAllSessions(ctx, actor);
     return reply
-      .clearCookie(SESSION_COOKIE_NAME, clearedSessionCookieOptions(ctx.config.isProduction))
+      .clearCookie(
+        SESSION_COOKIE_NAME,
+        clearedSessionCookieOptions({ isProduction: ctx.config.isProduction }),
+      )
       .code(200)
       .send({ message: 'Du er logget ut av alle enheter.', revokedSessions: revoked });
   });

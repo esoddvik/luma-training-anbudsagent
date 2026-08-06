@@ -45,7 +45,7 @@ describe('scrubSecrets', () => {
 
   it('replaces a magic-link token embedded in a URL', () => {
     const scrubbed = scrubSecrets(
-      'sent https://anbudsvarsling.luma-training.com/logg-inn/bekreft?token=abcdef0123456789abcdef',
+      'sent https://luma-training.com/anbudsvarsling/logg-inn/bekreft?token=abcdef0123456789abcdef',
     );
     expect(scrubbed).not.toContain('abcdef0123456789abcdef');
     expect(scrubbed).toContain('token=' + REDACTED);

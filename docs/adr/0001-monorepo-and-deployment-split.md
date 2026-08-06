@@ -34,7 +34,9 @@ PostgreSQL is a Railway managed instance.
 
 `apps/mcp` stays a separate deployment even though it could technically live inside `core`. This is deliberate: the MCP server is the demo surface (§29), and a demo must never queue behind an ingest run or a digest fan-out that happens to be saturating the same event loop. Isolation here buys predictable latency during the moments that matter commercially.
 
-Public domain is `anbudsvarsling.luma-training.com`. Because the app owns its own subdomain, internal Next.js routes drop the `/anbudsvarsling` prefix used in spec §16: `/anbudsvarsling/oversikt` becomes `/oversikt`. The route inventory is otherwise unchanged. MCP is served at `mcp.luma-training.com/mcp`.
+Public URL is `luma-training.com/anbudsvarsling`, as spec §9.1 step 1 and §16 specify. `apps/web` is a Next.js Multi Zone with `basePath: '/anbudsvarsling'`, reached through a rewrite on Luma Training's marketing site — a separate repository — so the service inherits an existing domain's standing rather than starting a new hostname. An earlier revision of this ADR put it on `anbudsvarsling.luma-training.com` and dropped the prefix; that was reversed before anything was deployed. What the shared origin costs — cookie scoping, Server Action origin allowlisting, and `APP_URL` becoming the only carrier of the prefix outside Next — is recorded in `docs/spec-deviations.md`.
+
+The public and signed-in routes now match §16 verbatim. The admin routes do not: §16 puts them at `/admin/anbudsvarsling/...` and one `basePath` can only put the prefix first, so they are at `/anbudsvarsling/admin/...`. MCP is served at `mcp.luma-training.com/mcp`.
 
 ## Consequences
 

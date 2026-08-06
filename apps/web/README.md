@@ -8,6 +8,12 @@ The Next.js App Router application: public pages, the logged-in dashboard, the s
 pnpm --filter web dev
 ```
 
+The app is at **http://localhost:3000/anbudsvarsling**, not at the root. It sets
+`basePath: '/anbudsvarsling'` (spec §16) and is served in production through a
+rewrite on Luma Training's marketing site, so `http://localhost:3000/` is a 404
+here and that is correct. `docs/deployment.md` §7 has the rewrite; `src/lib/site.ts`
+has the prefix and the list of things Next does *not* prefix for you.
+
 Next reads environment from **`apps/web/`, not the repository root**. The root `.env` is what `apps/core` and `apps/mcp` load through `@luma/config`, and it does nothing here. Without `apps/web/.env.local`, every logged-in page returns 500 with «DATABASE_URL mangler» while the public pages render fine — so the app looks healthy until you sign in.
 
 Copy the values you need from `.env.example`. `apps/web/.env.local` is gitignored.

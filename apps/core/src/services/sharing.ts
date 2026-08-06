@@ -9,6 +9,7 @@ import {
   type SharedTenderView,
   type TenderShare,
 } from '@luma/domain';
+import { appUrlFor } from '@luma/email';
 import { z } from 'zod';
 import { gone, notFound, parseOrThrow } from '../routes/errors.js';
 import { recordShareCreated, recordShareViewed } from './attribution.js';
@@ -89,7 +90,10 @@ export async function createShare(
 
   ctx.logger.info({ shareId: id, tenderId }, 'delingslenke opprettet');
 
-  return { id, url: `${ctx.config.appUrl.replace(/\/$/, '')}${SHARE_PATH}/${token}`, expiresAt };
+  // Concatenation was already prefix-safe here, unlike the magic-link builders
+  // — but the two now go through one join with one test, so a share link
+  // cannot lose `APP_URL`'s `/anbudsvarsling` prefix on its own.
+  return { id, url: appUrlFor(ctx.config.appUrl, `${SHARE_PATH}/${token}`), expiresAt };
 }
 
 export interface ShareListItem {

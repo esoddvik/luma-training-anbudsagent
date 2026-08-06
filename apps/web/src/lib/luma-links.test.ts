@@ -158,7 +158,9 @@ describe('isLumaUrl', () => {
   it.each([
     'https://luma-training.com',
     'https://www.luma-training.com/kurs',
-    'https://anbudsvarsling.luma-training.com/oversikt',
+    'https://luma-training.com/anbudsvarsling/oversikt',
+    // Still a subdomain case, because `mcp.luma-training.com` is one.
+    'https://mcp.luma-training.com/mcp',
   ])('accepts %o', (url) => {
     expect(isLumaUrl(url)).toBe(true);
   });

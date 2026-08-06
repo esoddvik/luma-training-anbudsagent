@@ -33,7 +33,7 @@ That limitation is demonstrated rather than assumed. `legal.ts`'s reference to �
 | §35: five deployed applications (`web`, `api`, `mcp`, `worker`, `jobs`) | Three: `web`, `core` (API + worker + cron in one process), `mcp` | Fewer moving parts to operate at launch volume. The `/packages` boundaries are unchanged, so splitting `core` later is mechanical. [ADR-1](adr/0001-monorepo-and-deployment-split.md). |
 | §35: "Redis eller PostgreSQL-basert kø" | pg-boss on the main PostgreSQL. No Redis | Jobs enqueue in the same transaction as the data that causes them, and there is one less stateful service. [ADR-8](adr/0008-queue-technology.md). |
 | §10: "Auth.js eller annen vedlikeholdt TypeScript-løsning" | A custom `packages/auth`: magic links plus opaque database sessions | Three runtimes must validate the same session. Auth.js is Next-centric and its v5 line is pre-release, so adopting it would mean either a beta dependency on the login path or duplicated session logic in the Fastify API. [ADR-16](adr/0016-custom-passwordless-auth.md). |
-| §16: routes under `/anbudsvarsling/...` | The prefix is dropped | The service deploys to its own subdomain, `anbudsvarsling.luma-training.com`, so the prefix would be duplicated in every URL. |
+| §16: admin at `/admin/anbudsvarsling/...` | `/anbudsvarsling/admin/...` | The app is served under one Next `basePath`, and a base path can only go in *front* of every route. `/anbudsvarsling/oversikt` and `/admin/anbudsvarsling` cannot both come out of one prefix. Satisfying §16's literal admin paths would mean a second routing mechanism — a rewrite layer, or a separate zone for admin — for eleven pages behind a login that answers 404 to everyone else (§45). The user-facing routes match §16 exactly; the admin ones are reordered. `apps/core`'s `adminOrderUrl` and `packages/email`'s `ADMIN_ORDER_URL` fixture follow the real path, not §16's. |
 | §48: `DOFFIN_API_KEY`, `DOFFIN_API_CLIENT_ID`, `DOFFIN_API_CLIENT_SECRET` | A single `DOFFIN_SUBSCRIPTION_KEY` | The API is an Azure API Management gateway authenticating with one `Ocp-Apim-Subscription-Key` header. There is no client id or secret. |
 | §48: `REDIS_URL` | Absent | Follows from the queue decision above. |
 | §48 lists no variable for §40's MCP host allowlist | `MCP_ALLOWED_HOSTS` added, optional | The allowlist derives from `MCP_URL`, which §48 does list, so a single-domain deployment needs no new variable. This exists for the second domain a platform adds without being asked — Railway serves every service on a generated `*.up.railway.app` name alongside any custom one, and a client pointed at it is legitimate. Empty by default. |
@@ -43,6 +43,69 @@ That limitation is demonstrated rather than assumed. `legal.ts`'s reference to �
 | §10: where redemption happens | The **web app** redeems the link and sets the cookie, rather than calling the API | `apps/web` and `apps/core` are on different hosts. A cookie set by the API would either not reach the web app or would have to be widened to `.luma-training.com`, handing it to every other host under that domain including the marketing site. Both sides call the same `@luma/auth` functions, so the single-use and expiry rules are identical. |
 | §11: `AlertProfile.active` on creation | New profiles are created **paused** | §9.1 orders the journey preview (11) → adjust (12) → activate (13). Activating on creation would send a digest built from criteria nobody has looked at yet. |
 | §14 confidence bands | Only `high` triggers an immediate alert | §9.3 says "høy relevans" without defining it. Interrupting someone for a medium match gets the service muted, after which the high ones stop arriving too. |
+
+## What following §16's path prefix costs
+
+The build originally deployed to `anbudsvarsling.luma-training.com` and dropped
+the prefix. That was recorded here as a deviation; it is not one any more. The
+product owner chose the spec's `luma-training.com/anbudsvarsling` for the SEO
+value of inheriting a domain that already ranks, and nothing was deployed yet,
+so no live link was broken by the change. This is what it bought and what it
+cost, written down because most of the cost is invisible until it bites.
+
+**One shared origin instead of two.** A subdomain is a separate origin: cookies,
+CSP, Server Action origin checks and CSRF all get their boundary for free. A
+path prefix on a shared domain gets none of that, and each one had to be
+re-established by hand:
+
+- **The session cookie is scoped to `/anbudsvarsling`.** At the default `path:
+  '/'` the browser would attach it to every request for every page of the
+  marketing site. Nothing breaks when a cookie is too wide, which is exactly why
+  it needs a test — `login.integration.test.ts` asserts the path.
+  `clearedSessionCookieOptions` was changed to take the same input shape as
+  `sessionCookieOptions` so the compiler asks about `path` at both ends: a
+  cookie set at `/anbudsvarsling` and deleted at `/` is not deleted, and the
+  logout reports success either way. `SameSite=Lax` is unchanged and must stay —
+  the magic-link click is a cross-site navigation.
+- **Server Actions need an origin allowlist.** Behind the marketing site's
+  rewrite the browser's `Origin` and this deployment's `Host` never agree, and
+  Next refuses the action. `experimental.serverActions.allowedOrigins` in
+  `next.config.ts` is now load-bearing for every form on the service.
+- **`apps/core`'s CSRF and CORS list needs `new URL(APP_URL).origin`.** An
+  `Origin` header is scheme, host and port and never a path, so `APP_URL` can no
+  longer be passed to it raw.
+- **HSTS `preload` from `vercel.json` now applies to `luma-training.com`
+  itself**, not to a subdomain nobody else uses. See `docs/deployment.md` §5.
+
+**`APP_URL` carries the prefix, and it is the only thing that does.**
+`apps/core` mints magic links, share links and every email footer link knowing
+nothing about Next's `basePath`. Two of those builders used
+`new URL('/logg-inn/bekreft', APP_URL)`, which **discards the base's path** —
+so every login link pointed at the marketing site's 404 page, with a URL that
+parses, a host that is right, mail that sends, and nothing logged. Both now go
+through `appUrlFor` in `packages/email`, whose test fails if the prefix is
+dropped; that test was proved able to fail by reintroducing each form of the bug
+before it was trusted. The residual risk is unautomatable: a platform settings
+page where somebody types `APP_URL` without the path.
+
+**Four places Next does not apply `basePath` for you**, each silent:
+
+| Place | Symptom if forgotten |
+| --- | --- |
+| `next/image` `src` | The optimiser answers 400 and the logo is simply missing. Confirmed against the running app before and after. |
+| A plain `<form action>` | The filter form submits to a path the app does not serve. `Link` and `router` are prefixed; raw HTML is not. |
+| `vercel.json` `headers[].source` | Sources are matched against the arriving path. The unprefixed `/delt/:path*` entry stopped matching, and §17's `X-Robots-Tag: noindex` on a private share page would have gone with it. |
+| Playwright `baseURL` | `page.goto('/oversikt')` resolves with `new URL()` — the same discard as above. `baseURL` stays the bare origin and specs go through `appPath`. |
+
+`redirect()` and `metadataBase` **are** handled by Next; both were checked
+rather than assumed (`resolve-url.js` joins `metadataBase`'s pathname;
+`action-handler.js` prefixes an app-relative redirect, and a live 307 confirmed
+it).
+
+**What was not paid.** The route inventory is otherwise §16's, verbatim, for the
+first time — every public and signed-in path now matches the spec exactly. Only
+the admin block deviates, and it deviates for a reason a second routing
+mechanism would not have made worth it (see the table above).
 
 ## Known gaps: specified, not built
 

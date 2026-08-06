@@ -1,4 +1,4 @@
-import { expect, test } from './support';
+import { appPath, expect, test } from './support';
 
 /**
  * Innlogging (spec seksjon 10).
@@ -14,7 +14,7 @@ const UKJENT_ADRESSE = `ingen-konto-${Date.now()}@ukjent-virksomhet.example`;
 
 test.describe('innloggingsskjemaet', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/logg-inn');
+    await page.goto(appPath('/logg-inn'));
   });
 
   test('viser et skjema med ledetekst, e-postfelt og send-knapp', async ({ page }) => {
@@ -83,7 +83,7 @@ test.describe('innloggingsskjemaet', () => {
 
 test.describe('bekreftelsessiden uten gyldig lenke', () => {
   test('viser en nøytral norsk feilmelding for et ugyldig token', async ({ page }) => {
-    await page.goto(`/logg-inn/bekreft?token=${'z'.repeat(43)}`);
+    await page.goto(appPath(`/logg-inn/bekreft?token=${'z'.repeat(43)}`));
 
     await expect(
       page.getByRole('heading', { name: 'Innloggingen kunne ikke fullføres' }),
@@ -98,7 +98,7 @@ test.describe('bekreftelsessiden uten gyldig lenke', () => {
   });
 
   test('viser samme side når tokenet mangler helt', async ({ page }) => {
-    await page.goto('/logg-inn/bekreft');
+    await page.goto(appPath('/logg-inn/bekreft'));
 
     await expect(
       page.getByRole('heading', { name: 'Innloggingen kunne ikke fullføres' }),
@@ -108,7 +108,7 @@ test.describe('bekreftelsessiden uten gyldig lenke', () => {
 
   test('er ikke indekserbar', async ({ page }) => {
     // URL-en bærer en levende legitimasjon. Den skal ikke havne i et søkeindeks.
-    await page.goto(`/logg-inn/bekreft?token=${'z'.repeat(43)}`);
+    await page.goto(appPath(`/logg-inn/bekreft?token=${'z'.repeat(43)}`));
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
   });
 });

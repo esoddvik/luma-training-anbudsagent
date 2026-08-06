@@ -8,6 +8,7 @@ import {
   type OrderStatus,
 } from '@luma/domain';
 import {
+  appUrlFor,
   renderOrderAdminNotification,
   renderOrderReceived,
   renderPaidAccessActivated,
@@ -37,15 +38,18 @@ import type { Actor, ApiContext } from './context.js';
 /**
  * Where the billing administrator lands from the notification email.
  *
- * `/admin/bestillinger`, taken from what `apps/web` actually mounts rather than
- * from spec §16's route list: the web app drops the `/anbudsvarsling` prefix
- * because it deploys to its own subdomain, so the path in §16 — and in the
- * doc comment on `OrderAdminNotificationContext` — would 404.
+ * `/anbudsvarsling/admin/bestillinger` once `APP_URL`'s prefix is joined on,
+ * taken from what `apps/web` actually mounts rather than from spec §16's route
+ * list. §16 puts the admin surfaces at `/admin/anbudsvarsling/…`, which a
+ * single Next `basePath` cannot produce — it can only put the prefix first.
+ * Following §16 literally here would deep-link to a 404. The deviation is
+ * recorded in `docs/spec-deviations.md`; the doc comment on
+ * `OrderAdminNotificationContext` still quotes §16's form.
  *
  * There is no per-order page to deep-link to; the queue is one screen.
  */
 function adminOrderUrl(ctx: ApiContext): string {
-  return `${ctx.config.appUrl.replace(/\/$/, '')}/admin/bestillinger`;
+  return appUrlFor(ctx.config.appUrl, '/admin/bestillinger');
 }
 
 export const adminOrderUpdateSchema = z.object({

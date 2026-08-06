@@ -105,6 +105,19 @@ describeDb('completeLogin', () => {
     });
   });
 
+  it('scopes the cookie to the base path, not to the whole domain', async () => {
+    // This app shares `luma-training.com` with Luma Training's marketing site.
+    // At `path: '/'` the browser attaches the session to every request for
+    // every page of that site — a credential handed to pages with no use for
+    // it. Nothing breaks when it is too wide, which is why it is asserted.
+    const token = await issueLink();
+    await completeLogin(token);
+
+    expect(cookieJar.get(SESSION_COOKIE_NAME)!.options).toMatchObject({
+      path: '/anbudsvarsling',
+    });
+  });
+
   it('refuses a token that was never issued', async () => {
     const result = await completeLogin('not-a-real-token');
     expect(result.ok).toBe(false);

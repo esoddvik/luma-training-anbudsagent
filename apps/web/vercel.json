@@ -35,15 +35,6 @@
           "value": "noindex, nofollow, noarchive"
         }
       ]
-    },
-    {
-      "source": "/delt/:path*",
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow, noarchive"
-        }
-      ]
     }
   ]
 }

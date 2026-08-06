@@ -1,4 +1,12 @@
-import { expect, profileKeyword, profileName, shareToken, sharerEmail, test } from './support';
+import {
+  appPath,
+  expect,
+  profileKeyword,
+  profileName,
+  shareToken,
+  sharerEmail,
+  test,
+} from './support';
 
 /**
  * The public shared view (spec section 17, launch blocker 51.11).
@@ -19,7 +27,7 @@ const PROFILE_NAME = profileName;
 
 test.describe('delt-visning uten gyldig lenke', () => {
   test('viser en nøytral norsk side for et ukjent token', async ({ page }) => {
-    await page.goto(`/delt/${'z'.repeat(43)}`);
+    await page.goto(appPath(`/delt/${'z'.repeat(43)}`));
 
     await expect(
       page.getByRole('heading', { name: 'Denne delingslenken er ikke lenger aktiv' }),
@@ -32,7 +40,7 @@ test.describe('delt-visning uten gyldig lenke', () => {
   });
 
   test('krever ikke innlogging', async ({ page }) => {
-    const response = await page.goto(`/delt/${'z'.repeat(43)}`);
+    const response = await page.goto(appPath(`/delt/${'z'.repeat(43)}`));
     expect(response?.status()).toBe(200);
     await expect(page).not.toHaveURL(/logg-inn/);
   });
@@ -42,7 +50,7 @@ test.describe('delt-visning', () => {
   test.skip(!shareToken, 'krever E2E_SHARE_TOKEN fra et seedet miljø');
 
   test.beforeEach(async ({ page }) => {
-    await page.goto(`/delt/${shareToken}`);
+    await page.goto(appPath(`/delt/${shareToken}`));
   });
 
   test('åpnes uten innlogging og viser anbudet', async ({ page }) => {

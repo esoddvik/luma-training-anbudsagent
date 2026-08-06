@@ -51,7 +51,14 @@ export {
   formatInteger,
   formatValueRange,
 } from './format.js';
-export { buildLinks, extractUrls, externalSourceLink, lumaLink, type EmailLinks } from './links.js';
+export {
+  appUrlFor,
+  buildLinks,
+  extractUrls,
+  externalSourceLink,
+  lumaLink,
+  type EmailLinks,
+} from './links.js';
 
 // Sender identity (spec section 25), from configuration rather than a constant.
 export { senderIdentityFromEnv } from './sender.js';

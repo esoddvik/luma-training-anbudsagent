@@ -21,6 +21,7 @@ import {
   hasActiveFilters,
   parseDashboardFilters,
 } from '@/server/dashboard-filters';
+import { basePathed } from '@/lib/site';
 import { getWebDb } from '@/server/db';
 import { listProfiles } from '@/server/profiles';
 import { requireUser } from '@/server/session';
@@ -225,7 +226,11 @@ function FilterForm({
 }) {
   return (
     <Card as="section" tone="secondary" heading="Filtrer treffene" titleLevel={2}>
-      <form method="get" action="/oversikt">
+      {/* A plain HTML form, so the browser resolves `action` against the
+          origin and `basePath` never gets a chance to apply — unlike `Link`
+          and `router`, which Next prefixes for you. Written out via
+          `basePathed` rather than as a literal so it moves with the prefix. */}
+      <form method="get" action={basePathed('/oversikt')}>
         <Stack gap="md">
           <div className="grid grid-cols-1 gap-md sm:grid-cols-2 lg:grid-cols-3">
             <Field id="profil" label="Varslingsprofil">

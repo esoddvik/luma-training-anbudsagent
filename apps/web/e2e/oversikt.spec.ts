@@ -1,4 +1,4 @@
-import { expect, sessionCookie, signIn, test } from './support';
+import { appPath, expect, sessionCookie, signIn, test } from './support';
 
 /**
  * The dashboard (spec section 16).
@@ -9,7 +9,7 @@ import { expect, sessionCookie, signIn, test } from './support';
 
 test.describe('oversikten uten innlogging', () => {
   test('sender en uinnlogget besøkende til innlogging', async ({ page }) => {
-    await page.goto('/oversikt');
+    await page.goto(appPath('/oversikt'));
     await expect(page).toHaveURL(/\/logg-inn/);
   });
 });
@@ -19,7 +19,7 @@ test.describe('oversikten', () => {
 
   test.beforeEach(async ({ context, baseURL, page }) => {
     await signIn(context, baseURL!);
-    await page.goto('/oversikt');
+    await page.goto(appPath('/oversikt'));
   });
 
   test('viser hovedoverskriften på norsk', async ({ page }) => {

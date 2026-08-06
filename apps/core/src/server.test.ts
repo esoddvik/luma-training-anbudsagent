@@ -14,7 +14,7 @@ afterEach(async () => {
 async function start(readinessChecks: readonly DependencyCheck[] = []) {
   app = await buildServer({
     logger: silentLogger,
-    allowedOrigins: ['https://anbudsvarsling.luma-training.com'],
+    allowedOrigins: ['https://luma-training.com'],
     readinessChecks,
   });
   return app;

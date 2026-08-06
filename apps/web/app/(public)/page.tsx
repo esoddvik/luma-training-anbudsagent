@@ -18,6 +18,7 @@ import {
 } from '@/content/copy';
 import { lumaUrl } from '@/lib/luma-links';
 import { privacyPolicyUrl } from '@/lib/legal';
+import { PRODUCTION_URL } from '@/lib/site';
 
 export const metadata: Metadata = {
   title: {
@@ -25,7 +26,10 @@ export const metadata: Metadata = {
   },
   description:
     'Fortell oss hvilke oppdrag virksomheten din ser etter. Luma Anbudsvarsling følger med på nye offentlige anbud på Doffin og sender deg treff som passer kriteriene dine. Gratis, fra Luma Training.',
-  alternates: { canonical: '/' },
+  // Absolute rather than `'/'`. Next would resolve `'/'` against
+  // `metadataBase` to `…/anbudsvarsling/`, and `trailingSlash` is off, so that
+  // form is a redirect to this one — a canonical pointing at a hop.
+  alternates: { canonical: PRODUCTION_URL },
 };
 
 /**

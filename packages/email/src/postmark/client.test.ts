@@ -91,7 +91,7 @@ describe('stream routing at send time', () => {
     const harness = fakeTransport();
     await client(harness.transport).sendTenderNotification(DAILY_DIGEST, {
       to: f.RECIPIENT_EMAIL,
-      unsubscribeUrl: 'https://anbudsvarsling.luma-training.com/innstillinger?handling=avslutt',
+      unsubscribeUrl: 'https://luma-training.com/anbudsvarsling/innstillinger?handling=avslutt',
     });
     expect(harness.sent[0]?.MessageStream).toBe('tender-notifications');
     expect(harness.sent[0]?.Headers?.map((header) => header.Name)).toEqual([

@@ -102,7 +102,16 @@ describe('integration coverage guard', () => {
   });
 });
 
-const APP_URL = 'https://anbudsvarsling.luma-training.com';
+const APP_URL = 'https://luma-training.com/anbudsvarsling';
+
+/**
+ * What a browser actually puts in `Origin`: scheme, host and port, never a
+ * path. Kept separate from `APP_URL` because `APP_URL` now carries the app's
+ * `/anbudsvarsling` prefix, and a suite that sent `APP_URL` as the origin *and*
+ * allowed `APP_URL` would agree with itself while production refused every
+ * state-changing request — the CSRF guard compares against the real header.
+ */
+const APP_ORIGIN = new URL(APP_URL).origin;
 const ADMIN_EMAIL = 'drift@luma-training.com';
 const SECRET = 'a'.repeat(40);
 
@@ -232,7 +241,7 @@ describeDb('HTTP API', () => {
 
     app = await buildServer({
       logger,
-      allowedOrigins: [APP_URL],
+      allowedOrigins: [APP_ORIGIN],
       api: ctx,
     });
   });
@@ -281,7 +290,7 @@ describeDb('HTTP API', () => {
     url: string,
     options: RequestOptions = {},
   ) {
-    const headers: Record<string, string> = { origin: options.origin ?? APP_URL };
+    const headers: Record<string, string> = { origin: options.origin ?? APP_ORIGIN };
     if (!options.withoutCsrf) headers['x-luma-csrf'] = '1';
 
     return app.inject({
@@ -869,8 +878,24 @@ describeDb('HTTP API', () => {
       });
       const url: string = created.json().url;
       const token = url.slice(url.lastIndexOf('/') + 1);
-      return { owner, tenderId, shareId: created.json().id as string, token };
+      return { owner, tenderId, shareId: created.json().id as string, token, url };
     }
+
+    /**
+     * The link `apps/core` hands the sharer has to be a link into the app.
+     *
+     * `apps/core` knows nothing about Next's `basePath`; the `/anbudsvarsling`
+     * prefix reaches this URL only because `APP_URL` carries it and the join
+     * preserves it. Lose either and the recipient gets Luma Training's
+     * marketing 404 — a share that fails for the one person it was made for,
+     * with a correct-looking URL and nothing in the logs.
+     */
+    it('returns a share link under the base path', async () => {
+      const { url } = await createShare();
+
+      expect(new URL(url).pathname).toMatch(/^\/anbudsvarsling\/delt\//);
+      expect(url.startsWith(`${APP_URL}/delt/`)).toBe(true);
+    });
 
     it('is readable without a session', async () => {
       const { token } = await createShare();
@@ -1407,7 +1432,7 @@ describeDb('HTTP API', () => {
         await app.close();
         app = await buildServer({
           logger,
-          allowedOrigins: [APP_URL],
+          allowedOrigins: [APP_ORIGIN],
           api: buildApiContext({
             db,
             email,

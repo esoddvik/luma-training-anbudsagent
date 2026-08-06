@@ -180,7 +180,30 @@ describe('session cookie', () => {
   });
 
   it('is cleared with a zero lifetime on logout', () => {
-    expect(clearedSessionCookieOptions(true).maxAge).toBe(0);
+    expect(clearedSessionCookieOptions({ isProduction: true }).maxAge).toBe(0);
+  });
+
+  it('defaults to the root path, which is what apps/core needs on its own host', () => {
+    expect(sessionCookieOptions({ isProduction: true }).path).toBe('/');
+  });
+
+  it('scopes to a base path when one is given, so a shared origin gets no copy', () => {
+    // apps/web shares luma-training.com with the marketing site. At `/` the
+    // browser would attach this credential to every page of that site.
+    expect(sessionCookieOptions({ isProduction: true, path: '/anbudsvarsling' }).path).toBe(
+      '/anbudsvarsling',
+    );
+  });
+
+  it('clears on the same path it was set on', () => {
+    // A cookie set at `/anbudsvarsling` and deleted at `/` is not deleted. The
+    // logout reports success and the browser stays signed in.
+    const set = sessionCookieOptions({ isProduction: true, path: '/anbudsvarsling' });
+    const cleared = clearedSessionCookieOptions({
+      isProduction: true,
+      path: '/anbudsvarsling',
+    });
+    expect(cleared.path).toBe(set.path);
   });
 
   it('uses a stable, non-descriptive cookie name', () => {

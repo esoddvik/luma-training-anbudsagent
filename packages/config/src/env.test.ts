@@ -8,7 +8,7 @@ import { parseCoreEnv, parseMcpEnv, parseWebEnv, csvList } from './env.js';
 const validCore: Record<string, string> = {
   NODE_ENV: 'test',
   DATABASE_URL: 'postgres://user:pass@localhost:5432/luma',
-  APP_URL: 'https://anbudsvarsling.luma-training.com',
+  APP_URL: 'https://luma-training.com/anbudsvarsling',
   API_URL: 'https://api.luma-training.com',
   MCP_URL: 'https://mcp.luma-training.com',
   AUTH_SECRET: 'x'.repeat(32),
@@ -24,7 +24,7 @@ const validCore: Record<string, string> = {
   MCP_TOKEN_PEPPER: 'y'.repeat(32),
   SHARE_TOKEN_SECRET: 'z'.repeat(32),
   LUMA_PRIVACY_POLICY_URL: 'https://luma-training.com/personvern',
-  TENDER_SERVICE_TERMS_URL: 'https://anbudsvarsling.luma-training.com/vilkar',
+  TENDER_SERVICE_TERMS_URL: 'https://luma-training.com/anbudsvarsling/vilkar',
   CURRENT_PRIVACY_POLICY_VERSION: '2026-01-01',
   CURRENT_TERMS_VERSION: '1.0',
   CURRENT_MARKETING_CONSENT_TEXT_VERSION: '1.0',

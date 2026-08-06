@@ -29,7 +29,12 @@ export default defineConfig({
     ? {
         webServer: {
           command: 'pnpm run build && pnpm run start',
-          url: baseURL,
+          // The app is served under `basePath`, so the origin alone answers
+          // 404 and never proves the server came up with the right routes.
+          // `baseURL` stays the bare origin because `page.goto('/x')` is
+          // resolved against it with `new URL()`, which would throw a path
+          // away — specs prefix explicitly through `appPath` in `e2e/support`.
+          url: `${baseURL}/anbudsvarsling`,
           reuseExistingServer: !isCi,
           timeout: 180_000,
         },

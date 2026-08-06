@@ -14,7 +14,7 @@ import {
   SESSION_TTL_DAYS,
 } from '@luma/auth';
 import { sessions, users, magicLinkTokens, notificationPreferences } from '@luma/db';
-import { renderMagicLink } from '@luma/email';
+import { appUrlFor, renderMagicLink } from '@luma/email';
 import { maskEmail } from '@luma/observability';
 import { ApiError, tooManyRequests } from '../routes/errors.js';
 import { DbMagicLinkStore, DbSessionStore } from './auth-stores.js';
@@ -119,12 +119,18 @@ export async function requestMagicLink(
     return { emailSent: false };
   }
 
-  const url = new URL(LOGIN_CONFIRM_PATH, ctx.config.appUrl);
-  url.searchParams.set('token', issued.token);
+  // `appUrlFor`, not `new URL(LOGIN_CONFIRM_PATH, appUrl)`. The service is
+  // served under `/anbudsvarsling` on Luma Training's domain, so `APP_URL`
+  // carries that prefix, and resolving a leading-slash path against it throws
+  // the prefix away — producing a login link to the marketing site's 404 page,
+  // with nothing logged anywhere. Nobody could log in and nothing would say so.
+  const magicLinkUrl = appUrlFor(ctx.config.appUrl, LOGIN_CONFIRM_PATH, {
+    token: issued.token,
+  });
 
   const rendered = renderMagicLink({
     ...baseEmailContext(ctx, email),
-    magicLinkUrl: url.toString(),
+    magicLinkUrl,
     validForMinutes: MAGIC_LINK_TTL_MINUTES,
   });
 

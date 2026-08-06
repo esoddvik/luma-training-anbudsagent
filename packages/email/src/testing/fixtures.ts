@@ -32,9 +32,9 @@ export const SENDER: SenderIdentity = {
 };
 
 export const LINK_CONTEXT: LinkContext = {
-  appUrl: 'https://anbudsvarsling.luma-training.com',
+  appUrl: 'https://luma-training.com/anbudsvarsling',
   privacyUrl: 'https://luma-training.com/personvern',
-  termsUrl: 'https://anbudsvarsling.luma-training.com/vilkar',
+  termsUrl: 'https://luma-training.com/anbudsvarsling/vilkar',
   actionToken: 'tok_7d1f2b6c9a',
   medium: 'digest',
 };
@@ -385,8 +385,15 @@ export const ORDER_REQUEST_ID = '88888888-8888-4888-8888-000000000001';
 /** `BILLING_ADMIN_EMAIL` (spec section 28.2, step 2). Not a customer address. */
 export const BILLING_ADMIN_EMAIL = 'faktura@luma-training.com';
 
-/** The admin order view (spec section 16). Built by the caller, tagged here. */
-export const ADMIN_ORDER_URL = `https://anbudsvarsling.luma-training.com/admin/anbudsvarsling/bestillinger/${ORDER_REQUEST_ID}`;
+/**
+ * The admin order view. Built by the caller, tagged here.
+ *
+ * `/anbudsvarsling/admin/…`, not §16's `/admin/anbudsvarsling/…`: a single
+ * Next `basePath` can only put the prefix first, and the deviation is recorded
+ * in `docs/spec-deviations.md`. A fixture spelled the other way would be a
+ * template test agreeing with a URL the app cannot serve.
+ */
+export const ADMIN_ORDER_URL = `https://luma-training.com/anbudsvarsling/admin/bestillinger/${ORDER_REQUEST_ID}`;
 
 export function marketingConsentEvent(overrides?: Partial<ConsentEvent>): ConsentEvent {
   return {

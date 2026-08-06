@@ -95,7 +95,15 @@ async function main(): Promise<void> {
 
   const app = await buildServer({
     logger,
-    allowedOrigins: [env.APP_URL],
+    // The **origin** of `APP_URL`, not `APP_URL` itself. This list is compared
+    // against the browser's `Origin` header (and handed to CORS), and an
+    // `Origin` is scheme, host and port with no path — ever. Since the web app
+    // moved under `luma-training.com/anbudsvarsling`, `APP_URL` carries a path,
+    // and passing it raw would make the comparison in `checkCsrf` unsatisfiable:
+    // every state-changing browser request would be refused as
+    // `csrf_origin_rejected`, and every CORS preflight would fail, on a value
+    // that looks correct in the config.
+    allowedOrigins: [new URL(env.APP_URL).origin],
     readinessChecks: [databaseDependencyCheck(database.db), queueDependencyCheck(queue.boss)],
     api,
   });

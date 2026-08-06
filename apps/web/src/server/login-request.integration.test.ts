@@ -27,6 +27,14 @@ const PEPPER = 'p'.repeat(32);
 const KNOWN = 'anbud@entreprenor.no';
 const UNKNOWN = 'ingen-konto@ukjent-firma.no';
 
+/**
+ * The real shape of `APP_URL`: an origin **and** the app's `/anbudsvarsling`
+ * path. The path is not decoration here — it is the only thing that puts the
+ * prefix in an emailed link, since nothing outside Next knows about
+ * `basePath`. A fixture without it would let the prefix-dropping bug pass.
+ */
+const APP_URL = 'https://luma-training.com/anbudsvarsling';
+
 describeDb('requestLoginLink', () => {
   let harness: TestDatabase;
   let db: TestDatabase['db'];
@@ -40,7 +48,7 @@ describeDb('requestLoginLink', () => {
     email = new FakePostmarkClient();
 
     process.env.AUTH_SECRET = PEPPER;
-    process.env.APP_URL = 'https://anbudsvarsling.luma-training.com';
+    process.env.APP_URL = APP_URL;
     process.env.LUMA_PRIVACY_POLICY_URL = 'https://luma-training.com/personvern';
     process.env.TENDER_SERVICE_TERMS_URL = 'https://luma-training.com/vilkar-anbudsvarsling';
     process.env.AUTH_EMAIL_FROM = 'anbudsvarsling@luma-training.com';
@@ -239,8 +247,12 @@ describeDb('requestLoginLink', () => {
     const sent = email.lastSent()!;
     const url = new URL(confirmUrlFrom(sent.text));
 
-    expect(url.origin).toBe('https://anbudsvarsling.luma-training.com');
-    expect(url.pathname).toBe('/logg-inn/bekreft');
+    expect(url.origin).toBe('https://luma-training.com');
+    // Under the base path, not at the root of the domain. `new URL(path, base)`
+    // would have produced `/logg-inn/bekreft` here — a link to the marketing
+    // site, and a login nobody could complete.
+    expect(url.pathname).toBe('/anbudsvarsling/logg-inn/bekreft');
+    expect(url.toString().startsWith(`${APP_URL}/`)).toBe(true);
     expect(url.searchParams.get('token')).toBeTruthy();
     // The HTML part must carry the same URL: a link that only works in one
     // part is a link that fails for half the recipients.

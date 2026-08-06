@@ -73,7 +73,7 @@ export function renderAllTemplates(options?: RenderAllOptions): RenderedEmail<Te
       ...base,
       links: linksFor('landing'),
       magicLinkUrl:
-        'https://anbudsvarsling.luma-training.com/logg-inn/bekreft/9f2c41a8b7de4c0fa1b23c8d5e6f7a09',
+        'https://luma-training.com/anbudsvarsling/logg-inn/bekreft/9f2c41a8b7de4c0fa1b23c8d5e6f7a09',
       validForMinutes: 15,
     }),
     renderAlertConfirmation({

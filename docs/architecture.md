@@ -31,7 +31,7 @@ graph TB
     end
 
     subgraph vercel["Vercel"]
-        WEB["apps/web<br/>Next.js App Router<br/>anbudsvarsling.luma-training.com<br/>public pages, dashboard,<br/>shared view, admin UI"]
+        WEB["apps/web<br/>Next.js App Router<br/>luma-training.com/anbudsvarsling<br/>public pages, dashboard,<br/>shared view, admin UI"]
     end
 
     subgraph railway["Railway"]
@@ -66,7 +66,7 @@ graph TB
 
 **Two deliberate deviations from the spec:**
 
-- The service owns the subdomain `anbudsvarsling.luma-training.com`, so internal routes drop the `/anbudsvarsling` prefix used in spec §16. `/anbudsvarsling/oversikt` is `/oversikt`. The route inventory is otherwise unchanged.
+- The admin routes are at `/anbudsvarsling/admin/...`, not §16's `/admin/anbudsvarsling/...`. `apps/web` is served under one Next `basePath`, which can only put the prefix in front of every route, so the two forms cannot both come out of it. Every public and signed-in route matches §16 exactly. The service is reached at `luma-training.com/anbudsvarsling` through a rewrite on the marketing site (`docs/deployment.md` §7).
 - The Doffin credential environment variable is `DOFFIN_SUBSCRIPTION_KEY`, matching the Azure APIM subscription-key style, not the spec's generic `DOFFIN_API_KEY` (ADR-0007).
 
 ## 3. Where things live

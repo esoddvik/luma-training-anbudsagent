@@ -96,25 +96,53 @@ export interface SessionCookieOptions {
  * `SameSite=Lax` rather than `Strict`: the magic link arrives from an email
  * client, so the first request after clicking it is cross-site, and `Strict`
  * would drop the cookie and bounce the user straight back to the login page.
- * `Lax` still blocks the cross-site POST that CSRF depends on.
+ * `Lax` still blocks the cross-site POST that CSRF depends on. It is not a
+ * default anybody should tighten without re-reading that sentence.
  *
  * `secure` is false only outside production, because `localhost` is served
  * over plain HTTP during development.
+ *
+ * ## `path`
+ *
+ * Defaults to `/`, which is right for `apps/core`: it owns the root of its own
+ * host, and a session cookie scoped anywhere narrower would never come back to
+ * `/api/v1/…`.
+ *
+ * It is **wrong** for `apps/web`, which is served under `/anbudsvarsling` on a
+ * domain it shares with Luma Training's marketing site. A cookie at `/` there
+ * is attached to every request for every page of that site — a credential
+ * handed to pages that have no use for it and no reason to see it — so the web
+ * app passes its base path. The failure mode is not an error: the cookie works
+ * perfectly, it is simply broader than it should be.
+ *
+ * Both halves have to agree. A cookie set at `/anbudsvarsling` is not cleared
+ * by a delete at `/`; the browser keeps it, the user stays signed in, and the
+ * logout looks like it succeeded. That is why the clearing function takes the
+ * same input shape rather than a lone boolean — the compiler now asks the
+ * question at every call site.
  */
 export function sessionCookieOptions(input: {
   isProduction: boolean;
   ttlDays?: number;
+  path?: string;
 }): SessionCookieOptions {
   return {
     httpOnly: true,
     secure: input.isProduction,
     sameSite: 'lax',
-    path: '/',
+    path: input.path ?? '/',
     maxAge: (input.ttlDays ?? SESSION_TTL_DAYS) * 86_400,
   };
 }
 
-/** Attributes that clear the cookie on logout. */
-export function clearedSessionCookieOptions(isProduction: boolean): SessionCookieOptions {
-  return { ...sessionCookieOptions({ isProduction }), maxAge: 0 };
+/**
+ * Attributes that clear the cookie on logout.
+ *
+ * `path` must match the one the cookie was set with, or nothing is cleared.
+ */
+export function clearedSessionCookieOptions(input: {
+  isProduction: boolean;
+  path?: string;
+}): SessionCookieOptions {
+  return { ...sessionCookieOptions(input), maxAge: 0 };
 }

@@ -118,7 +118,7 @@ export const EDITORIAL_SEEDS: readonly EditorialSeed[] = [
     title: 'Bruk anbudsvarslene i ditt eget AI-verktøy',
     description:
       'Koble varslingsprofilen til ChatGPT eller Claude, og undersøk treffene der du allerede jobber.',
-    url: 'https://anbudsvarsling.luma-training.com/koble-til-ai',
+    url: 'https://luma-training.com/anbudsvarsling/ai-verktoy',
     placement: 'empty_state',
     relevanceTags: ['mcp', 'ai'],
     ladderLevel: 1,

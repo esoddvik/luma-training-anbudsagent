@@ -506,7 +506,7 @@ describeDb('the pg-boss job runtime', () => {
 /** The non-database configuration the email jobs need. Values are irrelevant here. */
 function emailConfig() {
   return {
-    appUrl: 'https://anbudsvarsling.example.test',
+    appUrl: 'https://example.test/anbudsvarsling',
     privacyUrl: 'https://example.test/personvern',
     termsUrl: 'https://example.test/vilkar',
     senderName: 'Luma Training',

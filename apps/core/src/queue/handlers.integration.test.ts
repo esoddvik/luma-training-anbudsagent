@@ -312,7 +312,7 @@ describeDb('the queue handlers', () => {
         logger,
         now: () => now,
         config: {
-          appUrl: 'https://anbudsvarsling.example.test',
+          appUrl: 'https://example.test/anbudsvarsling',
           privacyUrl: 'https://example.test/personvern',
           termsUrl: 'https://example.test/vilkar',
           senderName: 'Luma Training',

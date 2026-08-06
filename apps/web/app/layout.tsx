@@ -10,7 +10,20 @@ import { Poppins } from 'next/font/google';
 import { buttonClassName, Cluster, SkipLink } from '@luma/ui';
 import { privacyPolicyUrl } from '@/lib/legal';
 import { lumaUrl } from '@/lib/luma-links';
+import { basePathed, PRODUCTION_URL } from '@/lib/site';
 import { SERVICE_NAME, SERVICE_TAGLINE } from '@/content/copy';
+
+/**
+ * The logo, addressed with the base path in front of it.
+ *
+ * `next/image` is the one place `basePath` is **not** applied for you: Next's
+ * own reference says the prefix has to be in `src`. Without it the optimiser is
+ * handed `/luma-logo-orange-transparent.png`, which is not a path this app
+ * serves any more — public files sit under the prefix too — and answers 400.
+ * Verified both ways against the running server; the only symptom is a missing
+ * logo in the header and the footer.
+ */
+const LOGO_SRC = basePathed('/luma-logo-orange-transparent.png');
 
 /**
  * Poppins is Luma Training's typeface (luma-training.com loads 400/500/600/700).
@@ -32,7 +45,11 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://anbudsvarsling.luma-training.com'),
+  // Carries the base path, so every relative URL Next resolves against it —
+  // canonicals above all — lands inside the zone. Next joins `metadataBase`'s
+  // pathname with the relative value rather than calling `new URL(path, base)`,
+  // which would drop it (`resolve-url.ts`, checked in the installed version).
+  metadataBase: new URL(PRODUCTION_URL),
   title: {
     default: `${SERVICE_NAME} — gratis varsling om offentlige anbud`,
     template: `%s | ${SERVICE_NAME}`,
@@ -89,14 +106,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 function BrandLockup() {
   return (
     <Link href="/" className="site-brand">
-      <Image
-        src="/luma-logo-orange-transparent.png"
-        alt=""
-        width={273}
-        height={164}
-        className="site-brand__logo"
-        priority
-      />
+      <Image src={LOGO_SRC} alt="" width={273} height={164} className="site-brand__logo" priority />
       {/* Name only. `SERVICE_TAGLINE` is the hero's eyebrow and the footer's
           first sentence; a third copy in the chrome on every page reads as a
           slogan rather than as the fact it is. */}
@@ -139,7 +149,7 @@ function SiteFooter() {
         <div className="flex flex-wrap items-start justify-between gap-lg">
           <div className="flex flex-col gap-xs">
             <Image
-              src="/luma-logo-orange-transparent.png"
+              src={LOGO_SRC}
               alt="Luma Training"
               width={273}
               height={164}

@@ -86,6 +86,32 @@ if (isCi) {
 
 export const SESSION_COOKIE_NAME = 'luma_session';
 
+/**
+ * The path prefix the app is served under, duplicated from
+ * `src/lib/site.ts` because this suite drives a deployed URL over HTTP and
+ * imports nothing from the application.
+ *
+ * Playwright resolves a `page.goto` argument against `baseURL` with `new
+ * URL()`, so `goto('/oversikt')` against a base of
+ * `http://127.0.0.1:3000/anbudsvarsling` would resolve to
+ * `http://127.0.0.1:3000/oversikt` — the leading slash discards the base's
+ * path, the same trap that broke the magic-link builders. `baseURL` therefore
+ * stays the bare origin and every spec goes through `appPath`.
+ */
+export const BASE_PATH = '/anbudsvarsling';
+
+/**
+ * An in-app path as the browser must ask for it.
+ *
+ * `appPath('/')` is `/anbudsvarsling`, not `/anbudsvarsling/`: `trailingSlash`
+ * is off, so the slashed form is a redirect and a test that navigates to it
+ * measures the hop rather than the page.
+ */
+export function appPath(path: string): string {
+  if (path === '' || path === '/') return BASE_PATH;
+  return `${BASE_PATH}${path.startsWith('/') ? path : `/${path}`}`;
+}
+
 export const sessionCookie = process.env['E2E_SESSION_COOKIE'];
 
 /** A token for a share link seeded before the run. */
@@ -111,7 +137,9 @@ export async function signIn(context: BrowserContext, baseURL: string): Promise<
       name: SESSION_COOKIE_NAME,
       value: sessionCookie,
       domain: url.hostname,
-      path: '/',
+      // The same scope the app sets it with, so a test cannot pass on a
+      // broader cookie than production ever issues.
+      path: BASE_PATH,
       httpOnly: true,
       secure: url.protocol === 'https:',
       sameSite: 'Lax',

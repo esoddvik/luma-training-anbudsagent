@@ -75,7 +75,7 @@ const clickEvent = {
   MessageStream: 'tender-notifications',
   Recipient: RECIPIENT,
   ReceivedAt: '2026-03-12T09:00:00Z',
-  OriginalLink: 'https://anbudsvarsling.luma-training.com/anbud/22222222?utm_source=anbudsvarsling',
+  OriginalLink: 'https://luma-training.com/anbudsvarsling/anbud/22222222?utm_source=anbudsvarsling',
   ClickLocation: 'HTML',
   Tag: 'tender-daily-digest-v1',
 };

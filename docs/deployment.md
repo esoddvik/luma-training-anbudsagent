@@ -11,12 +11,19 @@ one PostgreSQL database.
 
 ## 1. What runs where
 
-| Service     | Path        | Platform | Public URL                                   |
-| ----------- | ----------- | -------- | -------------------------------------------- |
-| Web         | `apps/web`  | Vercel   | `https://anbudsvarsling.luma-training.com`   |
-| Core API    | `apps/core` | Railway  | internal + `https://api.…` (optional)        |
-| MCP server  | `apps/mcp`  | Railway  | `https://mcp.luma-training.com/mcp`          |
-| PostgreSQL  | —           | Railway  | private network only                         |
+| Service     | Path        | Platform | Public URL                                       |
+| ----------- | ----------- | -------- | ------------------------------------------------ |
+| Web         | `apps/web`  | Vercel   | `https://luma-training.com/anbudsvarsling`       |
+| Core API    | `apps/core` | Railway  | internal + `https://api.…` (optional)            |
+| MCP server  | `apps/mcp`  | Railway  | `https://mcp.luma-training.com/mcp`              |
+| PostgreSQL  | —           | Railway  | private network only                             |
+
+**Web is served under a path, not on a subdomain.** It is a Next.js Multi Zone
+with `basePath: '/anbudsvarsling'`, reached through a rewrite on Luma Training's
+marketing site — a **separate repository** this one never edits. §7 below holds
+the rewrite that site needs. Nothing here deploys until that rewrite is in
+place: the Vercel deployment is reachable on its own `*.vercel.app` hostname,
+but the public URL is the one in the table.
 
 `apps/core` is a single Node process that runs the Fastify HTTP API, the pg-boss
 worker and the cron jobs (Doffin ingest, digest, cleanup). pg-boss creates its
@@ -31,6 +38,18 @@ Directory in the Build Step"** — the build command is
 `cd ../.. && pnpm turbo run build --filter=web` and needs the workspace root.
 Everything else (framework, install/build command, output dir, region `arn1`,
 security headers) is declared in [`apps/web/vercel.json`](../apps/web/vercel.json).
+
+> **`vercel.json`'s `headers[].source` values must carry the base path.** Vercel
+> matches `source` against the request path as it arrives, and with
+> `basePath: '/anbudsvarsling'` every request to this app arrives prefixed. The
+> `X-Robots-Tag: noindex, nofollow, noarchive` that spec §17 requires on the
+> shared view is therefore sourced at `/anbudsvarsling/delt/:path*`, and a
+> second entry for the unprefixed `/delt/:path*` was removed because it can no
+> longer match anything. `vercel.json` is strict JSON — it accepts neither
+> comments nor a `$comment` key — so this note lives here and beside `basePath`
+> in `apps/web/next.config.ts`. If the prefix ever moves, move that source with
+> it: a share page that stops matching becomes an indexable private page, and
+> nothing fails.
 
 ### Railway services
 
@@ -89,6 +108,23 @@ Names only. The authoritative list is spec §48 and the Zod schema in
 > **`DOFFIN_SUBSCRIPTION_KEY` replaces the spec's `DOFFIN_API_KEY`.** The spec
 > was written before the Doffin API's actual auth header was confirmed. Use
 > `DOFFIN_SUBSCRIPTION_KEY` everywhere.
+
+> **`APP_URL` must include `/anbudsvarsling`** — in production
+> `https://luma-training.com/anbudsvarsling`, locally
+> `http://localhost:3000/anbudsvarsling`. It is the only place the base path
+> exists outside `apps/web`: `apps/core` builds magic links, share links and
+> every email footer link from `APP_URL` and has no idea Next has a `basePath`.
+> Set it without the path and every login link points at the marketing site's
+> 404 page. The URL parses, the host is right, the mail sends, nothing is
+> logged, and nobody can sign in. `packages/email`'s `links.test.ts` fails if
+> the join ever stops preserving the path, but nothing can check the value you
+> type into a platform's settings page.
+>
+> `TENDER_SERVICE_TERMS_URL` points at a page this app serves, so it carries the
+> prefix too.
+>
+> `apps/core` derives its CSRF and CORS origin list from `APP_URL` with
+> `new URL(APP_URL).origin`, because an `Origin` header never carries a path.
 
 ### Shared by all three services
 
@@ -279,24 +315,26 @@ Actions versions are scanned on the same schedule.
 
 ## 5. DNS
 
-Both records go in the `luma-training.com` zone. Add the domain in the platform
-**first**, then create the record — both platforms need to see the record to
-issue a certificate, and both will show a verification state until it resolves.
+### `luma-training.com` → unchanged
 
-### `anbudsvarsling.luma-training.com` → Vercel
+The apex record already points at the marketing site and **must not be
+repointed**. `apps/web` is reached through that site's rewrite (§7), not through
+a DNS record of its own, which is the whole point of moving off a subdomain:
+the service inherits the domain's existing SEO standing instead of starting a
+new hostname from zero.
 
-1. Vercel → project → Settings → Domains → add `anbudsvarsling.luma-training.com`.
-2. Create the DNS record Vercel shows:
-
-   ```text
-   anbudsvarsling   CNAME   cname.vercel-dns.com.   (TTL 300)
-   ```
-
-3. Wait for Vercel to report the domain as Valid; the Let's Encrypt certificate
-   is issued automatically. HSTS with `preload` is set by `vercel.json`, so do
-   not point this hostname anywhere else afterwards without planning for it.
+The Vercel project still needs a hostname to be rewritten *to*. Either leave it
+on the generated `<project>.vercel.app` name or give it an internal one; nothing
+links to it, and §7's rewrite is what the public sees. HSTS with `preload` is
+set by `vercel.json` and is now served under `luma-training.com`, so the header
+applies to the apex — confirm the marketing site is happy with `preload` before
+launch, because it is a hard commitment to HTTPS for the whole domain.
 
 ### `mcp.luma-training.com` → Railway
+
+This one record does go in the `luma-training.com` zone. Add the domain in
+Railway **first**, then create the record — the platform needs to see it to
+issue a certificate, and will show a verification state until it resolves.
 
 1. Railway → mcp service → Settings → Networking → Custom Domain → add
    `mcp.luma-training.com`.
@@ -311,8 +349,8 @@ issue a certificate, and both will show a verification state until it resolves.
 3. The MCP endpoint is then `https://mcp.luma-training.com/mcp` (spec §33).
    Verify `https://mcp.luma-training.com/health` returns 200 before announcing it.
 
-Neither hostname is an apex record, so CNAMEs are fine and no ALIAS/ANAME
-support is required from the DNS provider.
+`mcp.luma-training.com` is not an apex record, so a CNAME is fine and no
+ALIAS/ANAME support is required from the DNS provider.
 
 ---
 
@@ -333,3 +371,103 @@ columns a release after you stop writing them.
 Rollback: Railway → Deployments → Redeploy the previous build. Vercel →
 Deployments → Promote the previous production deployment. Neither reverses a
 migration — write a forward fix.
+
+---
+
+## 7. The rewrite the marketing site needs
+
+`luma-training.com` is served by a **separate repository** — `C:\Luma Training
+web` on the machine this was written on. Nothing in this repository edits it.
+This section exists so that whoever owns it can paste the change in and know
+what it is for.
+
+Without this rewrite `luma-training.com/anbudsvarsling` is a 404 on the
+marketing site and this service is only reachable on its raw Vercel hostname.
+
+### What to add
+
+In the marketing site's `next.config.js` (or `.ts`):
+
+```js
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  async rewrites() {
+    return [
+      // Luma Anbudsvarsling is a separate Next.js app (a Multi Zone) deployed
+      // to Vercel with basePath: '/anbudsvarsling'. Both entries are needed:
+      // the first is the landing page itself, the second is everything under
+      // it. `:path+` requires at least one segment and will not match the bare
+      // prefix, which is why the bare prefix has its own rule.
+      {
+        source: '/anbudsvarsling',
+        destination: `${process.env.ANBUDSVARSLING_ORIGIN}/anbudsvarsling`,
+      },
+      {
+        source: '/anbudsvarsling/:path+',
+        destination: `${process.env.ANBUDSVARSLING_ORIGIN}/anbudsvarsling/:path+`,
+      },
+    ];
+  },
+};
+
+module.exports = nextConfig;
+```
+
+`ANBUDSVARSLING_ORIGIN` is the anbudsvarsling app's own deployment origin,
+scheme and host, no trailing slash — for example
+`https://luma-anbudsvarsling.vercel.app`. Set it as an environment variable on
+the marketing site's project rather than hard-coding it, so a preview
+deployment can be pointed at a preview of this app.
+
+### Why there is no third rule for static assets
+
+The Multi Zones guide shows a third rewrite for an `assetPrefix` path, and one
+for `/_next/…`. Neither applies here:
+
+- This app sets **`basePath` and no `assetPrefix`**, so Next already serves its
+  own JS and CSS from `/anbudsvarsling/_next/…`. That is inside
+  `/anbudsvarsling/:path+`, so the rule above already carries it. Verified
+  against the running app: every `<script src>` and the `next/image` URL are
+  prefixed.
+- The guide's extra `/blog-static/_next/:path+` rewrite is for Next versions
+  before 15 and is called out in the docs as no longer necessary.
+
+Adding an `assetPrefix` to this app **would** require a third rule, and would
+buy nothing — the prefix already namespaces the assets against the marketing
+site's own `/_next/…`.
+
+### What breaks if the rewrite is wrong
+
+- **A rewrite that strips the prefix** — `destination: '${ORIGIN}/:path+'` —
+  makes every page load with unstyled HTML and no interactivity. The document
+  renders; the asset URLs 404 against a `basePath`ed server.
+- **A redirect instead of a rewrite** exposes the Vercel hostname in the address
+  bar, which loses the SEO benefit the move was made for and puts the session
+  cookie on the wrong host.
+- **`:path*` instead of `:path+`** on the second rule with the first rule
+  removed can send `/anbudsvarsling` itself to `${ORIGIN}/anbudsvarsling/`,
+  which is a redirect hop rather than the page.
+
+### One check that catches all three
+
+After deploying the rewrite, from anywhere:
+
+```bash
+curl -sI https://luma-training.com/anbudsvarsling | head -1        # 200, not 301/404
+curl -s  https://luma-training.com/anbudsvarsling | grep -o '/anbudsvarsling/_next/static/[^"]*' | head -1
+curl -sI "https://luma-training.com$(curl -s https://luma-training.com/anbudsvarsling \
+  | grep -o '/anbudsvarsling/_next/static/[^"]*' | head -1)" | head -1   # 200
+```
+
+The third line is the one that matters: it asks for an asset by the URL the
+page itself printed. A page that renders while its assets 404 looks broken but
+reports nothing, and is the failure this whole section is about.
+
+### Server Actions
+
+`apps/web` lists `luma-training.com` in
+`experimental.serverActions.allowedOrigins`. Server Actions refuse a request
+whose `Origin` does not match the `Host` they were served on, and behind a
+rewrite those never match. If the public hostname ever changes, that list has to
+change with it or every form on the service — the login form first — starts
+failing with a CSRF error that mentions neither the proxy nor the origin.

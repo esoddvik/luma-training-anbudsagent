@@ -1,9 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Alert, Button, buttonClassName, Card, Field, Input, Stack } from '@luma/ui';
+import { Button, Card, Field, Input, Stack } from '@luma/ui';
 import {
-  COVERAGE_HEADING,
-  COVERAGE_TEXT,
   LANDING_HEADING,
   LANDING_INTRO,
   MCP_HEADING,
@@ -87,23 +85,18 @@ export default function LandingPage() {
             <p className="prose-measure m-0 text-lg text-text-muted">{LANDING_INTRO[0]}</p>
             <p className="prose-measure m-0 text-lg text-text-muted">{LANDING_INTRO[1]}</p>
             {/*
-             * One call to action, deliberately.
+             * No button here.
              *
-             * A second button here offered «Koble til AI-verktøyet ditt» beside
-             * signup, as though the two were alternatives. They are not: an MCP
-             * connection needs a token, a token needs an account, and §9.5's
-             * setup journey begins with a user who already has one. Presenting
-             * them side by side told a first-time visitor they could choose the
-             * one they cannot do.
+             * The hero used to carry a «Opprett varslingsprofil» link that
+             * jumped to `#registrering`, one screen down. The signup form now
+             * sits directly below the hero with the same label on its own
+             * submit button, so the link was sending people past nothing to
+             * reach a button they could already see — and it made the page
+             * read as though it had two calls to action when it has one.
              *
-             * The MCP capability is still on this page, further down, where it
-             * describes what registering gets you rather than competing with it.
+             * The header's «Kom i gang» still points at `#registrering`, which
+             * is what that anchor is for on pages further down the site.
              */}
-            <div className="flex flex-wrap gap-sm">
-              <Link href="#registrering" className={buttonClassName({ variant: 'primary' })}>
-                {SIGNUP_SUBMIT}
-              </Link>
-            </div>
           </div>
 
           <Card heading="Kort fortalt" titleLevel={2} tone="raised">
@@ -122,44 +115,56 @@ export default function LandingPage() {
       </section>
 
       <Stack gap="2xl">
-        {/* Dekningstekst. Spec 51, punkt 3: dette er en lanseringsblokkering og
-            skal stå tydelig på landingssiden, ikke gjemt i en bunntekst. */}
-        <Alert tone="info" heading={COVERAGE_HEADING} titleLevel={2}>
-          <p className="m-0 prose-measure">{COVERAGE_TEXT}</p>
-        </Alert>
-
-        <section aria-label={SIGNUP_HEADING} className="prose-measure" id="registrering">
-          <Card heading={SIGNUP_HEADING} titleLevel={2} tone="raised">
-            <Stack gap="md">
-              <p className="m-0">{SIGNUP_INTRO}</p>
-              {/* TODO(auth): send til POST /api/registrering når autentisering og
-                  samtykkelagring er på plass (spec seksjon 10 og 21). */}
-              <form action="#registrering" method="post" noValidate>
-                <Stack gap="md">
-                  <Field id="e-post" label={SIGNUP_EMAIL_LABEL} hint={SIGNUP_EMAIL_HINT} required>
-                    {(controlProps) => (
-                      <Input
-                        {...controlProps}
-                        name="epost"
-                        type="email"
-                        autoComplete="email"
-                        inputMode="email"
-                        placeholder="navn@virksomhet.no"
-                      />
-                    )}
-                  </Field>
+        {/*
+         * Signup, sitting directly on the page.
+         *
+         * It used to be a `Card`, which drew a box around the one thing on the
+         * page nobody needs persuading to look at, indented its contents away
+         * from the left edge every other block on the page starts at, and gave
+         * the form a second border inside the card's own. A section heading, a
+         * line of intro and the form itself line up with the hero above them
+         * and the trust text below, so the eye runs straight down one edge.
+         *
+         * `prose-measure` caps the column so the input does not stretch the
+         * full shell width — a 72rem-wide e-mail field looks like a mistake.
+         */}
+        <section aria-labelledby="registrering-tittel" className="prose-measure" id="registrering">
+          <Stack gap="md">
+            <h2 id="registrering-tittel" className="section-heading">
+              {SIGNUP_HEADING}
+            </h2>
+            <p className="m-0">{SIGNUP_INTRO}</p>
+            {/* TODO(auth): send til POST /api/registrering når autentisering og
+                samtykkelagring er på plass (spec seksjon 10 og 21). */}
+            <form action="#registrering" method="post" noValidate>
+              <Stack gap="md">
+                <Field id="e-post" label={SIGNUP_EMAIL_LABEL} hint={SIGNUP_EMAIL_HINT} required>
+                  {(controlProps) => (
+                    <Input
+                      {...controlProps}
+                      name="epost"
+                      type="email"
+                      autoComplete="email"
+                      inputMode="email"
+                      placeholder="navn@virksomhet.no"
+                    />
+                  )}
+                </Field>
+                {/* Sized to its label rather than to the column, so the button
+                    reads as an action and not as a second input. */}
+                <div className="flex">
                   <Button type="submit" variant="primary">
                     {SIGNUP_SUBMIT}
                   </Button>
-                </Stack>
-              </form>
-              <p className="m-0 text-sm text-text-muted">
-                Du må godta <Link href="/vilkar">bruksvilkårene</Link> i neste steg. Markedsføring
-                er valgfritt og påvirker ikke varslene dine. Se{' '}
-                <a href={privacyPolicyUrl()}>Luma Trainings personvernerklæring</a>.
-              </p>
-            </Stack>
-          </Card>
+                </div>
+              </Stack>
+            </form>
+            <p className="m-0 text-sm text-text-muted">
+              Du må godta <Link href="/vilkar">bruksvilkårene</Link> i neste steg. Markedsføring er
+              valgfritt og påvirker ikke varslene dine. Se{' '}
+              <a href={privacyPolicyUrl()}>Luma Trainings personvernerklæring</a>.
+            </p>
+          </Stack>
         </section>
 
         <section aria-labelledby="tillit" className="prose-measure">
@@ -169,34 +174,6 @@ export default function LandingPage() {
           <p className="m-0">{TRUST_TEXT}</p>
         </section>
       </Stack>
-
-      <section aria-labelledby="slik-virker-det" className="bleed luma-soft-band">
-        <div className="app-shell py-2xl">
-          <h2 id="slik-virker-det" className="section-heading mb-lg">
-            Slik virker tjenesten
-          </h2>
-          <ul className="grid list-none grid-cols-1 gap-md p-0 sm:grid-cols-3">
-            <Card as="li" heading="1. Sett opp varslingsprofilen" tone="flat">
-              <p className="m-0 text-sm">
-                Velg tjenestemal, geografi, CPV-koder og terskelverdier. Du kan justere kriteriene
-                når som helst.
-              </p>
-            </Card>
-            <Card as="li" heading="2. Få treff på e-post" tone="flat">
-              <p className="m-0 text-sm">
-                Daglig sammendrag eller umiddelbart varsel — du bestemmer. Hvert treff har en
-                forklaring på hvorfor det passer, frist og lenke til kunngjøringen.
-              </p>
-            </Card>
-            <Card as="li" heading="3. Forbered deg tidlig" tone="flat">
-              <p className="m-0 text-sm">
-                Planlagte anskaffelser vises som egen kategori, tydelig merket, slik at du kan
-                begynne tilbudsarbeidet før konkurransen publiseres.
-              </p>
-            </Card>
-          </ul>
-        </div>
-      </section>
 
       <Card as="section" heading={MCP_HEADING} titleLevel={2}>
         <Stack gap="md" className="prose-measure">

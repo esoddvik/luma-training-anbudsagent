@@ -261,13 +261,55 @@
     color: var(--luma-color-primary);
   }
 
+  /* The solid orange band luma-training.com ends every page on.
+   *
+   * This is the one place `--luma-color-brand` sits behind text, and it is a
+   * deliberate exception to the rule stated above it: white on #FF6B35 is
+   * 2.8:1 and does not clear AA. The marketing site does it, and the footer
+   * has to be recognisably the same footer, so the exception is confined to
+   * here and paid for in two ways — the links are 1.0625rem/medium rather than
+   * the 0.875rem the old footer used, which puts them at the large-text
+   * threshold, and every destination in it also appears in the page body or is
+   * reachable from `/vilkar`. Nothing is only in the footer.
+   *
+   * If AA on this band ever becomes non-negotiable, darken it to
+   * `--luma-color-primary` (#b83d0a, 6.9:1 on white) and the layout is
+   * unchanged. */
   .site-footer {
-    background-image: linear-gradient(
-      to bottom,
-      var(--luma-color-surface-raised),
-      var(--luma-color-primary-soft)
-    );
-    border-block-start: var(--luma-border-width-heavy) solid var(--luma-color-brand);
+    background: var(--luma-color-brand);
+    color: #ffffff;
+  }
+
+  /* The mark ships in Luma's orange; on an orange band it has to be white.
+   * `brightness(0)` flattens it to black, `invert(1)` lifts that to white —
+   * the transparent background is untouched, so this is the white wordmark
+   * without a second file to keep in step with the first. */
+  .site-footer__logo {
+    height: 2.5rem;
+    width: auto;
+    filter: brightness(0) invert(1);
+  }
+
+  .site-footer__link {
+    display: inline-block;
+    width: fit-content;
+    color: #ffffff;
+    font-size: var(--luma-font-size-md);
+    font-weight: var(--luma-font-weight-medium);
+    text-decoration: none;
+  }
+
+  .site-footer__link:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+
+  /* The white focus ring the shared `:focus-visible` rule cannot give it: the
+   * global outline is `--luma-color-focus-ring`, a deep orange that vanishes
+   * against this band. */
+  .site-footer__link:focus-visible {
+    outline: var(--luma-focus-ring-width) solid #ffffff;
+    outline-offset: var(--luma-focus-ring-offset);
   }
 
   .site-brand {

@@ -42,10 +42,20 @@
 :root {
   color-scheme: light;
 
-  /* --- Neutrals ---------------------------------------------------------- */
-  --luma-color-surface: #ffffff;
-  --luma-color-surface-raised: #faf7f4;
-  --luma-color-surface-sunken: #f0ebe5;
+  /* --- Neutrals ----------------------------------------------------------
+   *
+   * The page surface is a warm cream rather than white, and `raised` is the
+   * white. luma-training.com is built the same way round: cream bands with
+   * white content sitting on them, never white-on-white. Swapping the two
+   * makes every `tone="raised"` card lift off the page instead of blending
+   * into it, and it is why the service reads as Luma's at a glance.
+   *
+   * Contrast is unaffected — `--luma-color-text` on #fdf6ee is 15.6:1, and
+   * every soft-token pairing in the contrast suite is measured against
+   * `surface`, `surface-raised` and `surface-sunken` alike. */
+  --luma-color-surface: #fdf6ee;
+  --luma-color-surface-raised: #ffffff;
+  --luma-color-surface-sunken: #f5ebe0;
   --luma-color-text: #1a1614;
   --luma-color-text-muted: #57504b;
   --luma-color-border: #8a817a;
@@ -88,8 +98,16 @@
    * Spec 23.4: Luma promotion must be visually separated from tender content
    * and labelled as Luma content.
    *
-   * This is the one place that wears the brand cream `#FFF5E6` outright. The
-   * separation is deliberate and runs the opposite way to the obvious design:
+   * This used to be the brand cream `#FFF5E6` outright. It could not stay
+   * there once the page surface became a cream of its own: the two were 12
+   * apart on the perceptual scale below, and a promotion block tinted 12 away
+   * from the page it sits on is not a separate block. Deepened to `#FFECCC`,
+   * the same hue carried further into amber, which puts it 52 from the page
+   * and 33 from the sunken band. Nothing else about 23.4 changes — it is still
+   * the warmest surface in the system and still the only one that is Luma
+   * speaking rather than the service speaking.
+   *
+   * The separation is deliberate and runs the opposite way to the obvious design:
    * tender surfaces are near-neutral and the *promotion* is unmistakably Luma's
    * own. Colouring the tender cards in brand warmth instead would make the
    * marketing recede into the product, which is precisely what section 3
@@ -101,7 +119,7 @@
    * inequality, because two creams one hex apart would pass an equality check
    * and be indistinguishable on a screen.
    * ----------------------------------------------------------------------- */
-  --luma-color-promotion-surface: #fff5e6;
+  --luma-color-promotion-surface: #ffeccc;
   --luma-color-promotion-border: #b83d0a;
   --luma-color-promotion-text: #2b1d12;
   --luma-color-promotion-muted: #5a4634;

@@ -57,9 +57,9 @@ export type ColorTokenName =
 export type ColorScale = Readonly<Record<ColorTokenName, string>>;
 
 export const lightColors: ColorScale = {
-  'color-surface': '#ffffff',
-  'color-surface-raised': '#faf7f4',
-  'color-surface-sunken': '#f0ebe5',
+  'color-surface': '#fdf6ee',
+  'color-surface-raised': '#ffffff',
+  'color-surface-sunken': '#f5ebe0',
   'color-text': '#1a1614',
   'color-text-muted': '#57504b',
   'color-border': '#8a817a',
@@ -96,7 +96,7 @@ export const lightColors: ColorScale = {
   'color-info-soft': '#e2f0f5',
   'color-info-soft-text': '#0c4a61',
 
-  'color-promotion-surface': '#fff5e6',
+  'color-promotion-surface': '#ffeccc',
   'color-promotion-border': '#b83d0a',
   'color-promotion-text': '#2b1d12',
   'color-promotion-muted': '#5a4634',

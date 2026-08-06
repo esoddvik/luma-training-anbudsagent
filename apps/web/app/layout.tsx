@@ -11,7 +11,7 @@ import { buttonClassName, Cluster, SkipLink } from '@luma/ui';
 import { privacyPolicyUrl } from '@/lib/legal';
 import { lumaUrl } from '@/lib/luma-links';
 import { basePathed, PRODUCTION_URL } from '@/lib/site';
-import { SERVICE_NAME, SERVICE_TAGLINE } from '@/content/copy';
+import { SERVICE_NAME } from '@/content/copy';
 
 /**
  * The logo, addressed with the base path in front of it.
@@ -73,9 +73,20 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
+/**
+ * `data-theme="light"` pins the palette.
+ *
+ * The tokens carry a full dark scale and honour `prefers-color-scheme`, but
+ * luma-training.com has no dark mode: it is cream, white and orange in every
+ * browser. A visitor arriving from the marketing site with dark mode on got a
+ * near-black page carrying Luma's logo, which reads as a different company
+ * rather than as the same one after dark. `data-theme` is the escape hatch
+ * tokens.css documents for exactly this; the dark blocks stay in place and
+ * come back the moment the attribute is removed.
+ */
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="nb" className={poppins.variable}>
+    <html lang="nb" data-theme="light" className={poppins.variable}>
       <body>
         <SkipLink />
         <SiteHeader />
@@ -142,34 +153,53 @@ function SiteHeader() {
   );
 }
 
+/**
+ * luma-training.com's footer, rebuilt here.
+ *
+ * The marketing site ends every page on a solid orange band: the white
+ * wordmark on the left, a single column of plain links set well in from it,
+ * nothing else. No tagline, no columns, no small print. Reproduced to the same
+ * shape so a visitor who arrives from luma-training.com lands on a page that
+ * ends the way the one they came from does.
+ *
+ * The destinations are this service's own, not the marketing site's. Its
+ * footer links to `/kjopsvilkar` and `/bedriftsinterne-kurs`, which are pages
+ * about buying a course; this app has to keep its own privacy notice and terms
+ * one click from every page, so those take the first two slots and Luma's own
+ * privacy notice and front page follow.
+ *
+ * The mark is the orange logo inverted to white in CSS rather than a second
+ * asset, so there is one logo file in `public/` and it cannot go out of sync
+ * with itself.
+ */
 function SiteFooter() {
   return (
-    <footer className="site-footer mt-3xl py-xl">
-      <div className="app-shell flex flex-col gap-lg">
-        <div className="flex flex-wrap items-start justify-between gap-lg">
-          <div className="flex flex-col gap-xs">
-            <Image
-              src={LOGO_SRC}
-              alt="Luma Training"
-              width={273}
-              height={164}
-              className="site-brand__logo"
-            />
-            {/* Two sentences rather than one, because the previous wording
-                lower-cased `SERVICE_TAGLINE` to splice it into a clause and
-                printed the company as "luma training". */}
-            <p className="m-0 font-semibold">{SERVICE_NAME}</p>
-            <p className="prose-measure m-0 text-sm text-text-muted">
-              {SERVICE_TAGLINE}. Kildedata kommer fra Doffin.
-            </p>
-          </div>
-          <Cluster as="nav" gap="md" aria-label="Bunnmeny" className="text-sm">
-            <Link href="/personvern">Personvern</Link>
-            <Link href="/vilkar">Bruksvilkår</Link>
-            <a href={privacyPolicyUrl()}>Luma Trainings personvernerklæring</a>
-            <a href={lumaUrl('/', { medium: 'nettsted', content: 'bunnmeny' })}>Luma Training</a>
-          </Cluster>
-        </div>
+    <footer className="site-footer mt-3xl py-2xl">
+      <div className="app-shell flex flex-col gap-lg md:flex-row md:gap-3xl">
+        <Image
+          src={LOGO_SRC}
+          alt="Luma Training"
+          width={273}
+          height={164}
+          className="site-footer__logo"
+        />
+        <nav aria-label="Bunnmeny" className="flex flex-col gap-sm md:ms-3xl">
+          <Link href="/personvern" className="site-footer__link">
+            Retningslinjer for personvern
+          </Link>
+          <Link href="/vilkar" className="site-footer__link">
+            Bruksvilkår
+          </Link>
+          <a href={privacyPolicyUrl()} className="site-footer__link">
+            Luma Trainings personvernerklæring
+          </a>
+          <a
+            href={lumaUrl('/', { medium: 'nettsted', content: 'bunnmeny' })}
+            className="site-footer__link"
+          >
+            Luma Training
+          </a>
+        </nav>
       </div>
     </footer>
   );

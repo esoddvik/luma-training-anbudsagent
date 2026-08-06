@@ -26,7 +26,13 @@ WORKDIR /app
 FROM base AS deps
 COPY pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY package.json ./
-RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store pnpm fetch
+# No BuildKit cache mount here. It is a build-speed optimisation only, and
+# Railway's builder rejects the mount outright: it requires every cache id to
+# carry its own cacheKey prefix, so `id=pnpm-store` fails the build with
+# "missing the cacheKey prefix from its id". Prefixing it would tie this
+# Dockerfile to one platform's builder for a faster `pnpm fetch`, which is
+# not a trade worth making — the file is also built locally and in CI.
+RUN pnpm fetch
 
 # ---------------------------------------------------------------------------
 # build — install offline from the warmed store, then build only mcp + its deps

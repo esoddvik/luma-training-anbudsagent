@@ -2,11 +2,63 @@
   "$schema": "https://turbo.build/schema.json",
   "ui": "stream",
   "globalDependencies": [".env.example", "tsconfig.base.json"],
-  // DATABASE_URL is passed through deliberately. The integration suites in
-  // @luma/db and core skip themselves when it is absent, so without it here
-  // turbo would report a green run that quietly skipped every test that talks
-  // to a real database — the most valuable ones in the repository.
-  "globalEnv": ["NODE_ENV", "LOG_LEVEL", "DATABASE_URL", "CI"],
+  // Every environment variable the apps read has to be named here. Turbo does
+  // not pass through what it is not told about, and the failure is silent in
+  // the worst way: a variable with a fallback quietly uses the fallback.
+  //
+  // That is not hypothetical. This list held only the first four, so the first
+  // production deploy rendered the privacy link as `luma-training.com/personvern`
+  // — the apex — even though `LUMA_PRIVACY_POLICY_URL` was correctly set to the
+  // `www` host in Vercel. The page looked perfectly healthy. Turbo printed a
+  // warning that these variables "WILL NOT be available to your application",
+  // which is exactly what happened, and only a byte-level check of the served
+  // HTML caught it.
+  //
+  // DATABASE_URL was here from the start for a related reason: the integration
+  // suites in @luma/db and core skip themselves when it is absent, so without
+  // it turbo would report a green run that quietly skipped every test touching
+  // a real database — the most valuable ones in the repository.
+  "globalEnv": [
+    "NODE_ENV",
+    "LOG_LEVEL",
+    "CI",
+    "DATABASE_URL",
+    "APP_URL",
+    "API_URL",
+    "MCP_URL",
+    "MCP_ALLOWED_HOSTS",
+    "MCP_TOKEN_PEPPER",
+    "AUTH_SECRET",
+    "AUTH_EMAIL_FROM",
+    "ADMIN_EMAIL_ALLOWLIST",
+    "SHARE_TOKEN_SECRET",
+    "SHARE_DEFAULT_TTL_DAYS",
+    "CRON_SECRET",
+    "DOFFIN_API_BASE_URL",
+    "DOFFIN_SUBSCRIPTION_KEY",
+    "POSTMARK_SERVER_TOKEN",
+    "POSTMARK_ACCOUNT_TOKEN",
+    "POSTMARK_TRANSACTIONAL_STREAM",
+    "POSTMARK_TENDER_NOTIFICATION_STREAM",
+    "POSTMARK_MARKETING_STREAM",
+    "POSTMARK_WEBHOOK_USERNAME",
+    "POSTMARK_WEBHOOK_PASSWORD",
+    "SENDER_NAME",
+    "SENDER_POSTAL_ADDRESS",
+    "SENDER_CONTACT_EMAIL",
+    "LUMA_PRIVACY_POLICY_URL",
+    "TENDER_SERVICE_TERMS_URL",
+    "CURRENT_PRIVACY_POLICY_VERSION",
+    "CURRENT_TERMS_VERSION",
+    "CURRENT_MARKETING_CONSENT_TEXT_VERSION",
+    "BILLING_PROVIDER",
+    "BILLING_ADMIN_EMAIL",
+    "DEFAULT_VAT_PERCENT",
+    "OSLO_REGION_CODES",
+    "WORKER_ENABLED",
+    "SENTRY_DSN",
+    "ANALYTICS_KEY"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],

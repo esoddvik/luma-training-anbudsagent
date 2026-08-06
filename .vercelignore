@@ -1,0 +1,35 @@
+# What NOT to upload to Vercel.
+#
+# The project's Root Directory is `apps/web`, but the deploy is made from the
+# repository root so that pnpm can resolve the workspace and the `catalog:`
+# version pins. That means the whole tree is a candidate for upload.
+#
+# Without this file that came to **4.5 GB** — the pnpm store's symlink farm
+# under `node_modules`, every package's `dist`, and every `.next`. Vercel
+# installs dependencies itself and rebuilds from source, so none of it is
+# wanted; it only makes the upload slow enough to look like a hang, which is
+# exactly how it presented.
+node_modules
+**/node_modules
+
+# Build output, all of it regenerated during the build.
+.next
+**/.next
+dist
+**/dist
+.turbo
+**/.turbo
+*.tsbuildinfo
+**/*.tsbuildinfo
+
+# Test and tooling artefacts.
+coverage
+**/coverage
+playwright-report
+**/playwright-report
+test-results
+**/test-results
+
+# Source documents that are inputs to the work, not part of the app.
+*.pdf
+*.docx

@@ -23,8 +23,17 @@
 /** The path prefix every route in this app sits under. Spec §16. */
 export const BASE_PATH = '/anbudsvarsling';
 
-/** Luma Training's public origin. The marketing site owns the root. */
-export const PRODUCTION_ORIGIN = 'https://luma-training.com';
+/**
+ * Luma Training's public origin. The marketing site owns the root.
+ *
+ * **`www.`, not the apex.** The apex 307-redirects to `www` via middleware on
+ * the marketing site — verified against production, not assumed. Naming the
+ * apex here would point the canonical tag at a redirect, which is the same
+ * defect the trailing-slash note below exists to avoid, and it would undo the
+ * reason this app is served on a path at all: inheriting the domain's search
+ * standing only works if the canonical is the URL that actually answers.
+ */
+export const PRODUCTION_ORIGIN = 'https://www.luma-training.com';
 
 /**
  * The canonical public root of this app.

@@ -1,7 +1,6 @@
 import { sql } from 'drizzle-orm';
 import { drizzle, type PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import postgres, { type Sql } from 'postgres';
-import { getCoreEnv } from '@luma/config';
 import type { DependencyCheck } from '@luma/observability';
 import * as schema from './schema/index.js';
 
@@ -9,9 +8,9 @@ import * as schema from './schema/index.js';
  * The Drizzle client.
  *
  * One pool per process, created lazily. Lazily, because importing this module
- * for a type must not open a socket, and because `getCoreEnv()` throws on an
- * incomplete environment — a validation failure at import time would surface
- * as an unrelated module-loading error somewhere far from the cause.
+ * for a type must not open a socket, and because a missing `DATABASE_URL`
+ * throws — a validation failure at import time would surface as an unrelated
+ * module-loading error somewhere far from the cause.
  */
 
 export type Database = PostgresJsDatabase<typeof schema>;
@@ -44,8 +43,39 @@ interface Pooled {
 
 let pooled: Pooled | undefined;
 
+/**
+ * The connection string, without demanding an environment this package does
+ * not use.
+ *
+ * `getCoreEnv()` validates the *whole* core schema — Postmark tokens, the cron
+ * secret, the billing address, the Doffin key. Calling it here meant any
+ * service that opened a database connection had to carry all of it. `apps/mcp`
+ * needs a database and none of those secrets, and it crashed on boot listing
+ * `CRON_SECRET`, `POSTMARK_WEBHOOK_PASSWORD` and `API_URL` as missing.
+ *
+ * The tempting fix was to copy those variables onto the MCP service. That
+ * would have put the Postmark tokens and the cron secret on a process with no
+ * use for them, purely to satisfy a validation call — spreading credentials to
+ * make a schema check pass, which is invisible the moment it is done.
+ *
+ * So this reads the one variable it actually needs. The error message is
+ * deliberately specific: a bare "undefined connection string" from inside a
+ * pool constructor is the kind of thing that gets debugged for an hour.
+ */
+function resolveConnectionString(explicit?: string): string {
+  if (explicit) return explicit;
+
+  const fromEnv = process.env['DATABASE_URL'];
+  if (fromEnv !== undefined && fromEnv.trim() !== '') return fromEnv;
+
+  throw new Error(
+    'DATABASE_URL mangler. @luma/db trenger bare denne variabelen — ' +
+      'ikke hele miljøet til én bestemt tjeneste.',
+  );
+}
+
 function createPool(options: CreateDatabaseOptions): Pooled {
-  const connectionString = options.connectionString ?? getCoreEnv().DATABASE_URL;
+  const connectionString = resolveConnectionString(options.connectionString);
 
   const client = postgres(connectionString, {
     max: options.max ?? 10,

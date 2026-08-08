@@ -17,8 +17,7 @@ import {
   TRUST_TEXT,
 } from '@/content/copy';
 import { requestSignupAction } from '@/server/actions/registration-actions';
-import { getWebDb } from '@/server/db';
-import { listServiceTemplates } from '@/server/profiles';
+import { listServiceTemplateChoices } from '@/server/profiles';
 import { lumaUrl } from '@/lib/luma-links';
 import { privacyPolicyUrl } from '@/lib/legal';
 import { PRODUCTION_URL } from '@/lib/site';
@@ -77,12 +76,20 @@ const HERO_FACTS = [
   { term: 'Du trenger', description: 'En e-postadresse' },
 ] as const;
 
+/**
+ * Rebuilt hourly rather than pinned at deploy, so a template added in admin
+ * appears without a deploy (spec section 11.2). Static, never `force-dynamic`:
+ * IDE Agent Spec v3 section 3.2 makes that a rule for public pages.
+ */
+export const revalidate = 3600;
+
 export default async function LandingPage() {
-  // Read from the database rather than from `@luma/content`: the templates are
-  // editorial content admin maintains without a deploy (spec section 11.2), and
-  // the action re-resolves the posted slug against this same list so a forged
-  // option value cannot write arbitrary criteria into a profile.
-  const templates = await listServiceTemplates(getWebDb());
+  // Database first, editorial seeds as the fallback — see
+  // `listServiceTemplateChoices` for why the fallback is on configuration
+  // rather than on error. The action re-resolves the posted slug against the
+  // live table, so a forged option value cannot write arbitrary criteria into
+  // a profile.
+  const templates = await listServiceTemplateChoices();
 
   return (
     <>

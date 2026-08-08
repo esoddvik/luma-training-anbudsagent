@@ -141,6 +141,23 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # REQUIRED before the migration step, not an optimisation.
+      #
+      # `pnpm db:migrate` runs `tsx src/migrate.ts`, which imports
+      # `@luma/config` — and every workspace package resolves to its built
+      # `dist`, not to `src`. After a bare `pnpm install` no `dist` exists
+      # anywhere, so the migration dies with
+      # `ERR_MODULE_NOT_FOUND: .../@luma/config/dist/index.js`.
+      #
+      # The `Run tests` step below never had this problem and that is what hid
+      # it: `test` declares `dependsOn: ["^build"]` in turbo.json, so turbo
+      # builds the dependency graph on its way into the tests. The migration
+      # step is plain pnpm and gets no such help. Restoring `.turbo` does not
+      # substitute — that cache replays *task outputs* for tasks turbo is
+      # asked to run, and here it is asked to run none.
+      - name: Build packages needed by the migration runner
+        run: pnpm turbo run build --filter=@luma/db
+
       - name: Run migrations
         env:
           DATABASE_URL: postgres://luma:luma@localhost:5432/luma_anbudsvarsling_test

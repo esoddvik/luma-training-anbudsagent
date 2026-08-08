@@ -1,6 +1,7 @@
 import { and, desc, eq, gte, inArray, isNull, sql } from 'drizzle-orm';
 import * as schema from '@luma/db/schema';
-import type { Database } from './db';
+import { SERVICE_TEMPLATE_SEEDS } from '@luma/content';
+import { getWebDb, type Database } from './db';
 import type {
   AlertFrequency,
   AlertProfile,
@@ -363,6 +364,49 @@ export interface ServiceTemplateOption {
  * `@luma/content` is the seed for an empty database, not the source of truth,
  * so the onboarding page falls back to it only when nothing has been seeded.
  */
+/** The two fields the anonymous picker needs. Seeds have no `id` to offer. */
+export interface ServiceTemplateChoice {
+  readonly slug: string;
+  readonly name: string;
+}
+
+/**
+ * The picker's options, resolvable without a database.
+ *
+ * The landing page is statically prerendered, and a static prerender runs at
+ * build time on a machine with no `DATABASE_URL` — which is exactly how the
+ * first version of the search-first form broke the build: `Error occurred
+ * prerendering page "/"`, `DATABASE_URL mangler`. Making the page dynamic would
+ * have fixed it and broken something worse, since IDE Agent Spec v3 section 3.2
+ * forbids `force-dynamic` on public pages for the same reason it wants them
+ * indexable and fast.
+ *
+ * So the fallback is on *configuration*, not on failure:
+ *
+ * - No `DATABASE_URL` at all means a build-time prerender. Fall back to the
+ *   editorial seeds, which is what they are for.
+ * - A configured database that returns nothing means nothing has been seeded
+ *   yet, which `listServiceTemplates` already documents as the seeds' other
+ *   job.
+ * - A configured database that *throws* is a real failure and is allowed to
+ *   propagate. Catching it here would quietly serve the seed list in
+ *   production while admin's curated templates sat unreachable, and the page
+ *   would look perfectly healthy while offering the wrong choices.
+ */
+export async function listServiceTemplateChoices(): Promise<ServiceTemplateChoice[]> {
+  // No `active` filter: a seed is editorial content that ships with the build,
+  // and retiring one is an edit to `@luma/content`. Only rows in the database
+  // carry an `active` flag, because only they can be retired without a deploy.
+  const seeds = SERVICE_TEMPLATE_SEEDS.slice()
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+    .map((seed) => ({ slug: seed.slug, name: seed.name }));
+
+  if (!process.env['DATABASE_URL']) return seeds;
+
+  const rows = await listServiceTemplates(getWebDb());
+  return rows.length > 0 ? rows.map((row) => ({ slug: row.slug, name: row.name })) : seeds;
+}
+
 export async function listServiceTemplates(db: Database): Promise<ServiceTemplateOption[]> {
   const rows = await db
     .select({

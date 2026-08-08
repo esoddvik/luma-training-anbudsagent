@@ -40,6 +40,14 @@ A second specification document, `Luma Anbudsvarsling IDE Agent Spec v3: Søk-f�
 
 **Known gap, not yet closed.** Users who sign up during Fase A accept the *placeholder* terms, because that is the only version in force (§51 blocker 2). The re-acceptance flow that must run when real terms are published does not exist. It is tracked in [`launch-readiness.md`](launch-readiness.md) and has to be built alongside the terms text, not after it.
 
+### The landsdel dimension (Fase B)
+
+| Spec v3 says | What we do | Why |
+| --- | --- | --- |
+| Section 3.2: density query over «landsdel», threshold ≈8 active hits in 90 days | Threshold 8, landsdel = NUTS level 2, result in [`search-surface-density.md`](search-surface-density.md) | 27 of 48 template × landsdel pairs qualify. The grouping is *derived* from the NUTS-3 code rather than held in a county table, because a hand-maintained table is what rots when Norway reorganises its counties — as it did in 2020 and 2024, which is why the live data carries `NO083` for Østfold where most published material still shows `NO031`. |
+| Section 3.2: thresholds and query result documented | Documented, **and the measurement is flagged as provisional** | The corpus available when the query was run spanned 37 days, not 90, so every count is an undercount and the real number of qualifying pairs is higher than 27. The document says so and says to re-run before deploying the pages. |
+| — | Nationwide (`anyw`) notices count towards every landsdel | Consistent with the existing rule that a nationwide notice matches any profile geography. Recorded here because it has a consequence the spec does not anticipate: for `it-tjenester-og-konsulentbistand`, 36 of the qualifying hits are nationwide, so its six regional pages are ~86% identical content. That is a near-duplicate-content problem aimed at a search engine, and it is why a regional page must show regional and nationwide notices as separate sections rather than one merged list. |
+
 ## Deliberate engineering choices
 
 | Spec says | What we do | Why |

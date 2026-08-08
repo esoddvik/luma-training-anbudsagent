@@ -150,6 +150,37 @@ export function magicLinkValiditySentence(minutes: number): string {
   return `Lenken er gyldig i ${minutes} minutter.`;
 }
 
+/**
+ * signup-confirmation-v1 (IDE Agent Spec v3, section 3.1).
+ *
+ * Two variants of one template, because the search-first entry door must send
+ * an email whether or not the address already has an account, and the two
+ * recipients need different sentences. The *response* the browser gets is
+ * identical; only the message in the recipient's own inbox differs, which is
+ * the one place the difference is safe to make.
+ */
+export const SIGNUP_CONFIRMATION_NB = {
+  subject: 'Bekreft e-postadressen din',
+  heading: 'Bekreft e-postadressen',
+  /** Sent when the address has no account yet. */
+  introNew:
+    'Du har satt opp en varslingsprofil i Luma Anbudsvarsling. Bekreft e-postadressen din, så oppretter vi kontoen og aktiverer profilen.',
+  /**
+   * Sent when the address already has an account. It must not say "you already
+   * have an account" in a way the *sender* of the request could learn from —
+   * but this is the inbox of the address owner, who already knows.
+   */
+  introExisting:
+    'Du har satt opp en ny varslingsprofil i Luma Anbudsvarsling. Bruk lenken under for å logge inn og legge profilen til kontoen din.',
+  action: 'Bekreft og fortsett',
+  singleUse: 'Lenken kan brukes én gang.',
+  pausedNotice:
+    'Profilen starter på pause, slik at du rekker å se over kriteriene før det første varselet går ut.',
+  notRequested:
+    'Har du ikke bedt om denne e-posten, kan du se bort fra den. Da blir det ikke opprettet noen konto, og adressen din blir slettet automatisk.',
+  fallbackIntro: 'Fungerer ikke knappen? Kopier denne adressen inn i nettleseren:',
+} as const;
+
 /** alert-confirmation-v1 (spec section 11). */
 export const ALERT_CONFIRMATION_NB = {
   heading: 'Varslingsprofilen er aktiv',

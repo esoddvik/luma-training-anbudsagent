@@ -25,6 +25,11 @@ const EXPECTED_FROM_SPEC: Record<TemplateName, StreamKind> = {
   // Section 27, "Transactional": magic links, account confirmation, order
   // confirmation, account deletion.
   'auth-magic-link-v1': 'transactional',
+  // Section 27 lists "account confirmation" under transactional, and the
+  // search-first signup confirmation is exactly that event: proving an address
+  // belongs to the person who typed it, before any account exists. A
+  // suppression here would stop people creating accounts at all.
+  'signup-confirmation-v1': 'transactional',
   'alert-confirmation-v1': 'transactional',
   'order-request-received-v1': 'transactional',
   // Section 28.2 step 2: the billing administrator's notification is the same

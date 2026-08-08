@@ -11,7 +11,7 @@ import type {
 import type { PromotionBlock } from './promotion.js';
 
 /**
- * The MVP templates: spec section 25's nine, plus one.
+ * The MVP templates: spec section 25's nine, plus two.
  *
  * The names are the contract with Postmark: they identify the stream
  * (`postmark/streams.ts`), they are the Postmark `Tag`, and they version the
@@ -24,9 +24,23 @@ import type { PromotionBlock } from './promotion.js';
  * confirmation. That copy carries the invoicing fields but is addressed to the
  * customer, and an administrator scanning an inbox cannot tell a new order
  * from a receipt. The tenth template is that step's own document.
+ *
+ * `signup-confirmation-v1` is not in section 25's list either, and it exists
+ * for a reason worth stating precisely, because the obvious cheaper option is
+ * actively unsafe. The search-first entry door (IDE Agent Spec v3, section
+ * 3.1) has to send an email on *both* branches — known address and unknown —
+ * or the branch that sends nothing is an account-enumeration oracle measurable
+ * from the outside. `auth-magic-link-v1` cannot serve the unknown branch: its
+ * copy says "log in", the recipient has no account to log in to, and the
+ * confirmation it is standing in for is the acceptance of terms that section
+ * 20.1 requires before an account may exist at all. Reusing it would mean
+ * emailing a stranger a login link for an account nobody has agreed to create.
+ * The eleventh template is that branch's own document, and it carries both
+ * variants of the sentence so the two paths stay one code path.
  */
 export const TEMPLATE_NAMES = [
   'auth-magic-link-v1',
+  'signup-confirmation-v1',
   'alert-confirmation-v1',
   'tender-immediate-v1',
   'tender-daily-digest-v1',
@@ -148,6 +162,24 @@ export interface MaterialChangeContext extends TenderEmailContext {
 export interface MagicLinkContext extends BaseEmailContext {
   readonly magicLinkUrl: string;
   readonly validForMinutes: number;
+}
+
+/**
+ * The search-first signup confirmation (IDE Agent Spec v3, section 3.1).
+ *
+ * `hasExistingAccount` selects which of the two intro sentences is used. It is
+ * the *only* thing in the whole request that varies with whether the address is
+ * known, and it varies inside an email delivered to that address — never in
+ * anything the requester can observe. A caller that lets this value reach an
+ * HTTP response, a redirect code or a response time has reintroduced the
+ * enumeration channel the template exists to close.
+ */
+export interface SignupConfirmationContext extends BaseEmailContext {
+  readonly confirmUrl: string;
+  readonly validForMinutes: number;
+  readonly hasExistingAccount: boolean;
+  /** Shown so the recipient recognises what they signed up for. */
+  readonly profileName: string;
 }
 
 export interface AlertConfirmationContext extends BaseEmailContext {

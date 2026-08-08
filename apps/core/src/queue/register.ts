@@ -14,6 +14,7 @@ import { runIngest } from '../jobs/ingest.js';
 import { runMatching } from '../jobs/match.js';
 import { ALL_JOB_NAMES, CRON, JOB, type JobName } from '../jobs/names.js';
 import { runShareCleanup } from '../jobs/share-cleanup.js';
+import { runSignupCleanup } from '../jobs/signup-cleanup.js';
 import { DEAD_LETTER_QUEUE } from './boss.js';
 
 /**
@@ -119,6 +120,7 @@ const QUEUE_OPTIONS: Readonly<Record<JobName, Omit<Queue, 'name' | 'policy'>>> =
   [JOB.orderRequestNotify]: RETRY,
   [JOB.consentSync]: RETRY,
   [JOB.shareCleanup]: { ...RETRY, retryLimit: 2 },
+  [JOB.signupCleanup]: { ...RETRY, retryLimit: 2 },
 };
 
 const WORK_OPTIONS: WorkOptions = {
@@ -231,6 +233,7 @@ export async function registerSchedules(boss: PgBoss): Promise<void> {
     tz: SCHEDULE_TZ,
   });
   await boss.schedule(JOB.shareCleanup, CRON.shareCleanup, null, { tz: SCHEDULE_TZ });
+  await boss.schedule(JOB.signupCleanup, CRON.signupCleanup, null, { tz: SCHEDULE_TZ });
 }
 
 /**
@@ -428,6 +431,17 @@ export async function registerJobs(options: RegisterJobsOptions): Promise<void> 
     WORK_OPTIONS,
     handler(JOB.shareCleanup, logger, noPayload, async () => {
       const report = await runShareCleanup({ db, logger, now: now() });
+      return { deleted: report.deleted };
+    }),
+  );
+
+  // signup.cleanup → delete expired pending signups. An abandoned row is an
+  // email address with no remaining lawful basis, not just clutter.
+  await boss.work(
+    JOB.signupCleanup,
+    WORK_OPTIONS,
+    handler(JOB.signupCleanup, logger, noPayload, async () => {
+      const report = await runSignupCleanup({ db, logger, now: now() });
       return { deleted: report.deleted };
     }),
   );

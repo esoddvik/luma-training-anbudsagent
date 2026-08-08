@@ -261,10 +261,10 @@ exports[`the MVP templates > auth-magic-link-v1 > matches the HTML snapshot 1`] 
 <h1 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:22px;line-height:1.3;font-weight:600;color:#1a1a1a">Logg inn</h1>
 <p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">12. mars 2026</p>
 <p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">Bruk lenken under for å logge inn i Luma Anbudsvarsling.</p>
-<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong><a class="luma-link" href="https://luma-training.com/anbudsvarsling/logg-inn/bekreft/9f2c41a8b7de4c0fa1b23c8d5e6f7a09" style="color:#1c4b8c;text-decoration:underline">Logg inn</a></strong></p>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong><a class="luma-link" href="https://luma-training.com/anbudsvarsling/logg-inn/bekreft?token=9f2c41a8b7de4c0fa1b23c8d5e6f7a09&amp;retur=%2Foversikt" style="color:#1c4b8c;text-decoration:underline">Logg inn</a></strong></p>
 <p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">Lenken er gyldig i 15 minutter. Lenken kan brukes én gang.</p>
 <p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Fungerer ikke knappen? Kopier denne adressen inn i nettleseren:</p>
-<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57"><a class="luma-link" href="https://luma-training.com/anbudsvarsling/logg-inn/bekreft/9f2c41a8b7de4c0fa1b23c8d5e6f7a09" style="color:#1c4b8c;text-decoration:underline">https://luma-training.com/anbudsvarsling/logg-inn/bekreft/9f2c41a8b7de4c0fa1b23c8d5e6f7a09</a></p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57"><a class="luma-link" href="https://luma-training.com/anbudsvarsling/logg-inn/bekreft?token=9f2c41a8b7de4c0fa1b23c8d5e6f7a09&amp;retur=%2Foversikt" style="color:#1c4b8c;text-decoration:underline">https://luma-training.com/anbudsvarsling/logg-inn/bekreft?token=9f2c41a8b7de4c0fa1b23c8d5e6f7a09&amp;retur=%2Foversikt</a></p>
 <p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Har du ikke bedt om denne e-posten, kan du se bort fra den. Da skjer det ingenting med kontoen din.</p>
 <!--luma:section:legal-->
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr><td style="border-top:2px solid #c9c7bb;font-size:0;line-height:0;height:1px">&nbsp;</td></tr></table>
@@ -294,7 +294,7 @@ Logg inn
 Bruk lenken under for å logge inn i Luma Anbudsvarsling.
 
 Logg inn:
-https://luma-training.com/anbudsvarsling/logg-inn/bekreft/9f2c41a8b7de4c0fa1b23c8d5e6f7a09
+https://luma-training.com/anbudsvarsling/logg-inn/bekreft?token=9f2c41a8b7de4c0fa1b23c8d5e6f7a09&retur=%2Foversikt
 
 Lenken er gyldig i 15 minutter. Lenken kan brukes én gang.
 
@@ -613,6 +613,200 @@ Kontakt: anbudsvarsling@luma-training.com
 `;
 
 exports[`the MVP templates > paid-access-activated-v1 > matches the subject snapshot 1`] = `"Tilgangen din er aktivert"`;
+
+exports[`the MVP templates > signup-confirmation-v1 > matches the HTML snapshot 1`] = `
+"<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
+<title>Bekreft e-postadressen din</title>
+<style>@media (prefers-color-scheme: dark) {
+  .luma-page { background-color: #16171a !important; }
+  .luma-panel-cell, .luma-promotion-cell, .luma-planned-cell {
+    background-color: #212227 !important;
+    border-color: #3a3b42 !important;
+  }
+  .luma-text, .luma-text * { color: #f2f2f0 !important; }
+  .luma-muted, .luma-muted * { color: #b6b6b2 !important; }
+  .luma-link { color: #9dc0f0 !important; }
+}</style>
+</head>
+<body class="luma-page" style="margin:0;padding:0;background-color:#f4f4f2;color:#1a1a1a;-webkit-text-size-adjust:100%">
+<div style="display:none;font-size:1px;color:#f4f4f2;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden">Lenken er gyldig i 60 minutter.</div>
+<table role="presentation" class="luma-page" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;background-color:#f4f4f2">
+<tr>
+<td align="center" style="padding:20px 12px">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;text-align:left">
+<tr>
+<td>
+<!--luma:section:header-->
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong>Luma Anbudsvarsling</strong></p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">En gratis tjeneste fra Luma Training</p>
+<!--luma:section:title-->
+<h1 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:22px;line-height:1.3;font-weight:600;color:#1a1a1a">Bekreft e-postadressen</h1>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">12. mars 2026</p>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">Du har satt opp en varslingsprofil i Luma Anbudsvarsling. Bekreft e-postadressen din, så oppretter vi kontoen og aktiverer profilen.</p>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">Profilen starter på pause, slik at du rekker å se over kriteriene før det første varselet går ut.</p>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong><a class="luma-link" href="https://luma-training.com/anbudsvarsling/registrering/bekreft?token=3c1f8a20d94b4e17ac5d6b8f0e2a7c31" style="color:#1c4b8c;text-decoration:underline">Bekreft og fortsett</a></strong></p>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">Lenken er gyldig i 60 minutter. Lenken kan brukes én gang.</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Fungerer ikke knappen? Kopier denne adressen inn i nettleseren:</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57"><a class="luma-link" href="https://luma-training.com/anbudsvarsling/registrering/bekreft?token=3c1f8a20d94b4e17ac5d6b8f0e2a7c31" style="color:#1c4b8c;text-decoration:underline">https://luma-training.com/anbudsvarsling/registrering/bekreft?token=3c1f8a20d94b4e17ac5d6b8f0e2a7c31</a></p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Har du ikke bedt om denne e-posten, kan du se bort fra den. Da blir det ikke opprettet noen konto, og adressen din blir slettet automatisk.</p>
+<!--luma:section:legal-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr><td style="border-top:2px solid #c9c7bb;font-size:0;line-height:0;height:1px">&nbsp;</td></tr></table>
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Hvorfor mottar jeg denne e-posten?</h3>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Du mottar denne e-posten fordi den gjelder kontoen din i Luma Anbudsvarsling.</p>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://luma-training.com/personvern?utm_source=anbudsvarsling&amp;utm_medium=landing" style="color:#1c4b8c;text-decoration:underline">Personvern</a></li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://luma-training.com/anbudsvarsling/vilkar?utm_source=anbudsvarsling&amp;utm_medium=landing" style="color:#1c4b8c;text-decoration:underline">Vilkår for bruk</a></li></ul>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Avsender: Luma Training AS, Storgata 1, 0155 Oslo</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Kontakt: <a class="luma-link" href="mailto:anbudsvarsling@luma-training.com" style="color:#1c4b8c">anbudsvarsling@luma-training.com</a></p></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</body>
+</html>
+"
+`;
+
+exports[`the MVP templates > signup-confirmation-v1 > matches the HTML snapshot 2`] = `
+"<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
+<title>Bekreft e-postadressen din</title>
+<style>@media (prefers-color-scheme: dark) {
+  .luma-page { background-color: #16171a !important; }
+  .luma-panel-cell, .luma-promotion-cell, .luma-planned-cell {
+    background-color: #212227 !important;
+    border-color: #3a3b42 !important;
+  }
+  .luma-text, .luma-text * { color: #f2f2f0 !important; }
+  .luma-muted, .luma-muted * { color: #b6b6b2 !important; }
+  .luma-link { color: #9dc0f0 !important; }
+}</style>
+</head>
+<body class="luma-page" style="margin:0;padding:0;background-color:#f4f4f2;color:#1a1a1a;-webkit-text-size-adjust:100%">
+<div style="display:none;font-size:1px;color:#f4f4f2;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden">Lenken er gyldig i 60 minutter.</div>
+<table role="presentation" class="luma-page" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;background-color:#f4f4f2">
+<tr>
+<td align="center" style="padding:20px 12px">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;text-align:left">
+<tr>
+<td>
+<!--luma:section:header-->
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong>Luma Anbudsvarsling</strong></p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">En gratis tjeneste fra Luma Training</p>
+<!--luma:section:title-->
+<h1 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:22px;line-height:1.3;font-weight:600;color:#1a1a1a">Bekreft e-postadressen</h1>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">12. mars 2026</p>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">Du har satt opp en ny varslingsprofil i Luma Anbudsvarsling. Bruk lenken under for å logge inn og legge profilen til kontoen din.</p>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">Profilen starter på pause, slik at du rekker å se over kriteriene før det første varselet går ut.</p>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a"><strong><a class="luma-link" href="https://luma-training.com/anbudsvarsling/registrering/bekreft?token=7b40e5c2a1d84f96b3e0c7a5d2f18e64" style="color:#1c4b8c;text-decoration:underline">Bekreft og fortsett</a></strong></p>
+<p class="luma-text" style="margin:0 0 12px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.5;color:#1a1a1a">Lenken er gyldig i 60 minutter. Lenken kan brukes én gang.</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Fungerer ikke knappen? Kopier denne adressen inn i nettleseren:</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57"><a class="luma-link" href="https://luma-training.com/anbudsvarsling/registrering/bekreft?token=7b40e5c2a1d84f96b3e0c7a5d2f18e64" style="color:#1c4b8c;text-decoration:underline">https://luma-training.com/anbudsvarsling/registrering/bekreft?token=7b40e5c2a1d84f96b3e0c7a5d2f18e64</a></p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Har du ikke bedt om denne e-posten, kan du se bort fra den. Da blir det ikke opprettet noen konto, og adressen din blir slettet automatisk.</p>
+<!--luma:section:legal-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr><td style="border-top:2px solid #c9c7bb;font-size:0;line-height:0;height:1px">&nbsp;</td></tr></table>
+<h3 class="luma-text" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:15px;line-height:1.3;font-weight:600;color:#1a1a1a">Hvorfor mottar jeg denne e-posten?</h3>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Du mottar denne e-posten fordi den gjelder kontoen din i Luma Anbudsvarsling.</p>
+<ul style="margin:0 0 12px 0;padding-left:20px"><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://luma-training.com/personvern?utm_source=anbudsvarsling&amp;utm_medium=landing" style="color:#1c4b8c;text-decoration:underline">Personvern</a></li><li class="luma-text" style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:14px;line-height:1.5;color:#1a1a1a;margin-bottom:4px"><a class="luma-link" href="https://luma-training.com/anbudsvarsling/vilkar?utm_source=anbudsvarsling&amp;utm_medium=landing" style="color:#1c4b8c;text-decoration:underline">Vilkår for bruk</a></li></ul>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Avsender: Luma Training AS, Storgata 1, 0155 Oslo</p>
+<p class="luma-muted" style="margin:0 0 8px 0;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.5;color:#5b5b57">Kontakt: <a class="luma-link" href="mailto:anbudsvarsling@luma-training.com" style="color:#1c4b8c">anbudsvarsling@luma-training.com</a></p></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</body>
+</html>
+"
+`;
+
+exports[`the MVP templates > signup-confirmation-v1 > matches the plain-text snapshot 1`] = `
+"Luma Anbudsvarsling
+En gratis tjeneste fra Luma Training
+
+Bekreft e-postadressen
+======================
+12. mars 2026
+
+Du har satt opp en varslingsprofil i Luma Anbudsvarsling. Bekreft
+e-postadressen din, så oppretter vi kontoen og aktiverer profilen.
+
+Profilen starter på pause, slik at du rekker å se over kriteriene før
+det første varselet går ut.
+
+Bekreft og fortsett:
+https://luma-training.com/anbudsvarsling/registrering/bekreft?token=3c1f8a20d94b4e17ac5d6b8f0e2a7c31
+
+Lenken er gyldig i 60 minutter. Lenken kan brukes én gang.
+
+Har du ikke bedt om denne e-posten, kan du se bort fra den. Da blir det
+ikke opprettet noen konto, og adressen din blir slettet automatisk.
+
+------------------------------------------------------------------------
+Hvorfor mottar jeg denne e-posten?
+Du mottar denne e-posten fordi den gjelder kontoen din i Luma
+Anbudsvarsling.
+
+Personvern:
+https://luma-training.com/personvern?utm_source=anbudsvarsling&utm_medium=landing
+Vilkår for bruk:
+https://luma-training.com/anbudsvarsling/vilkar?utm_source=anbudsvarsling&utm_medium=landing
+
+Avsender: Luma Training AS, Storgata 1, 0155 Oslo
+Kontakt: anbudsvarsling@luma-training.com
+"
+`;
+
+exports[`the MVP templates > signup-confirmation-v1 > matches the plain-text snapshot 2`] = `
+"Luma Anbudsvarsling
+En gratis tjeneste fra Luma Training
+
+Bekreft e-postadressen
+======================
+12. mars 2026
+
+Du har satt opp en ny varslingsprofil i Luma Anbudsvarsling. Bruk lenken
+under for å logge inn og legge profilen til kontoen din.
+
+Profilen starter på pause, slik at du rekker å se over kriteriene før
+det første varselet går ut.
+
+Bekreft og fortsett:
+https://luma-training.com/anbudsvarsling/registrering/bekreft?token=7b40e5c2a1d84f96b3e0c7a5d2f18e64
+
+Lenken er gyldig i 60 minutter. Lenken kan brukes én gang.
+
+Har du ikke bedt om denne e-posten, kan du se bort fra den. Da blir det
+ikke opprettet noen konto, og adressen din blir slettet automatisk.
+
+------------------------------------------------------------------------
+Hvorfor mottar jeg denne e-posten?
+Du mottar denne e-posten fordi den gjelder kontoen din i Luma
+Anbudsvarsling.
+
+Personvern:
+https://luma-training.com/personvern?utm_source=anbudsvarsling&utm_medium=landing
+Vilkår for bruk:
+https://luma-training.com/anbudsvarsling/vilkar?utm_source=anbudsvarsling&utm_medium=landing
+
+Avsender: Luma Training AS, Storgata 1, 0155 Oslo
+Kontakt: anbudsvarsling@luma-training.com
+"
+`;
+
+exports[`the MVP templates > signup-confirmation-v1 > matches the subject snapshot 1`] = `"Bekreft e-postadressen din"`;
+
+exports[`the MVP templates > signup-confirmation-v1 > matches the subject snapshot 2`] = `"Bekreft e-postadressen din"`;
 
 exports[`the MVP templates > tender-daily-digest-v1 > matches the HTML snapshot 1`] = `
 "<!doctype html>

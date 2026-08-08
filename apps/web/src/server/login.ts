@@ -1,4 +1,3 @@
-import { createHash } from 'node:crypto';
 import { cookies } from 'next/headers';
 import { and, eq, gte, isNull, type SQL } from 'drizzle-orm';
 import {
@@ -19,6 +18,7 @@ import * as schema from '@luma/db/schema';
 import { safeReturnPath } from '@/lib/return-path';
 import { BASE_PATH } from '@/lib/site';
 import type { Database } from './db';
+import { hashIpAddress } from './client-identity';
 import { authPepper, getWebDb } from './db';
 import { appUrl, baseEmailContext, getWebEmailClient } from './email';
 
@@ -151,21 +151,6 @@ export type RequestLoginLinkResult =
       readonly emailSent: boolean;
     }
   | { readonly ok: false; readonly reason: 'rate_limited' };
-
-/**
- * A stable, non-reversible identifier for a client address.
- *
- * Spec section 40 requires data minimisation, and `magic_link_tokens` stores
- * `request_ip_hash` rather than an address. The pepper is `AUTH_SECRET`, so
- * the same address hashes differently in every environment and a database dump
- * cannot be joined back against a visitor log. Identical to the API's
- * `hashIpAddress`, deliberately: the two must produce the same value or the
- * per-IP budget would be two separate budgets.
- */
-function hashIpAddress(ip: string | undefined, pepper: string): string | null {
-  if (!ip) return null;
-  return createHash('sha256').update(`${pepper}:${ip}`, 'utf8').digest('hex');
-}
 
 /**
  * Issues a login link, or quietly does not.

@@ -7,8 +7,18 @@ import { renderAllTemplates } from '../../testing/all-templates.js';
 const rendered = renderAllTemplates();
 
 describe('the MVP templates', () => {
+  /**
+   * Compared as sets, because one template is rendered more than once.
+   * `signup-confirmation-v1` has two variants and both are rendered, so that
+   * each side of its one conditional passes through the prohibition scan, the
+   * link-parity check and the Norwegian-only review below. Comparing sorted
+   * arrays would make rendering a second variant of anything fail here, which
+   * would push the next person towards testing only one of them.
+   */
   it('renders exactly the templates in TEMPLATE_NAMES', () => {
-    expect(rendered.map((email) => email.template).sort()).toEqual([...TEMPLATE_NAMES].sort());
+    expect([...new Set(rendered.map((email) => email.template))].sort()).toEqual(
+      [...TEMPLATE_NAMES].sort(),
+    );
   });
 
   for (const email of rendered) {
@@ -81,18 +91,37 @@ describe('link parity between the HTML and text parts', () => {
 
 describe('UTM attribution (spec section 44.2)', () => {
   /**
-   * The magic link is a single-use credential, not an attribution surface.
-   * Appending analytics parameters to it would measure nothing and would put
-   * query junk on the one URL whose parsing has to be exact.
+   * A single-use credential, not an attribution surface. Appending analytics
+   * parameters to one of these would measure nothing and would put query junk
+   * on the URLs whose parsing has to be exact.
+   *
+   * Two paths qualify: the magic login link, and the search-first signup
+   * confirmation (IDE Agent Spec v3, section 3.1). Both carry a token that is
+   * redeemed once and then dead.
+   *
+   * **This check was weakened on purpose, and the reason matters.** It used to
+   * assert that a credential URL carried *no* query parameters at all, and it
+   * passed only because the fixture wrote the magic-link token into the path
+   * (`/logg-inn/bekreft/<token>`). The real implementation in
+   * `apps/web/src/server/login.ts` builds `/logg-inn/bekreft?token=…&retur=…`
+   * through `appUrlFor`, so the shape the assertion was pinning was never the
+   * shape that ships. The fixtures below now use the real query-parameter form,
+   * which means this assertion finally runs against something that looks like
+   * production — and the rule it enforces is stated as what was actually
+   * intended: no *analytics* parameters on a credential URL. `token` and
+   * `retur` are how the link works, not how it is measured.
    */
-  const isCredentialUrl = (url: URL): boolean => url.pathname.includes('/logg-inn/bekreft/');
+  const isCredentialUrl = (url: URL): boolean =>
+    url.pathname.includes('/logg-inn/bekreft') || url.pathname.includes('/registrering/bekreft');
 
   for (const email of rendered) {
     it(`${email.template} tags every Luma link and leaves Doffin alone`, () => {
       for (const url of extractUrls(email.html)) {
         const parsed = new URL(url);
         if (isCredentialUrl(parsed)) {
-          expect([...parsed.searchParams.keys()]).toEqual([]);
+          expect([...parsed.searchParams.keys()].filter((key) => key.startsWith('utm_'))).toEqual(
+            [],
+          );
         } else if (parsed.hostname.endsWith('doffin.no')) {
           expect([...parsed.searchParams.keys()].filter((key) => key.startsWith('utm_'))).toEqual(
             [],

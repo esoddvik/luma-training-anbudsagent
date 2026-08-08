@@ -2,13 +2,12 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { and, eq, isNull, type ExtractTablesWithRelations } from 'drizzle-orm';
-import type { PgTransaction } from 'drizzle-orm/pg-core';
-import type { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
+import { and, eq, isNull } from 'drizzle-orm';
 import * as schema from '@luma/db/schema';
-import { alertFrequencySchema, normalizeCpv, normalizeSearchText } from '@luma/domain';
+import { alertFrequencySchema } from '@luma/domain';
 import { z } from 'zod';
 import { getWebDb, type Database } from '../db';
+import { clearCriteria, writeCriteria } from '../profile-write';
 import { requireUser } from '../session';
 import { withMessage } from './messages';
 
@@ -258,114 +257,6 @@ async function ownedProfile(
   return row ?? null;
 }
 
-/**
- * The transaction handle Drizzle hands to a `db.transaction` callback.
- *
- * Spelled out rather than derived with `Parameters<...>`: `transaction` is
- * generic in its return type, and inferring through it collapses to `never`.
- */
-type Tx = PgTransaction<
-  PostgresJsQueryResultHKT,
-  typeof schema,
-  ExtractTablesWithRelations<typeof schema>
->;
-
-async function clearCriteria(tx: Tx, profileId: string): Promise<void> {
-  await tx
-    .delete(schema.alertProfileCpvCodes)
-    .where(eq(schema.alertProfileCpvCodes.alertProfileId, profileId));
-  await tx
-    .delete(schema.alertProfileKeywords)
-    .where(eq(schema.alertProfileKeywords.alertProfileId, profileId));
-  await tx
-    .delete(schema.alertProfileGeographies)
-    .where(eq(schema.alertProfileGeographies.alertProfileId, profileId));
-  await tx
-    .delete(schema.alertProfileBuyers)
-    .where(eq(schema.alertProfileBuyers.alertProfileId, profileId));
-}
-
-async function writeCriteria(tx: Tx, profileId: string, form: ProfileForm): Promise<void> {
-  const cpvRows = [
-    ...toCpvRows(profileId, form.cpvInclude, 'include'),
-    ...toCpvRows(profileId, form.cpvExclude, 'exclude'),
-  ];
-  if (cpvRows.length > 0) {
-    await tx.insert(schema.alertProfileCpvCodes).values(cpvRows).onConflictDoNothing();
-  }
-
-  const keywordRows = [
-    ...toKeywordRows(profileId, form.keywordsInclude, 'include'),
-    ...toKeywordRows(profileId, form.keywordsExclude, 'exclude'),
-  ];
-  if (keywordRows.length > 0) {
-    await tx.insert(schema.alertProfileKeywords).values(keywordRows).onConflictDoNothing();
-  }
-
-  const regionRows = dedupe(form.regionsInclude).map((code) => ({
-    alertProfileId: profileId,
-    kind: 'region' as const,
-    code,
-  }));
-  if (regionRows.length > 0) {
-    await tx.insert(schema.alertProfileGeographies).values(regionRows).onConflictDoNothing();
-  }
-
-  const buyerRows = [
-    ...toBuyerRows(profileId, form.buyerInclude, 'include'),
-    ...toBuyerRows(profileId, form.buyerExclude, 'exclude'),
-  ];
-  if (buyerRows.length > 0) {
-    await tx.insert(schema.alertProfileBuyers).values(buyerRows).onConflictDoNothing();
-  }
-}
-
-/** Invalid CPV entries are dropped rather than stored: an eight-digit column
- *  would reject them at insert and fail the whole save for one typo. */
-function toCpvRows(profileId: string, values: readonly string[], mode: 'include' | 'exclude') {
-  return dedupe(
-    values.map((value) => normalizeCpv(value)).filter((value): value is string => value !== null),
-  ).map((cpvCode) => ({ alertProfileId: profileId, mode, cpvCode }));
-}
-
-function toKeywordRows(profileId: string, values: readonly string[], mode: 'include' | 'exclude') {
-  const seen = new Set<string>();
-  const rows: Array<{
-    alertProfileId: string;
-    mode: 'include' | 'exclude';
-    keyword: string;
-    normalizedKeyword: string;
-  }> = [];
-  for (const keyword of values) {
-    if (keyword.length < 2) continue;
-    // The normalised form is supplied by the writer on purpose: the folding
-    // rule for æ, ø and å lives in TypeScript, where it is tested, rather than
-    // being reimplemented in SQL.
-    const normalizedKeyword = normalizeSearchText(keyword);
-    if (normalizedKeyword.length === 0 || seen.has(normalizedKeyword)) continue;
-    seen.add(normalizedKeyword);
-    rows.push({ alertProfileId: profileId, mode, keyword, normalizedKeyword });
-  }
-  return rows;
-}
-
-function toBuyerRows(profileId: string, values: readonly string[], mode: 'include' | 'exclude') {
-  const seen = new Set<string>();
-  const rows: Array<{
-    alertProfileId: string;
-    mode: 'include' | 'exclude';
-    buyerName: string;
-    normalizedBuyerName: string;
-  }> = [];
-  for (const buyerName of values) {
-    const normalizedBuyerName = normalizeSearchText(buyerName);
-    if (normalizedBuyerName.length === 0 || seen.has(normalizedBuyerName)) continue;
-    seen.add(normalizedBuyerName);
-    rows.push({ alertProfileId: profileId, mode, buyerName, normalizedBuyerName });
-  }
-  return rows;
-}
-
-function dedupe(values: readonly string[]): string[] {
-  return [...new Set(values)];
-}
+// `clearCriteria` and `writeCriteria` moved to `../profile-write` when the
+// search-first signup gained a second way to create a profile. See that file
+// for why the writing was extracted but the form parsing was not.

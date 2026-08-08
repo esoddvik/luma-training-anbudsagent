@@ -1,4 +1,5 @@
 import { MAGIC_LINK_GENERIC_RESPONSE_NB } from '@luma/auth';
+import { SIGNUP_GENERIC_RESPONSE_NB } from '../registration';
 
 /**
  * Confirmation and error messages for server actions.
@@ -67,9 +68,22 @@ export const ACTION_MESSAGES_NB = {
    * registered, and a copy in this file is a copy that can drift.
    */
   'lenke-sendt': { tone: 'success', text: MAGIC_LINK_GENERIC_RESPONSE_NB },
+  /**
+   * The answer to every signup submission that was not rate limited.
+   *
+   * Imported from `registration.ts` for the same reason `lenke-sendt` imports
+   * from `@luma/auth`: the enumeration defence only works if the sentence is
+   * identical whether or not the address already has an account, and a copy in
+   * this file is a copy that can drift into "welcome back".
+   */
+  'sjekk-e-post': { tone: 'success', text: SIGNUP_GENERIC_RESPONSE_NB },
   'for-mange-lenker': {
     tone: 'warning',
     text: 'Vi har allerede sendt flere innloggingslenker til denne adressen. Vent litt før du prøver igjen.',
+  },
+  'bekreftelse-feilet': {
+    tone: 'danger',
+    text: 'Vi klarte ikke å bekrefte adressen. Sett opp varslingen på nytt, så sender vi en ny lenke.',
   },
   ugyldig: {
     tone: 'danger',

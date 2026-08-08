@@ -33,6 +33,7 @@ export {
   renderOrderAdminNotification,
   renderOrderReceived,
   renderPaidAccessActivated,
+  renderSignupConfirmation,
   renderWeeklyDigest,
   type DigestEmail,
   type DigestVariant,

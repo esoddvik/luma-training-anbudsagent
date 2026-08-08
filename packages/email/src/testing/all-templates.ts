@@ -11,6 +11,7 @@ import {
   renderOrderAdminNotification,
   renderOrderReceived,
   renderPaidAccessActivated,
+  renderSignupConfirmation,
   renderWeeklyDigest,
 } from '../render/templates/index.js';
 import type { DigestContext, LinkContext, RenderedEmail, TemplateName } from '../types.js';
@@ -72,9 +73,34 @@ export function renderAllTemplates(options?: RenderAllOptions): RenderedEmail<Te
     renderMagicLink({
       ...base,
       links: linksFor('landing'),
+      // The query-parameter form `login.ts` actually builds through
+      // `appUrlFor`, not a path-style token. The previous fixture used a path
+      // and quietly made the UTM check in `templates.test.ts` assert against a
+      // URL shape this product never sends.
       magicLinkUrl:
-        'https://luma-training.com/anbudsvarsling/logg-inn/bekreft/9f2c41a8b7de4c0fa1b23c8d5e6f7a09',
+        'https://luma-training.com/anbudsvarsling/logg-inn/bekreft?token=9f2c41a8b7de4c0fa1b23c8d5e6f7a09&retur=%2Foversikt',
       validForMinutes: 15,
+    }),
+    // Both variants, because the branch on `hasExistingAccount` is the only
+    // conditional in an account-critical template and the cross-cutting scans
+    // (forbidden phrasing, link parity, Norwegian-only) have to see each side.
+    renderSignupConfirmation({
+      ...base,
+      links: linksFor('landing'),
+      confirmUrl:
+        'https://luma-training.com/anbudsvarsling/registrering/bekreft?token=3c1f8a20d94b4e17ac5d6b8f0e2a7c31',
+      validForMinutes: 60,
+      hasExistingAccount: false,
+      profileName: f.ALERT_PROFILE.name,
+    }),
+    renderSignupConfirmation({
+      ...base,
+      links: linksFor('landing'),
+      confirmUrl:
+        'https://luma-training.com/anbudsvarsling/registrering/bekreft?token=7b40e5c2a1d84f96b3e0c7a5d2f18e64',
+      validForMinutes: 60,
+      hasExistingAccount: true,
+      profileName: f.ALERT_PROFILE.name,
     }),
     renderAlertConfirmation({
       ...base,

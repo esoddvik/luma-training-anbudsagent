@@ -26,6 +26,20 @@ That limitation is demonstrated rather than assumed. `legal.ts`'s reference to �
 | §13: category derivation from notice type | `ANNOUNCEMENT_OF_INTENT` rolls up to `RESULT` in `allTypes`, the same tag as a real award | Category derives from the single-valued `type` field only. Reading `allTypes` would classify every intensjonskunngjøring as an award and hide it from users who asked for planned procurements. |
 | §54 step 7: award notices expose supplier and contract duration | Supplier yes (219/219). Duration no (2 of 10 XMLs) | Supplier watching is buildable; framework-expiry alerting is not, as specified. Recorded in [ADR-13](adr/0013-pre-announcement-signals-scope.md). |
 
+## Search-first entry door (IDE Agent Spec v3)
+
+A second specification document, `Luma Anbudsvarsling IDE Agent Spec v3: Søk-først, Pluss og dokumentpipeline`, supplements v2 and wins where the two conflict. It is held in Rable rather than in this repository. Fase A of it — the entry door — is implemented; Fases B, C and D are not.
+
+| Spec v3 says | What we do | Why |
+| --- | --- | --- |
+| Section 3 builds on «Search-first onboarding — direction and plan» *«i repoet»* | Implemented from sections 3.1–3.3 alone | **That document does not exist.** It is not in this repository and not in Rable. Section 3 says it "applies as the implementation basis" and that v3 only settles the points left open in it, so some amount of intended design is unrecorded anywhere we can read. Sections 3.1–3.3 are concrete enough to build Fase A from; if the direction document surfaces, Fase A should be re-read against it before Fase B is built on top. |
+| Section 10 lists `/registrering/sjekk-e-post` and no confirmation route | Added `/registrering/bekreft` | The confirmation link needs somewhere to land. Named to mirror `/logg-inn/bekreft`, which does the equivalent job for the magic link, rather than inventing a second convention. |
+| Section 25 (v2) defines nine email templates | Eleven. `signup-confirmation-v1` is the new one | The entry door must send an email on **both** branches or the silent branch is an account-enumeration oracle. `auth-magic-link-v1` cannot serve the unknown-address branch: its copy says "log in", the recipient has no account, and the confirmation it stands in for is the terms acceptance that §20.1 requires *before* an account may exist. Reusing it would mean emailing a stranger a login link for an account nobody agreed to create. Same reasoning as the tenth template, `order-admin-notification-v1`. |
+| Section 3.1: registration «med begge-grener-sender-e-post» | Both branches send, and the HTTP response is identical in text, shape and destination | Note this **inverts** `login.ts`, which deliberately sends nothing to an unknown address and documents three reasons why. Both are correct: a login link for a non-existent account cannot work, whereas creating the account *is* what registration is for. The two files each carry the argument for their own choice, because a reader who finds them contradictory is asking a fair question. |
+| — | `pending_signups` is swept by `signup.cleanup` at 03:40 | Not in v2's §38 job list. An abandoned row is an email address whose lawful basis — completing the signup — expires with its token, so deleting it is an obligation under §40's data minimisation rather than housekeeping. Mirrors `share.cleanup`. |
+
+**Known gap, not yet closed.** Users who sign up during Fase A accept the *placeholder* terms, because that is the only version in force (§51 blocker 2). The re-acceptance flow that must run when real terms are published does not exist. It is tracked in [`launch-readiness.md`](launch-readiness.md) and has to be built alongside the terms text, not after it.
+
 ## Deliberate engineering choices
 
 | Spec says | What we do | Why |

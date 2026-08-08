@@ -12,8 +12,13 @@ import {
   SIGNUP_HEADING,
   SIGNUP_INTRO,
   SIGNUP_SUBMIT,
+  SIGNUP_TEMPLATE_HINT,
+  SIGNUP_TEMPLATE_LABEL,
   TRUST_TEXT,
 } from '@/content/copy';
+import { requestSignupAction } from '@/server/actions/registration-actions';
+import { getWebDb } from '@/server/db';
+import { listServiceTemplates } from '@/server/profiles';
 import { lumaUrl } from '@/lib/luma-links';
 import { privacyPolicyUrl } from '@/lib/legal';
 import { PRODUCTION_URL } from '@/lib/site';
@@ -72,7 +77,13 @@ const HERO_FACTS = [
   { term: 'Du trenger', description: 'En e-postadresse' },
 ] as const;
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  // Read from the database rather than from `@luma/content`: the templates are
+  // editorial content admin maintains without a deploy (spec section 11.2), and
+  // the action re-resolves the posted slug against this same list so a forged
+  // option value cannot write arbitrary criteria into a profile.
+  const templates = await listServiceTemplates(getWebDb());
+
   return (
     <>
       <section className="bleed luma-hero">
@@ -134,10 +145,29 @@ export default function LandingPage() {
               {SIGNUP_HEADING}
             </h2>
             <p className="m-0">{SIGNUP_INTRO}</p>
-            {/* TODO(auth): send til POST /api/registrering når autentisering og
-                samtykkelagring er på plass (spec seksjon 10 og 21). */}
-            <form action="#registrering" method="post" noValidate>
+            {/* Wired to `requestSignupAction` (IDE Agent Spec v3, section 3.1).
+                The service template is picked here rather than after signup so
+                the address and the criteria arrive together — the whole point
+                of the search-first entry door. `pending_signups` holds both
+                until the address is confirmed. */}
+            <form action={requestSignupAction} noValidate>
               <Stack gap="md">
+                <Field
+                  id="tjenestemal"
+                  label={SIGNUP_TEMPLATE_LABEL}
+                  hint={SIGNUP_TEMPLATE_HINT}
+                  required
+                >
+                  {(controlProps) => (
+                    <select {...controlProps} name="tjenestemal" className="form-control" required>
+                      {templates.map((template) => (
+                        <option key={template.slug} value={template.slug}>
+                          {template.name}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                </Field>
                 <Field id="e-post" label={SIGNUP_EMAIL_LABEL} hint={SIGNUP_EMAIL_HINT} required>
                   {(controlProps) => (
                     <Input

@@ -22,6 +22,11 @@ export type StreamKind = (typeof STREAM_KINDS)[number];
  */
 export const TEMPLATE_STREAM = {
   'auth-magic-link-v1': 'transactional',
+  // Account-critical, exactly like the magic link it stands beside: a
+  // suppression here would silently stop people being able to create an
+  // account at all, and there is nothing marketing about confirming that an
+  // address belongs to the person who typed it.
+  'signup-confirmation-v1': 'transactional',
   'alert-confirmation-v1': 'transactional',
   'order-request-received-v1': 'transactional',
   // Spec section 27 lists "bestillingsbekreftelse" under transactional. The

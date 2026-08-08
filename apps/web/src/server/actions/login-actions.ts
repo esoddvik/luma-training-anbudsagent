@@ -1,7 +1,7 @@
 'use server';
 
-import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { clientIdentity } from '../client-identity';
 import { requestLoginLink } from '../login';
 import { loginPath } from '@/lib/return-path';
 import { withMessage, type ActionMessageCode } from './messages';
@@ -24,27 +24,11 @@ import { withMessage, type ActionMessageCode } from './messages';
  * by someone trying to be helpful.
  */
 
-/**
- * The client address, as far as the platform will say.
- *
- * `x-forwarded-for` is a client-settable header everywhere except behind a
- * proxy that overwrites it, which Vercel does. It is used for a rate-limit
- * budget and nothing else, and it is hashed before it is stored, so a forged
- * value costs the forger their own budget rather than anyone else's.
- */
-async function clientAddress(): Promise<{ ip?: string; userAgent?: string }> {
-  const list = await headers();
-  const forwarded = list.get('x-forwarded-for');
-  const ip = forwarded?.split(',')[0]?.trim() || list.get('x-real-ip')?.trim() || undefined;
-  const userAgent = list.get('user-agent') ?? undefined;
-  return { ...(ip ? { ip } : {}), ...(userAgent ? { userAgent } : {}) };
-}
-
 export async function requestLoginLinkAction(formData: FormData): Promise<void> {
   const rawEmail = formData.get('epost');
   const rawReturn = formData.get('retur');
 
-  const { ip, userAgent } = await clientAddress();
+  const { ip, userAgent } = await clientIdentity();
 
   const result = await requestLoginLink({
     // An absent or non-string field is passed through as an empty address

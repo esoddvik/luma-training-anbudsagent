@@ -36,6 +36,13 @@
       "when": 1785800404243,
       "tag": "0004_service_templates_and_remap_evidence",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1786218790278,
+      "tag": "0005_pending_signups",
+      "breakpoints": true
     }
   ]
 }

@@ -13,3 +13,4 @@ export { renderMaterialChange } from './material-change.js';
 export { renderOrderAdminNotification } from './order-admin.js';
 export { renderOrderReceived } from './order-received.js';
 export { renderPaidAccessActivated } from './paid-access.js';
+export { renderSignupConfirmation } from './signup-confirmation.js';

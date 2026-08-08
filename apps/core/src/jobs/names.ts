@@ -17,6 +17,7 @@ export const JOB = {
   orderRequestNotify: 'order.request.notify',
   consentSync: 'consent.sync',
   shareCleanup: 'share.cleanup',
+  signupCleanup: 'signup.cleanup',
   doffinSync: 'doffin.sync',
 } as const;
 
@@ -38,4 +39,12 @@ export const CRON = {
   digestScheduler: '*/15 * * * *',
   /** Expired share links, overnight. */
   shareCleanup: '30 3 * * *',
+  /**
+   * Expired pending signups, overnight, offset from the share sweep.
+   *
+   * Ten minutes later rather than the same minute so that two unrelated
+   * delete-heavy jobs do not contend, and so an error in the log can be
+   * attributed to one of them without reading the message.
+   */
+  signupCleanup: '40 3 * * *',
 } as const;

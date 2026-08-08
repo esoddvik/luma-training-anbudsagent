@@ -12,6 +12,7 @@
  * | File              | Tables                                                                                                                   |
  * | ----------------- | ------------------------------------------------------------------------------------------------------------------------ |
  * | `auth.ts`         | users, sessions, magic_link_tokens, companies, company_memberships                                                        |
+ * | `signups.ts`      | pending_signups                                                                                                           |
  * | `tenders.ts`      | tenders, tender_cpv_codes, tender_regions, tender_municipalities, tender_revisions, tender_change_events                  |
  * | `profiles.ts`     | service_templates, alert_profiles, alert_profile_cpv_codes, alert_profile_keywords, alert_profile_geographies, alert_profile_buyers, alert_profile_template_remaps |
  * | `matching.ts`     | tender_matches, tender_match_reasons, user_tender_states, relevance_feedback, profile_suggestions                         |
@@ -28,6 +29,7 @@
 
 export * from './enums.js';
 export * from './auth.js';
+export * from './signups.js';
 export * from './tenders.js';
 export * from './profiles.js';
 export * from './matching.js';

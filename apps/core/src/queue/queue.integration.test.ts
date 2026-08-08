@@ -123,12 +123,19 @@ async function jobsCreated(boss: PgBoss, name: string): Promise<number> {
  * an hour reads as a flake and gets re-run, which is exactly how a real defect
  * acquires camouflage.
  */
+/*
+ * Derived from what is actually scheduled, not from a list written here.
+ *
+ * This used to name the three jobs explicitly, and adding a fourth
+ * (`signup.cleanup`) walked straight into the failure mode the paragraph above
+ * describes: the new schedule survived `disableCron`, its timekeeper fired
+ * mid-test, and an unrelated assertion about queue contents went red. The
+ * hardcoded list could only ever be correct until the next schedule was added,
+ * and the cost of it being wrong is a test that fails on a timer.
+ */
 async function disableCron(boss: PgBoss): Promise<void> {
-  await Promise.all([
-    boss.unschedule(JOB.doffinSync),
-    boss.unschedule(JOB.notificationDigestPrepare),
-    boss.unschedule(JOB.shareCleanup),
-  ]);
+  const scheduled = await boss.getSchedules();
+  await Promise.all(scheduled.map((entry) => boss.unschedule(entry.name)));
 }
 
 async function jobStates(boss: PgBoss, name: string): Promise<string[]> {
@@ -411,7 +418,7 @@ describeDb('the pg-boss job runtime', () => {
 
     const first = await boss.getSchedules();
     expect(first.map((entry) => entry.name).sort()).toEqual(
-      [JOB.doffinSync, JOB.notificationDigestPrepare, JOB.shareCleanup].sort(),
+      [JOB.doffinSync, JOB.notificationDigestPrepare, JOB.shareCleanup, JOB.signupCleanup].sort(),
     );
 
     // A redeploy re-runs registration. pg-boss upserts on (name, key), so this
@@ -421,7 +428,7 @@ describeDb('the pg-boss job runtime', () => {
 
     const again = await boss.getSchedules();
     expect(again.length).toBe(first.length);
-    expect(new Set(again.map((entry) => entry.name)).size).toBe(3);
+    expect(new Set(again.map((entry) => entry.name)).size).toBe(4);
   }, 60_000);
 
   it('enqueues matching only for tenders that changed', async () => {

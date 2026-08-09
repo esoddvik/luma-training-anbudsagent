@@ -79,12 +79,35 @@ export async function searchPublicTenders(input: {
   now: Date;
   limit?: number;
 }): Promise<PublicSearchResult> {
-  const db = getWebDb();
-  const since = new Date(input.now.getTime() - PUBLIC_WINDOW_DAYS * 86_400_000);
-
   if (input.cpvInclude.length === 0) {
     return { regional: [], nationwide: [], totalConsidered: 0 };
   }
+
+  /*
+   * No database means a build-time prerender, and an empty page is the right
+   * answer to give one.
+   *
+   * These pages are statically generated, so `generateStaticParams` renders
+   * them during the build — on a machine that has no `DATABASE_URL`, which is
+   * how CI builds. Throwing there fails the whole build for a page whose data
+   * will be replaced within the hour anyway.
+   *
+   * A production build *does* have the variable, so the deployed pages
+   * prerender with real notices; this branch is what stops a database-less
+   * build from being an error. `revalidate = 3600` regenerates either way, so
+   * even a page built empty fills in on its first revalidation rather than
+   * staying blank.
+   *
+   * Deliberately a check on configuration and not a `catch`: a *configured*
+   * database that fails is a real fault and must still surface, rather than
+   * quietly serving every trade an empty page while looking healthy.
+   */
+  if (!process.env['DATABASE_URL']) {
+    return { regional: [], nationwide: [], totalConsidered: 0 };
+  }
+
+  const db = getWebDb();
+  const since = new Date(input.now.getTime() - PUBLIC_WINDOW_DAYS * 86_400_000);
 
   const rows: Row[] = await db
     .selectDistinct({

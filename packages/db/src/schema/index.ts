@@ -23,6 +23,7 @@
  * | `orders.ts`       | order_requests                                                                                                            |
  * | `editorial.ts`    | editorial_recommendations, editorial_impressions, editorial_clicks                                                        |
  * | `attribution.ts`  | attribution_events                                                                                                        |
+ * | `funnel.ts`       | funnel_events                                                                                                             |
  * | `ingestion.ts`    | ingestion_runs, ingestion_checkpoints, ingestion_errors                                                                   |
  * | `admin.ts`        | admin_audit_events                                                                                                        |
  */
@@ -40,5 +41,6 @@ export * from './mcp.js';
 export * from './orders.js';
 export * from './editorial.js';
 export * from './attribution.js';
+export * from './funnel.js';
 export * from './ingestion.js';
 export * from './admin.js';

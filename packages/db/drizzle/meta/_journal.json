@@ -43,6 +43,13 @@
       "when": 1786218790278,
       "tag": "0005_pending_signups",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1786303237288,
+      "tag": "0006_funnel_events",
+      "breakpoints": true
     }
   ]
 }

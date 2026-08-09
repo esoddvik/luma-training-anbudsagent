@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { clientIdentity } from '../client-identity';
 import { getWebDb } from '../db';
 import { draftFromTemplate, safeDraftReturnPath } from '../draft-profile';
+import { recordFunnelEvent } from '../funnel';
 import { listServiceTemplates } from '../profiles';
 import { requestSignupConfirmation } from '../registration';
 import { withMessage, type ActionMessageCode } from './messages';
@@ -55,6 +56,15 @@ export async function requestSignupAction(formData: FormData): Promise<void> {
   }
 
   const { ip, userAgent } = await clientIdentity();
+
+  // Recorded before the send, not after: this counts *attempts*, and a signup
+  // lost to a Postmark outage is exactly the one the funnel needs to show. The
+  // completion event is written when the link is confirmed.
+  await recordFunnelEvent({
+    type: 'signup_started',
+    serviceTemplateSlug: template.slug,
+    ...(typeof rawRegion === 'string' && rawRegion.length > 0 ? { landsdelSlug: rawRegion } : {}),
+  });
 
   const result = await requestSignupConfirmation({
     // An absent or non-string field is passed through as an empty address

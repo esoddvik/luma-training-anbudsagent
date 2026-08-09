@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { Alert, buttonClassName, Stack } from '@luma/ui';
+import { recordFunnelEvent } from '@/server/funnel';
 import { confirmSignup } from '@/server/registration';
 import { withMessage } from '@/server/actions/messages';
 
@@ -40,9 +41,15 @@ export default async function Page({
   const result = await confirmSignup(token);
 
   if (result.ok) {
-    // `redirect` throws, so nothing below runs on the success path. The stored
-    // return path wins when there is one; otherwise the new profile, which is
-    // the thing they came here to get.
+    // Recorded before the redirect: `redirect` throws, so anything after it
+    // never runs. Under the same template slug the earlier funnel events used,
+    // which is what makes the funnel a single chain rather than two lists.
+    await recordFunnelEvent({
+      type: 'signup_completed',
+      ...(result.serviceTemplateSlug ? { serviceTemplateSlug: result.serviceTemplateSlug } : {}),
+    });
+    // The stored return path wins when there is one; otherwise the new
+    // profile, which is the thing they came here to get.
     redirect(result.returnPath ?? withMessage(`/varsler/${result.profileId}`, 'profil-opprettet'));
   }
 

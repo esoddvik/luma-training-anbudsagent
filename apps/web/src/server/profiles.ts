@@ -364,10 +364,26 @@ export interface ServiceTemplateOption {
  * `@luma/content` is the seed for an empty database, not the source of truth,
  * so the onboarding page falls back to it only when nothing has been seeded.
  */
-/** The two fields the anonymous picker needs. Seeds have no `id` to offer. */
+/** What the anonymous surfaces need. Seeds have no `id` to offer. */
 export interface ServiceTemplateChoice {
   readonly slug: string;
   readonly name: string;
+  readonly description: string;
+  /**
+   * `cross_sector` or `sector_bound` (ADR-17).
+   *
+   * Read by the public pages for one rule: a `cross_sector` template's
+   * national page must show a region selector above the results (IDE Agent
+   * Spec v3, section 3.2). For a supplier whose buyer can be anyone, national
+   * *is* the correct default view, and the selector is how they narrow it
+   * themselves rather than having a landsdel guessed for them.
+   *
+   * It never reaches matching. `packages/matching`'s
+   * `no-sector-assumptions.test.ts` fails if the engine so much as names it.
+   */
+  readonly supplierForm: 'cross_sector' | 'sector_bound';
+  readonly cpvInclude: readonly string[];
+  readonly keywordsInclude: readonly string[];
 }
 
 /**
@@ -397,14 +413,40 @@ export async function listServiceTemplateChoices(): Promise<ServiceTemplateChoic
   // No `active` filter: a seed is editorial content that ships with the build,
   // and retiring one is an edit to `@luma/content`. Only rows in the database
   // carry an `active` flag, because only they can be retired without a deploy.
-  const seeds = SERVICE_TEMPLATE_SEEDS.slice()
+  const seeds: ServiceTemplateChoice[] = SERVICE_TEMPLATE_SEEDS.slice()
     .sort((a, b) => a.sortOrder - b.sortOrder)
-    .map((seed) => ({ slug: seed.slug, name: seed.name }));
+    .map((seed) => ({
+      slug: seed.slug,
+      name: seed.name,
+      description: seed.description,
+      supplierForm: seed.supplierForm,
+      cpvInclude: seed.cpvInclude,
+      keywordsInclude: seed.keywordsInclude,
+    }));
 
   if (!process.env['DATABASE_URL']) return seeds;
 
-  const rows = await listServiceTemplates(getWebDb());
-  return rows.length > 0 ? rows.map((row) => ({ slug: row.slug, name: row.name })) : seeds;
+  const rows = await getWebDb()
+    .select({
+      slug: schema.serviceTemplates.slug,
+      name: schema.serviceTemplates.name,
+      description: schema.serviceTemplates.description,
+      supplierForm: schema.serviceTemplates.supplierForm,
+      cpvInclude: schema.serviceTemplates.cpvInclude,
+      keywordsInclude: schema.serviceTemplates.keywordsInclude,
+    })
+    .from(schema.serviceTemplates)
+    .where(and(eq(schema.serviceTemplates.active, true), isNull(schema.serviceTemplates.deletedAt)))
+    .orderBy(schema.serviceTemplates.sortOrder)
+    .catch(() => []);
+
+  return rows.length > 0 ? rows : seeds;
+}
+
+/** One template by slug, resolvable without a database. Null when unknown. */
+export async function loadTemplateChoice(slug: string): Promise<ServiceTemplateChoice | null> {
+  const templates = await listServiceTemplateChoices();
+  return templates.find((template) => template.slug === slug) ?? null;
 }
 
 export async function listServiceTemplates(db: Database): Promise<ServiceTemplateOption[]> {

@@ -7,6 +7,7 @@ import * as schema from '@luma/db/schema';
 import { alertFrequencySchema } from '@luma/domain';
 import { z } from 'zod';
 import { getWebDb, type Database } from '../db';
+import { recordFunnelEvent } from '../funnel';
 import { clearCriteria, writeCriteria } from '../profile-write';
 import { requireUser } from '../session';
 import { withMessage } from './messages';
@@ -204,6 +205,21 @@ export async function toggleProfileActiveAction(formData: FormData): Promise<voi
     .set({ active: next, updatedAt: new Date() })
     .where(eq(schema.alertProfiles.id, idParsed.data));
 
+  // The last step of the search-first funnel (IDE Agent Spec v3, section 3.2),
+  // and the one that actually matters: a profile that is created but never
+  // activated sends nobody anything. Only the activating direction is
+  // recorded — pausing is a different fact and would corrupt the rate.
+  //
+  // The template slug is read from the profile rather than passed in, so a
+  // profile activated from the dashboard weeks later still lands in the funnel
+  // under the trade it came from.
+  if (next) {
+    await recordFunnelEvent({
+      type: 'profile_activated',
+      ...(owned.serviceTemplateSlug ? { serviceTemplateSlug: owned.serviceTemplateSlug } : {}),
+    });
+  }
+
   revalidatePath('/varsler');
   revalidatePath(`/varsler/${idParsed.data}`);
   redirect(withMessage(`/varsler/${idParsed.data}`, next ? 'profil-startet' : 'profil-pauset'));
@@ -242,10 +258,21 @@ async function ownedProfile(
   db: Database,
   profileId: string,
   userId: string,
-): Promise<{ id: string; active: boolean } | null> {
+): Promise<{ id: string; active: boolean; serviceTemplateSlug: string | null } | null> {
   const [row] = await db
-    .select({ id: schema.alertProfiles.id, active: schema.alertProfiles.active })
+    .select({
+      id: schema.alertProfiles.id,
+      active: schema.alertProfiles.active,
+      serviceTemplateSlug: schema.serviceTemplates.slug,
+    })
     .from(schema.alertProfiles)
+    // Left, not inner: `service_template_id` is nullable and a profile built
+    // by hand has none. An inner join would make this function return null for
+    // a profile that exists, and the caller reads that as "not yours".
+    .leftJoin(
+      schema.serviceTemplates,
+      eq(schema.serviceTemplates.id, schema.alertProfiles.serviceTemplateId),
+    )
     .where(
       and(
         eq(schema.alertProfiles.id, profileId),

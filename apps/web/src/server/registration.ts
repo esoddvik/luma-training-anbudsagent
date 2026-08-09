@@ -261,6 +261,12 @@ export type ConfirmSignupResult =
       readonly profileId: string;
       /** Where to send them next, already sanitised. */
       readonly returnPath: string | undefined;
+      /**
+       * Which template the signup came through, carried out so the caller can
+       * close the funnel with `signup_completed` under the same slug the
+       * earlier events used. Null for a signup that predates the picker.
+       */
+      readonly serviceTemplateSlug: string | null;
     }
   | {
       readonly ok: false;
@@ -394,6 +400,7 @@ export async function confirmSignup(token: string | undefined): Promise<ConfirmS
     userId: outcome.userId,
     profileId: outcome.profileId,
     returnPath: safeDraftReturnPath(row.returnPath ?? undefined),
+    serviceTemplateSlug: row.serviceTemplateSlug,
   };
 }
 

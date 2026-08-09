@@ -153,6 +153,25 @@ export const attributionEventTypeEnum = pgEnum('attribution_event_type', [
   'share_viewed',
 ]);
 
+/**
+ * The search-first funnel, in the order a visitor moves through it
+ * (IDE Agent Spec v3, section 3.2).
+ *
+ * Ordered deliberately, because PostgreSQL enums are ordered and the funnel
+ * report reads better sorted by the enum than by an arbitrary alphabetisation.
+ * A new step inserted in the middle means rewriting the type, so a later
+ * addition should be appended and sorted explicitly in the query instead.
+ */
+export const funnelEventTypeEnum = pgEnum('funnel_event_type', [
+  'picker_viewed',
+  'trade_selected',
+  'region_selected',
+  'results_viewed',
+  'signup_started',
+  'signup_completed',
+  'profile_activated',
+]);
+
 /** `promotionPlacementSchema` */
 export const promotionPlacementEnum = pgEnum('promotion_placement', [
   'digest_footer',

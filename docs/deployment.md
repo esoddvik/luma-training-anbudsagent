@@ -500,14 +500,32 @@ The settings that are live are **on the Railway service instance**, readable and
 
 ```bash
 railway api 'query { environment(id: "<env-id>") { serviceInstances { edges { node {
-  serviceName builder buildCommand startCommand preDeployCommand rootDirectory railwayConfigFile healthcheckPath
+  serviceName builder buildCommand startCommand preDeployCommand
+  rootDirectory railwayConfigFile healthcheckPath healthcheckTimeout
 } } } } }'
 ```
 
-Two traps in reading that back:
+### The state as of 2026-08-09, all of it verified on its own deployment
 
-1. **The service record and the deployment disagree.** The record showed `builder: RAILPACK`; the deployment resolved to `DOCKERFILE`. Only the deployment runs. Check `latestDeployment { meta }` as well as the instance.
-2. **`railway service redeploy` replays the previous deployment, config included.** Changing a setting and redeploying does *not* pick the change up. Push a commit, or use `railway up`, to get a deployment built from current settings.
+| Setting | `core` | `mcp` |
+| --- | --- | --- |
+| Source | GitHub repo, `main`, auto-deploy | GitHub repo, `main`, auto-deploy |
+| Builder | `DOCKERFILE` (detected from `apps/*/Dockerfile`) | `DOCKERFILE` |
+| `buildCommand` / `startCommand` | unset — the Dockerfile is the build | unset |
+| `preDeployCommand` | `node node_modules/@luma/db/dist/migrate.js` | none; it does not migrate |
+| `healthcheckPath` / `healthcheckTimeout` | `/health` / `300` | `/health` / `300` |
+| `railwayConfigFile` | empty, deliberately | empty, deliberately |
+
+The 300-second healthcheck timeout is not padding. `core` does real work before it listens: pg-boss migrates its own schema, thirteen queues are registered, and the schema-drift check queries the database. A gate shorter than the boot marks a healthy service as a failed deploy, and the cost of a generous timeout is a slow *failed* deploy while the cost of a tight one is a false failure on a working service.
+
+### Four traps, each of which cost a deployment
+
+1. **The service record and the deployment disagree.** The record said `builder: RAILPACK`; the deployment resolved to `DOCKERFILE`. Only the deployment runs. Read `latestDeployment { meta }` as well as the instance, and believe the deployment.
+2. **`railway service redeploy` replays the previous deployment, config included.** Change a setting, redeploy, and you get the *old* setting again — including, confusingly, the old failure. Push a commit or use `railway up` to get a deployment built from current settings. This one cost three attempts and produced an identical error each time, which read as "the change did nothing".
+3. **Clear a setting with `""`, not `null`.** A `null` returns `INTERNAL_SERVER_ERROR` from the mutation; an empty string clears it. `preDeployCommand` is `[String!]`, so its empty value is `[]`.
+4. **A `railwayConfigFile` pointing at a file that does not exist fails every deploy.** Deleting `apps/core/railway.json` while the service still pointed at it broke four deployments in a row, with the previous good deployment still serving so nothing looked wrong from outside.
+
+**Change one setting at a time.** Three at once, followed by deleting a file one of them referenced, made every subsequent failure ambiguous and was the single biggest waste of time in this work.
 
 ### The pre-deploy migration, and why it is not `pnpm db:migrate`
 
@@ -519,7 +537,17 @@ preDeployCommand: node node_modules/@luma/db/dist/migrate.js
 
 The compiled migrator needs none of that — no pnpm, no `tsx`, both absent from a production bundle. `@luma/db`'s `package.json` lists `"files": ["dist", "drizzle"]`, so the SQL folder travels with it.
 
-**If this ever silently stops running again**, `core` now says so: it checks the applied migration count against the migrations the build shipped, logs an `[ERROR]` at boot when the schema is behind, and reports `schema` as degraded on `/ready`. See `packages/db/src/schema-drift.ts`.
+**Confirmed working**, and worth recording *how*, because a green deploy on its own proves little. With `pnpm db:migrate` the deployment **failed** on `EACCES` — a failing pre-deploy fails the deploy. With the compiled migrator the deployment succeeded and the boot log read:
+
+```
+[INFO] database schema is current  migrations=8
+```
+
+That line comes from the schema-drift check reading the real database, so it also settles the open question about whether `drizzle/` survives `pnpm deploy --prod`: it does, or the migrator would have died looking for it.
+
+**If this ever silently stops running again**, `core` says so: it checks the applied migration count against the migrations the build shipped, logs an `[ERROR]` at boot when the schema is behind, and reports `schema` as degraded on `/ready`. See `packages/db/src/schema-drift.ts`.
+
+That check is the part worth keeping even if everything above is later replaced. On 2026-08-09 production ran today's code against a schema three migrations behind for several hours: it deployed cleanly, started cleanly, and answered `/health` and `/ready` green throughout, because "can I reach the database" and "is the database the shape my code expects" are different questions and only the first was being asked. The signup flow was broken the entire time and nothing said so.
 
 ### Local env goes in `.env.development.local`, never `.env.local`
 

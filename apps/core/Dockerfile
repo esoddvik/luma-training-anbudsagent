@@ -5,8 +5,10 @@
 # BUILD CONTEXT MUST BE THE REPO ROOT (monorepo build):
 #   docker build -f apps/core/Dockerfile -t luma-core .
 #
-# This is the alternative to the Nixpacks build described in apps/core/railway.json.
-# Use one or the other, not both.
+# This is how the service is actually built. There is deliberately no
+# railway.json beside it any more — see docs/deployment.md §8 for why the one
+# that used to be here was never read, and where the deploy settings really
+# live.
 
 # ---------------------------------------------------------------------------
 # base — Node 22 + pnpm via corepack (version comes from `packageManager`)

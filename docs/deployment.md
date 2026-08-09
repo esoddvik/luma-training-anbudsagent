@@ -486,6 +486,41 @@ Adding an `assetPrefix` to this app **would** require a third rule, and would
 buy nothing — the prefix already namespaces the assets against the marketing
 site's own `/_next/…`.
 
+## 8. Where the Railway deploy settings actually live
+
+**Not in this repository.** `apps/core/railway.json` and `apps/mcp/railway.json` used to exist and were never read by anything. They are deleted rather than corrected, because a config file that looks authoritative and is inert is worse than no file at all.
+
+The evidence, gathered 2026-08-09:
+
+- Both files declared `"builder": "NIXPACKS"` with explicit build and start commands. The services actually build with **`DOCKERFILE`** (Railway detects `apps/*/Dockerfile`) and had no build or start command set at all.
+- Setting the services' `railwayConfigFile` to point at them changed nothing: the deployment created afterwards still resolved `preDeployCommand` to null.
+- `apps/core/railway.json` declared `preDeployCommand: pnpm db:migrate`. It had never run. Production spent several hours on today's code against a schema three migrations behind, with a broken signup flow, because that line looked like it was doing something.
+
+The settings that are live are **on the Railway service instance**, readable and writable through the API:
+
+```bash
+railway api 'query { environment(id: "<env-id>") { serviceInstances { edges { node {
+  serviceName builder buildCommand startCommand preDeployCommand rootDirectory railwayConfigFile healthcheckPath
+} } } } }'
+```
+
+Two traps in reading that back:
+
+1. **The service record and the deployment disagree.** The record showed `builder: RAILPACK`; the deployment resolved to `DOCKERFILE`. Only the deployment runs. Check `latestDeployment { meta }` as well as the instance.
+2. **`railway service redeploy` replays the previous deployment, config included.** Changing a setting and redeploying does *not* pick the change up. Push a commit, or use `railway up`, to get a deployment built from current settings.
+
+### The pre-deploy migration, and why it is not `pnpm db:migrate`
+
+```
+preDeployCommand: node node_modules/@luma/db/dist/migrate.js
+```
+
+`pnpm db:migrate` fails in this image, and the failure is instructive: the runtime stage is a pruned `pnpm deploy --legacy --prod` bundle running as the `node` user, with no workspace, no dev dependencies and no writable pnpm store. pnpm runs a dependency check before any script, decides it must `pnpm install`, and dies with `EACCES: permission denied, open '/app/_tmp_…'`. Corepack also resolves the *latest* pnpm rather than the pinned one, because the pruned `package.json` carries no `packageManager` field.
+
+The compiled migrator needs none of that — no pnpm, no `tsx`, both absent from a production bundle. `@luma/db`'s `package.json` lists `"files": ["dist", "drizzle"]`, so the SQL folder travels with it.
+
+**If this ever silently stops running again**, `core` now says so: it checks the applied migration count against the migrations the build shipped, logs an `[ERROR]` at boot when the schema is behind, and reports `schema` as degraded on `/ready`. See `packages/db/src/schema-drift.ts`.
+
 ### Local env goes in `.env.development.local`, never `.env.local`
 
 **This is not a preference. `.env.local` makes `pnpm build` lie to you.**

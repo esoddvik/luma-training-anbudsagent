@@ -61,6 +61,11 @@ async function main(): Promise<void> {
       senderPostalAddress: env.SENDER_POSTAL_ADDRESS,
       senderContactEmail: env.SENDER_CONTACT_EMAIL,
       osloRegionCodes: env.OSLO_REGION_CODES,
+      // Signs on-demand revalidation calls to the web app. Shared with the
+      // cron authentication because both answer the same question — "is this
+      // the estate talking to itself" — and a second secret would be a second
+      // thing to rotate.
+      revalidateSecret: env.CRON_SECRET,
     },
   });
 

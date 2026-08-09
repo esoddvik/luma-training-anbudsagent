@@ -35,6 +35,24 @@
           "value": "noindex, nofollow, noarchive"
         }
       ]
+    },
+    {
+      "source": "/anbudsvarsling/:page(oversikt|varsler|lagret|planlagte|anbud|innstillinger|delinger|integrasjoner|bestillinger|admin|registrering)/:path*",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/anbudsvarsling/:page(oversikt|varsler|lagret|planlagte|innstillinger|delinger|integrasjoner|bestillinger|admin)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
     }
   ]
 }

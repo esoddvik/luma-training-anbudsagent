@@ -13,6 +13,7 @@ import { sendClaimedImmediateAlert } from '../jobs/immediate-send.js';
 import { runIngest } from '../jobs/ingest.js';
 import { runMatching } from '../jobs/match.js';
 import { ALL_JOB_NAMES, CRON, JOB, type JobName } from '../jobs/names.js';
+import { requestRevalidation } from '../services/revalidate.js';
 import { runShareCleanup } from '../jobs/share-cleanup.js';
 import { runSignupCleanup } from '../jobs/signup-cleanup.js';
 import { DEAD_LETTER_QUEUE } from './boss.js';
@@ -58,6 +59,16 @@ export interface JobConfig {
   readonly senderPostalAddress: string;
   readonly senderContactEmail: string;
   readonly osloRegionCodes: readonly string[];
+  /**
+   * `CRON_SECRET`, used to sign on-demand revalidation calls to the web app.
+   *
+   * Optional: without it the ingest simply does not purge, and the public
+   * pages refresh on their own hourly window instead. That is a degradation
+   * worth tolerating silently in a preview environment, and it is why the
+   * route refuses rather than accepting unsigned calls when its own copy of
+   * the secret is missing.
+   */
+  readonly revalidateSecret?: string | undefined;
 }
 
 export interface RegisterJobsOptions {
@@ -301,7 +312,25 @@ export async function registerJobs(options: RegisterJobsOptions): Promise<void> 
         await boss.send(JOB.tenderMatch, { tenderIds: report.matchableTenderIds });
       }
 
+      // Purge the public pages for exactly the notices that changed
+      // (IDE Agent Spec v3, section 3.3). Uses `matchableTenderIds` — the same
+      // "not unchanged" set — because a notice whose payload is byte-identical
+      // has nothing new to show. Never throws: a missed purge costs freshness,
+      // and the pages correct themselves on their own revalidate window, while
+      // a thrown error here would make the run partial and stop the checkpoint
+      // advancing.
+      const revalidated =
+        config.revalidateSecret && report.matchableTenderIds.length > 0
+          ? await requestRevalidation({
+              appUrl: config.appUrl,
+              secret: config.revalidateSecret,
+              tenderIds: report.matchableTenderIds,
+              logger,
+            })
+          : 0;
+
       return {
+        revalidated,
         runId: report.runId,
         ingestStatus: report.status,
         fetched: report.fetched,

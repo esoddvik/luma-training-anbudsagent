@@ -24,6 +24,18 @@ export const MCP_SCOPES = [
   'saved:read',
   'saved:write',
   'feedback:write',
+  /**
+   * The one paid scope (IDE Agent Spec v3, section 7.2).
+   *
+   * **The MCP server itself stays free.** Every tool in the free surface is
+   * unchanged, and this scope unlocks only the document tools. Holding it is
+   * necessary but *not sufficient*: the live `user_entitlements` row decides
+   * whether the answer is data or an upgrade refusal. Two gates, because a
+   * token outlives a subscription — a scope granted in January must not still
+   * be serving documents in December, and withdrawing access must not mean
+   * hunting down every token a user ever created.
+   */
+  'documents:read',
 ] as const;
 
 export type McpScope = (typeof MCP_SCOPES)[number];

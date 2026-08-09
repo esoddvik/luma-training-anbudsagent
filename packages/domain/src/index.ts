@@ -21,4 +21,5 @@ export * from './consent.js';
 export * from './sharing.js';
 export * from './editorial.js';
 export * from './billing.js';
+export * from './entitlements.js';
 export * from './attribution.js';

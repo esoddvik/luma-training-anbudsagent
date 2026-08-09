@@ -40,6 +40,27 @@ A second specification document, `Luma Anbudsvarsling IDE Agent Spec v3: Søk-f�
 
 **Known gap, not yet closed.** Users who sign up during Fase A accept the *placeholder* terms, because that is the only version in force (§51 blocker 2). The re-acceptance flow that must run when real terms are published does not exist. It is tracked in [`launch-readiness.md`](launch-readiness.md) and has to be built alongside the terms text, not after it.
 
+### Anbudsvarsling Pluss (Fase D) — partially built, and the missing half is named
+
+Fase D's ordering in IDE Agent Spec v3 section 11 is: entitlements and the order code, then `TendSignAdapter`, then storage and serving, then cleanup and takedown, then extraction, then the MCP scope, then the remaining adapters.
+
+**Built:** entitlements (`user_entitlements`, migration 0007), the `pluss` product code, the pure access decision in `@luma/domain`'s `isEntitlementActive`, grant/renew/revoke/expiry-report in `apps/core/src/services/entitlements.ts`, the `documents:read` MCP scope, and the upgrade refusal shape.
+
+**Not built:** the document pipeline in its entirety — the four KGV adapters, R2 storage, serving, reference-counted retention, the takedown switch, text extraction, and the three MCP document tools.
+
+**Why it stops there, stated plainly rather than left as an omission.** Section 5.2 requires the adapters to be tested against *fixture-recorded HTML flows*, so that CI never depends on the KGV systems' uptime. Those fixtures have to be recorded from the real Mercell, TendSign and CTM flows, and there is no access to record them from here. An adapter written against invented HTML would pass its own tests and fail on first contact with production — the worst possible outcome, because it would look finished. Section 5.3's storage needs R2 credentials that likewise do not exist yet.
+
+So the boundary is: everything decidable without those two dependencies is built and tested; nothing that would need fabricated evidence is. Recording one real flow per adapter family is the unblocking task, and it is a task for someone with a KGV login rather than a coding task.
+
+**Two decisions taken while building the half that exists:**
+
+| Decision | Why |
+| --- | --- |
+| An entitlement is a row keyed by `(user_id, product_code)`, not a boolean on `users` | A boolean cannot expire, cannot say who granted it or which order paid, and is one product. Section 4.2 already anticipates a course purchase granting access through the same mechanism, and Påfyll is a separate stream — a shared flag is exactly how "customer of one thing" becomes "customer of the other". |
+| `documents:read` on a token is necessary but **not sufficient** | The live entitlement decides. A token outlives a subscription, so a scope granted in January must not still serve documents in December, and withdrawing access must not mean hunting down every token a user made. |
+
+The upgrade refusal carries a test that would fail if the copy started selling: `FORBIDDEN_IN_UPGRADE_COPY` scans the rendered refusal for `påfyll` and for the urgency register §42 forbids, and a companion test proves the scan can fail.
+
 ### The landsdel dimension (Fase B)
 
 | Spec v3 says | What we do | Why |

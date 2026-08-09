@@ -50,6 +50,13 @@
       "when": 1786303237288,
       "tag": "0006_funnel_events",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1786305750819,
+      "tag": "0007_entitlements_and_documents_scope",
+      "breakpoints": true
     }
   ]
 }

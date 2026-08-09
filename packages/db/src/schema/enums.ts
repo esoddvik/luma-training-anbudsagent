@@ -332,6 +332,20 @@ export const mcpScopeEnum = pgEnum('mcp_scope', [
   'saved:read',
   'saved:write',
   'feedback:write',
+  /**
+   * The one paid scope (IDE Agent Spec v3, section 7.2).
+   *
+   * Appended, not inserted: PostgreSQL enums are ordered and adding a value in
+   * the middle rewrites the type.
+   *
+   * **Holding this scope on a token is not sufficient to use it.** The scope
+   * says the token is *allowed* to ask; the live `user_entitlements` row is
+   * what decides whether the answer is data or an upgrade refusal. Two gates,
+   * because a token outlives a subscription — a scope granted in January must
+   * not still be serving documents in December after the entitlement lapsed,
+   * and revoking access must not require hunting down every token a user made.
+   */
+  'documents:read',
 ]);
 
 export const mcpOutcomeEnum = pgEnum('mcp_outcome', ['ok', 'denied', 'error']);

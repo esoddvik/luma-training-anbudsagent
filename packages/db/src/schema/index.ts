@@ -21,6 +21,7 @@
  * | `consent.ts`      | consent_text_versions, consent_events, legal_documents, legal_document_versions, user_legal_acceptances                   |
  * | `mcp.ts`          | mcp_tokens, mcp_audit_events                                                                                              |
  * | `orders.ts`       | order_requests                                                                                                            |
+ * | `entitlements.ts` | user_entitlements                                                                                                         |
  * | `editorial.ts`    | editorial_recommendations, editorial_impressions, editorial_clicks                                                        |
  * | `attribution.ts`  | attribution_events                                                                                                        |
  * | `funnel.ts`       | funnel_events                                                                                                             |
@@ -39,6 +40,7 @@ export * from './notifications.js';
 export * from './consent.js';
 export * from './mcp.js';
 export * from './orders.js';
+export * from './entitlements.js';
 export * from './editorial.js';
 export * from './attribution.js';
 export * from './funnel.js';

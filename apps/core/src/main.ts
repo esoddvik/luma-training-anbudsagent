@@ -5,7 +5,12 @@ import { loadDotEnv } from '@luma/config';
 loadDotEnv();
 
 import { getCoreEnv } from '@luma/config';
-import { createDatabase, databaseDependencyCheck } from '@luma/db';
+import {
+  checkSchemaDrift,
+  createDatabase,
+  databaseDependencyCheck,
+  schemaDriftDependencyCheck,
+} from '@luma/db';
 import { DoffinApiAdapter } from '@luma/doffin';
 import { createEmailClientFromEnv } from '@luma/email';
 import { createLogger } from '@luma/observability';
@@ -109,9 +114,48 @@ async function main(): Promise<void> {
     // `csrf_origin_rejected`, and every CORS preflight would fail, on a value
     // that looks correct in the config.
     allowedOrigins: [new URL(env.APP_URL).origin],
-    readinessChecks: [databaseDependencyCheck(database.db), queueDependencyCheck(queue.boss)],
+    readinessChecks: [
+      databaseDependencyCheck(database.db),
+      queueDependencyCheck(queue.boss),
+      // Proves the schema is not behind the code. A PostgreSQL check alone
+      // passed through the whole of the 2026-08-09 outage, where the service
+      // was healthy by every measure and signing up threw because three
+      // migrations had never run. See `schema-drift.ts`.
+      schemaDriftDependencyCheck(database.db),
+    ],
     api,
   });
+
+  /*
+   * Say it at boot, not only on `/ready`.
+   *
+   * Readiness is pull-only: it answers when something asks, and after a deploy
+   * nothing asks except the platform's own health probe, which is satisfied by
+   * a 200. On 2026-08-09 the service booted against a schema three migrations
+   * behind and reported itself healthy for hours. A line in the deploy log is
+   * what an operator actually sees.
+   *
+   * Never fatal. A pending migration breaks some features and leaves the
+   * ingest pipeline, the digests and every existing surface working; refusing
+   * to start would turn a partial outage into a total one.
+   */
+  const drift = await checkSchemaDrift(database.db).catch(() => null);
+  if (drift === null) {
+    logger.warn('could not determine whether the database schema is current');
+  } else if (drift.state === 'behind') {
+    logger.error(
+      { shipped: drift.shipped, applied: drift.applied },
+      'DATABASE SCHEMA IS BEHIND THIS BUILD — migrations have not been applied. ' +
+        'Features depending on new tables will fail. Run `pnpm db:migrate`.',
+    );
+  } else if (drift.state === 'ahead') {
+    logger.warn(
+      { shipped: drift.shipped, applied: drift.applied },
+      'database schema is ahead of this build, which is what a rollback looks like',
+    );
+  } else {
+    logger.info({ migrations: drift.applied }, 'database schema is current');
+  }
 
   // Railway injects PORT; the default matters only for local runs and Docker.
   const port = Number(process.env.PORT ?? DEFAULT_PORT);

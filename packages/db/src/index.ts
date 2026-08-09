@@ -27,4 +27,10 @@ export {
   type RunMigrationsOptions,
 } from './migrate.js';
 
+export {
+  checkSchemaDrift,
+  schemaDriftDependencyCheck,
+  type SchemaDriftReport,
+} from './schema-drift.js';
+
 export * from './schema/index.js';

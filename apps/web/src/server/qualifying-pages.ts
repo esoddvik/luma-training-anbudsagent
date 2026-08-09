@@ -32,9 +32,30 @@ import { listServiceTemplateChoices } from './profiles';
 
 /** The window the list below was measured over. The spec asks for 90. */
 export const PAGES_MEASURED_OVER_DAYS = 37;
-export const PAGES_MEASURED_ON = '2026-08-09';
+export const PAGES_MEASURED_ON = '2026-08-10';
 /** Notices needed in the window before a pair gets its own page. */
 export const QUALIFYING_THRESHOLD = 8;
+
+/**
+ * A pair must also have at least this many notices *of its own*.
+ *
+ * Nationwide notices count towards `QUALIFYING_THRESHOLD` — that was a
+ * deliberate product decision, because a nationwide competition is a real
+ * opportunity for a supplier in that landsdel and hiding it to make the page
+ * look more distinctive would optimise the page against its reader.
+ *
+ * Measured against production, that rule alone produces a degenerate result:
+ * **Svalbard og Jan Mayen qualifies for four templates on zero regional
+ * notices.** Every one of its counts is borrowed from the nationwide pool, so
+ * the page would render an empty regional section above a "gjelder hele
+ * landet" list identical to the other six landsdeler — the emptiest possible
+ * page, and duplicate content pointed at a search engine.
+ *
+ * So the regional half has to justify the page's existence. One notice is a
+ * deliberately low bar: the threshold is what decides whether a page is worth
+ * having, and this only rules out the case where "regional page" is a lie.
+ */
+export const MINIMUM_OWN_NOTICES = 1;
 
 /**
  * Template slug → landsdel codes that cleared the threshold.
@@ -51,6 +72,10 @@ export const QUALIFYING_REGIONAL_PAGES: Readonly<Record<string, readonly string[
   'drift-og-vedlikehold-av-eiendom': ['NO08', 'NO09', 'NO0A', 'NO02', 'NO06', 'NO07'],
   'radgivende-ingeniortjenester': ['NO08', 'NO09', 'NO0A', 'NO02', 'NO06', 'NO07'],
   'renhold-og-facility-management': ['NO08', 'NO07'],
+  // Added on the 2026-08-10 re-measurement against production. Both clear the
+  // threshold only once nationwide notices are counted — 3 of their own plus 5
+  // shared — which is exactly the case the counting rule was chosen to admit.
+  'kantine-og-matservering': ['NO08', 'NO0A'],
   'vakthold-og-sikkerhet': ['NO08'],
 };
 

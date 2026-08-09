@@ -2,7 +2,7 @@
 
 IDE Agent Spec v3 section 3.2 says to run the density query **first** and let its answer decide which `/anbud-for/[bransje]/[landsdel]` pages exist, rather than generating the full cross product and hoping. This document is that answer, the query that produced it, and the parts of it that are not yet trustworthy.
 
-**Measured:** 2026-08-09, against 1015 real notices pulled from the live Doffin API into a local database.
+**Measured:** 2026-08-10, against the 999 notices in the **production** database. (Superseded an identical-shaped 2026-08-09 measurement over a local copy; the numbers moved slightly and one rule changed. See "The 2026-08-10 re-measurement" below.)
 
 ## The rule
 
@@ -71,6 +71,24 @@ This is not an argument against the pages. It is an argument that a regional pag
 **Decided (2026-08-09, product owner): separate sections, and all 27 pages stay.** A regional page renders the notices for its own landsdel first, then a clearly labelled «gjelder hele landet» section below them. Nationwide notices keep counting towards the qualifying threshold. The rejected alternative was excluding them from the threshold, which would have cut the `it-tjenester` and `radgivende-ingeniortjenester` regional pages sharply; the reasoning for keeping them is that a nationwide competition is a real opportunity for a supplier in that landsdel, so a page that hid it to look more distinctive would be optimising the page against the reader. Building the sections separately is what keeps the six pages from being six copies.
 
 **2. The `cross_sector` templates are the ones that struggle regionally.** Three of the four templates that fail or barely clear the threshold are `cross_sector`, and that is consistent with ADR-17's reasoning: for a cross-sector supplier the buyer can be anyone, so demand is thin and evenly spread rather than clustered. Spec v3 section 3.2's requirement that national pages for `cross_sector` templates carry a visible region selector is doing real work here — for those suppliers, national *is* the correct default view and the selector is how they narrow it themselves.
+
+## The 2026-08-10 re-measurement
+
+Re-run against production once `service_templates` was seeded there. **29 pairs qualify**, up from 27, and the counting rule gained a second condition.
+
+### The rule needed a floor on a landsdel's own notices
+
+Counting nationwide notices towards the threshold produced a result nobody would want: **`NO0B` (Svalbard og Jan Mayen) qualified for four templates on zero regional notices of its own.** `bygg-og-anlegg-utforende` showed `NO0B=12` — all twelve borrowed from the nationwide pool.
+
+Those pages would have rendered an empty regional section above a «gjelder hele landet» list identical to the other six landsdeler. That is the emptiest page the system can produce and the most duplicative, which is precisely what the two-section layout was chosen to avoid.
+
+So a pair now needs at least one notice of its own as well as clearing the threshold (`MINIMUM_OWN_NOTICES` in `qualifying-pages.ts`). The bar is deliberately low: the threshold decides whether a page is *worth* having, and this only rules out the case where calling it a regional page is untrue.
+
+### What changed in the page list
+
+`kantine-og-matservering` gains `NO08` and `NO0A`. Both have 3 notices of their own plus the 5 nationwide, landing exactly on 8 — the case the counting rule exists to admit, and the mirror image of the Svalbard case it now excludes. Everything else is unchanged.
+
+`NO0B` gets no page for any template, which was true in the first measurement too, but for the accidental reason that it had too few notices rather than the principled one.
 
 ## What this measurement cannot tell you
 

@@ -163,6 +163,28 @@ jobs:
           DATABASE_URL: postgres://luma:luma@localhost:5432/luma_anbudsvarsling_test
         run: pnpm db:migrate
 
+      # Builds `web` a second time, with a database reachable.
+      #
+      # The `quality` job above already builds, but with no `DATABASE_URL` —
+      # so it exercises only the branch where every server component short
+      # circuits and prerenders an empty page. **A Vercel production build has
+      # the variable set**, which means production prerenders through the real
+      # data path, and nothing in CI covered that path at all.
+      #
+      # The gap is not theoretical. A prerender failure on `/admin/attribusjon`
+      # (`Cannot read properties of null (reading 'useOptimistic')`) was seen
+      # repeatedly on local builds that had a database, and never once in CI.
+      # It has since stopped reproducing and was never root-caused, so this
+      # step is not a fix for it — it is the check that would have caught it,
+      # and will catch it if it returns.
+      #
+      # Cheap: this job already runs a PostgreSQL service and has just applied
+      # the migrations, so the only cost is the build itself.
+      - name: Build web against a real database
+        env:
+          DATABASE_URL: postgres://luma:luma@localhost:5432/luma_anbudsvarsling_test
+        run: pnpm turbo run build --filter=web
+
       - name: Run tests
         env:
           # REQUIRED — do not delete to make a red build go green.

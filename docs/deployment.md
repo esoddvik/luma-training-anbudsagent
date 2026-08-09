@@ -486,6 +486,26 @@ Adding an `assetPrefix` to this app **would** require a third rule, and would
 buy nothing — the prefix already namespaces the assets against the marketing
 site's own `/_next/…`.
 
+### Local env goes in `.env.development.local`, never `.env.local`
+
+**This is not a preference. `.env.local` makes `pnpm build` lie to you.**
+
+Next loads `.env.local` in *every* environment except test — including production builds. So a developer with `DATABASE_URL` in `apps/web/.env.local` gets a green `pnpm build` that proves nothing about CI, which has no such file. A page that reads the database during prerender builds fine locally and fails in CI, and the local run reports success either way.
+
+That is not hypothetical. It happened twice in one day. The second time, the "verification" was unsetting the shell variable before building — which does nothing, because Next reads the file, not the shell.
+
+`.env.development.local` is loaded only when `NODE_ENV=development`, which `next dev` sets and `next build` does not. So the dev server keeps its database and the build genuinely has none, exactly like CI.
+
+Both filenames are covered by `apps/web/.gitignore`'s `.env*`, so nothing changes about what is committed.
+
+To check a build the way CI will see it:
+
+```bash
+pnpm turbo run build --filter=web --force
+```
+
+If that passes with `.env.development.local` present, it will pass in CI. If you still keep a `.env.local`, move it — or accept that your local build result is not evidence.
+
 ### The second thing the marketing site owes us: `robots.txt`
 
 **Raised now because it has lead time**, and it is not something this

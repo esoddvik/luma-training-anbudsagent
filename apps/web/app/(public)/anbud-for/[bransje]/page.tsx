@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Stack } from '@luma/ui';
 import { FunnelBeacon } from '@/components/funnel-beacon';
+import { InlineSignup } from '@/components/inline-signup';
 import { PublicResults } from '@/components/public-results';
 import { loadTemplateChoice } from '@/server/profiles';
 import { searchPublicTenders } from '@/server/public-search';
@@ -92,11 +93,7 @@ export default async function NationalPage({ params }: { params: Promise<{ brans
 
       <PublicResults result={result} />
 
-      <p className="m-0">
-        <Link href={`/?bransje=${template.slug}#registrering`}>
-          Få disse på e-post — sett opp gratis varsling
-        </Link>
-      </p>
+      <InlineSignup templateSlug={template.slug} templateName={template.name} />
     </Stack>
   );
 }

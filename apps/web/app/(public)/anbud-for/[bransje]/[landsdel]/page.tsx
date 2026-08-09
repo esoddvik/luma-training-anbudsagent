@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { Stack } from '@luma/ui';
 import { FunnelBeacon } from '@/components/funnel-beacon';
+import { InlineSignup } from '@/components/inline-signup';
 import { PublicResults } from '@/components/public-results';
 import { loadTemplateChoice } from '@/server/profiles';
 import { searchPublicTenders } from '@/server/public-search';
@@ -84,11 +85,12 @@ export default async function RegionalPage({
 
       <PublicResults result={result} landsdelName={region.name} />
 
-      <p className="m-0">
-        <Link href={`/?bransje=${template.slug}&landsdel=${region.slug}#registrering`}>
-          Få disse på e-post — sett opp gratis varsling
-        </Link>
-      </p>
+      <InlineSignup
+        templateSlug={template.slug}
+        templateName={template.name}
+        landsdelSlug={region.slug}
+        landsdelName={region.name}
+      />
     </Stack>
   );
 }

@@ -8,6 +8,7 @@ import {
   ingestionRuns,
   tenderChangeEvents,
   tenderCpvCodes,
+  tenderRevisions,
   tenders,
 } from '@luma/db';
 import { createTestDatabase, hasDatabase, type TestDatabase } from '@luma/db/testing';
@@ -119,6 +120,67 @@ describeDb('runIngest against a real database', () => {
     expect(second.updated).toBe(0);
     expect(second.unchanged).toBe(2);
     expect(await db.$count(tenders)).toBe(2);
+  });
+
+  /**
+   * The failure the suite above could not see.
+   *
+   * `is idempotent` re-feeds a *byte-identical* array, which is the one thing
+   * the live API does not reliably do: Doffin serves the same notice with
+   * `allTypes` in a different sequence between fetches. The payload hash was
+   * order-sensitive on arrays, so a reordered re-read looked like a change,
+   * wrote a `tender_revisions` row, and — when a permutation recurred — hit
+   * the unique key on `(tender_id, source_payload_hash)`. The insert threw, the
+   * run reported `partial`, and a partial run does not advance the checkpoint.
+   *
+   * The end state is the expensive part and is invisible from any single run:
+   * the checkpoint never moves, so ingest re-reads one window forever while
+   * every individual sync looks like it did some work. Eighteen consecutive
+   * runs against the live API left `ingestion_checkpoints` empty.
+   */
+  it('treats a reordered array as unchanged, and still advances the checkpoint', async () => {
+    const ordered = hit('2026-000001', '2026-08-09', {
+      allTypes: ['COMPETITION', 'NOTICE_ON_BUYER_PROFILE', 'ANNOUNCEMENT_OF_COMPETITION'],
+    });
+    const reordered = hit('2026-000001', '2026-08-09', {
+      allTypes: ['ANNOUNCEMENT_OF_COMPETITION', 'COMPETITION', 'NOTICE_ON_BUYER_PROFILE'],
+    });
+
+    const first = await runIngest({
+      db,
+      adapter: new FixtureTenderSourceAdapter([ordered]),
+      logger,
+      now,
+    });
+    const second = await runIngest({
+      db,
+      adapter: new FixtureTenderSourceAdapter([reordered]),
+      logger,
+      now: new Date('2026-08-10T07:00:00Z'),
+    });
+    // Back to the first permutation. This is the read that used to throw,
+    // because that exact hash was already stored against this tender.
+    const third = await runIngest({
+      db,
+      adapter: new FixtureTenderSourceAdapter([ordered]),
+      logger,
+      now: new Date('2026-08-11T07:00:00Z'),
+    });
+
+    expect(first.created).toBe(1);
+    expect([second.unchanged, third.unchanged]).toEqual([1, 1]);
+    expect([second.failed, third.failed]).toEqual([0, 0]);
+    expect([second.status, third.status]).toEqual(['succeeded', 'succeeded']);
+
+    // The property that actually matters, and the one nothing asserted before:
+    // the checkpoint keeps moving, so the next run reads new notices rather
+    // than the same window again.
+    expect([first.checkpointAdvanced, second.checkpointAdvanced, third.checkpointAdvanced]).toEqual(
+      [true, true, true],
+    );
+
+    // One payload seen three times is one revision, not three.
+    expect(await db.$count(tenderRevisions)).toBe(1);
   });
 
   it('enqueues no match work for an unchanged notice', async () => {

@@ -55,6 +55,31 @@ export function buildSourceUrl(sourceId: string): string {
  * Object keys are sorted before hashing, because JSON key order is not
  * guaranteed across responses and an order-sensitive hash would report every
  * notice as changed on every run.
+ *
+ * **Array order is sorted too, and that was not always true.** The original
+ * version sorted keys and preserved array order, on the reasonable assumption
+ * that a list is a list. Doffin disagrees: it serves the same notice with
+ * `allTypes` in a different sequence between responses. Observed directly, on
+ * notice 2026-112262, across two fetches minutes apart:
+ *
+ *     ["COMPETITION","NOTICE_ON_BUYER_PROFILE","ANNOUNCEMENT_OF_COMPETITION","PLANNING"]
+ *     ["ANNOUNCEMENT_OF_COMPETITION","PLANNING","COMPETITION","NOTICE_ON_BUYER_PROFILE"]
+ *
+ * Same multiset, different sequence, different hash — so 741 of 1015 notices
+ * in a local corpus were recorded as "changed" without anything changing, and
+ * the permutations recur, which made the ingest write a `tender_revisions` row
+ * whose `(tender_id, source_payload_hash)` was already stored. That threw, the
+ * run reported `partial`, and `runIngest` only advances the checkpoint on a
+ * fully successful run — so the checkpoint never moved and the ingest re-read
+ * the same window forever. See `docs/search-surface-density.md`.
+ *
+ * **The trade-off, stated rather than buried:** two payloads differing *only*
+ * in the order of an array now hash identically, so a genuine reordering is
+ * invisible to this function. That is the right call here. This hash answers
+ * "is this the same data", and for a source that returns arrays in arbitrary
+ * order the honest reading of "same" is same-multiset. What a user is told
+ * about is decided by `detectChanges`, which compares named fields and already
+ * sorts CPV codes before comparing them — for exactly this reason.
  */
 export function hashPayload(payload: unknown): string {
   return createHash('sha256').update(stableStringify(payload)).digest('hex');
@@ -62,7 +87,11 @@ export function hashPayload(payload: unknown): string {
 
 function stableStringify(value: unknown): string {
   if (value === null || typeof value !== 'object') return JSON.stringify(value) ?? 'null';
-  if (Array.isArray(value)) return `[${value.map(stableStringify).join(',')}]`;
+  if (Array.isArray(value)) {
+    // Sorted on the serialised element, so ordering is total and deterministic
+    // for arrays of objects as well as of scalars.
+    return `[${value.map(stableStringify).sort().join(',')}]`;
+  }
   const entries = Object.entries(value as Record<string, unknown>)
     .filter(([, v]) => v !== undefined)
     .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))

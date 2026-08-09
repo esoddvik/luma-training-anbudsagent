@@ -260,8 +260,42 @@ describe('hashPayload', () => {
     expect(hashPayload({ o: { x: 1, y: 2 } })).toBe(hashPayload({ o: { y: 2, x: 1 } }));
   });
 
-  it('respects array order, which is meaningful', () => {
-    expect(hashPayload([1, 2])).not.toBe(hashPayload([2, 1]));
+  /**
+   * This assertion used to read the other way round — `[1,2]` and `[2,1]` were
+   * required to hash *differently*, on the stated grounds that array order "is
+   * meaningful". Doffin does not agree, and the live API is the authority on
+   * what Doffin sends. It serves the same notice with `allTypes` in a
+   * different sequence between fetches minutes apart, so the old rule made 741
+   * of 1015 notices in a real corpus look modified when nothing had changed,
+   * and eventually stalled the ingest checkpoint entirely.
+   *
+   * The test was not wrong about anything it could observe. It was written
+   * against fixtures, where array order is whatever the fixture author typed,
+   * and no fixture can show you that a live source reorders its own responses.
+   */
+  it('ignores array order, because the source reorders its own arrays', () => {
+    expect(hashPayload([1, 2])).toBe(hashPayload([2, 1]));
+  });
+
+  it('ignores array order for arrays of objects too', () => {
+    expect(hashPayload([{ a: 1 }, { b: 2 }])).toBe(hashPayload([{ b: 2 }, { a: 1 }]));
+  });
+
+  it('still sees a genuine change to an array member', () => {
+    // Order-insensitivity must not become blindness: a different multiset is
+    // still a different payload.
+    expect(hashPayload([1, 2])).not.toBe(hashPayload([1, 3]));
+    expect(hashPayload([1, 2])).not.toBe(hashPayload([1, 2, 3]));
+    // A repeated element is part of the multiset, not noise to be collapsed.
+    expect(hashPayload([1, 1, 2])).not.toBe(hashPayload([1, 2]));
+  });
+
+  it('is unmoved by the exact permutation observed on notice 2026-112262', () => {
+    // Captured from two live fetches minutes apart. Pinned as a regression:
+    // this is the shape that stalled the ingest.
+    const a = { allTypes: ['COMPETITION', 'NOTICE_ON_BUYER_PROFILE', 'ANNOUNCEMENT', 'PLANNING'] };
+    const b = { allTypes: ['ANNOUNCEMENT', 'PLANNING', 'COMPETITION', 'NOTICE_ON_BUYER_PROFILE'] };
+    expect(hashPayload(a)).toBe(hashPayload(b));
   });
 
   it('changes when a value changes', () => {

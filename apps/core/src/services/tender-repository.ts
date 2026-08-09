@@ -111,13 +111,7 @@ export async function upsertTender(
       if (!tenderId) throw new Error('insert returned no tender id');
 
       await writeChildRows(tx, tenderId, incoming.cpvCodes, incoming.regions);
-      await tx.insert(tenderRevisions).values({
-        tenderId,
-        sourceRevision: incoming.sourceRevision ?? null,
-        sourcePayloadHash: incoming.sourcePayloadHash,
-        rawPayload: incoming.rawPayload,
-        ingestionRunId: options.ingestionRunId ?? null,
-      });
+      await insertRevision(tx, tenderId, incoming, options.ingestionRunId);
 
       return { tenderId, outcome: 'created' as const, changes: [] };
     }
@@ -156,13 +150,7 @@ export async function upsertTender(
 
     await writeChildRows(tx, existing.id, incoming.cpvCodes, incoming.regions);
 
-    await tx.insert(tenderRevisions).values({
-      tenderId: existing.id,
-      sourceRevision: incoming.sourceRevision ?? null,
-      sourcePayloadHash: incoming.sourcePayloadHash,
-      rawPayload: incoming.rawPayload,
-      ingestionRunId: options.ingestionRunId ?? null,
-    });
+    await insertRevision(tx, existing.id, incoming, options.ingestionRunId);
 
     if (changes.length > 0) {
       await tx.insert(tenderChangeEvents).values(
@@ -179,6 +167,50 @@ export async function upsertTender(
 
     return { tenderId: existing.id, outcome: 'updated' as const, changes };
   });
+}
+
+/**
+ * Records the payload we just saw, if we do not already hold it.
+ *
+ * `onConflictDoNothing`, and the reason is worth stating because the schema
+ * comment on `tender_revisions_tender_hash_key` already claimed this behaviour
+ * before the code delivered it: "the hash is the identity of the payload, so
+ * uniqueness on it makes the write idempotent". The constraint enforced that
+ * by *raising*, and no caller caught it — so the guard intended to make a
+ * re-fetch harmless was instead the thing that failed the run.
+ *
+ * The consequences ran a long way from here. A failed row makes `runIngest`
+ * report `partial`; `partial` means the checkpoint is not advanced, by design,
+ * so that a run which lost notices cannot skip past them forever. Correct on
+ * its own — but with a *systematic* duplicate it meant the checkpoint never
+ * advanced at all, and the ingest re-read one window indefinitely while
+ * appearing to work. Eighteen consecutive runs, empty `ingestion_checkpoints`.
+ *
+ * The unstable hash that produced the duplicates is fixed in
+ * `@luma/doffin`'s `hashPayload`. This is the second line: even with a source
+ * that reorders arrays, or a future one that does something else surprising,
+ * re-recording a payload we already have is a no-op rather than an outage.
+ * Storing the same revision twice is not possible and is not desirable, so
+ * there is nothing here to fall back to — the row exists either way.
+ */
+async function insertRevision(
+  tx: Database,
+  tenderId: string,
+  incoming: { sourceRevision?: string | undefined; sourcePayloadHash: string; rawPayload: unknown },
+  ingestionRunId: string | undefined,
+): Promise<void> {
+  await tx
+    .insert(tenderRevisions)
+    .values({
+      tenderId,
+      sourceRevision: incoming.sourceRevision ?? null,
+      sourcePayloadHash: incoming.sourcePayloadHash,
+      rawPayload: incoming.rawPayload as never,
+      ingestionRunId: ingestionRunId ?? null,
+    })
+    .onConflictDoNothing({
+      target: [tenderRevisions.tenderId, tenderRevisions.sourcePayloadHash],
+    });
 }
 
 /**

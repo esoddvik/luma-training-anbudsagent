@@ -382,6 +382,15 @@ export interface ServiceTemplateChoice {
    * `no-sector-assumptions.test.ts` fails if the engine so much as names it.
    */
   readonly supplierForm: 'cross_sector' | 'sector_bound';
+  /**
+   * The one-sentence onboarding line written for this template (ADR-17), shown
+   * as the example under the trade's name on the picker.
+   *
+   * Nullable for the same reason as on `ServiceTemplateOption`: a template
+   * created in admin may not have one yet, and the card shows nothing rather
+   * than inventing generic advice.
+   */
+  readonly onboardingHint: string | null;
   readonly cpvInclude: readonly string[];
   readonly keywordsInclude: readonly string[];
 }
@@ -420,6 +429,7 @@ export async function listServiceTemplateChoices(): Promise<ServiceTemplateChoic
       name: seed.name,
       description: seed.description,
       supplierForm: seed.supplierForm,
+      onboardingHint: seed.onboardingHint,
       cpvInclude: seed.cpvInclude,
       keywordsInclude: seed.keywordsInclude,
     }));
@@ -432,6 +442,7 @@ export async function listServiceTemplateChoices(): Promise<ServiceTemplateChoic
       name: schema.serviceTemplates.name,
       description: schema.serviceTemplates.description,
       supplierForm: schema.serviceTemplates.supplierForm,
+      onboardingHint: schema.serviceTemplates.onboardingHint,
       cpvInclude: schema.serviceTemplates.cpvInclude,
       keywordsInclude: schema.serviceTemplates.keywordsInclude,
     })

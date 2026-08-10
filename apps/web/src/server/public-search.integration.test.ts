@@ -47,11 +47,13 @@ describeDb('searchPublicTenders', () => {
 
   async function seedTender(input: {
     sourceId: string;
-    cpv: string;
+    cpv: string | string[];
     regions: string[];
     suppressed?: boolean;
     category?: 'planned' | 'competition' | 'award';
     publishedAt?: Date;
+    title?: string;
+    estimatedValueMinNok?: number;
   }): Promise<string> {
     const [row] = await db
       .insert(schema.tenders)
@@ -59,7 +61,10 @@ describeDb('searchPublicTenders', () => {
         source: 'doffin',
         sourceId: input.sourceId,
         sourceUrl: `https://doffin.no/notices/${input.sourceId}`,
-        title: `Notice ${input.sourceId}`,
+        title: input.title ?? `Notice ${input.sourceId}`,
+        ...(input.estimatedValueMinNok === undefined
+          ? {}
+          : { estimatedValueMinNok: input.estimatedValueMinNok }),
         buyerName: 'Testkommune',
         noticeCategory: input.category ?? 'competition',
         status: 'open',
@@ -72,7 +77,10 @@ describeDb('searchPublicTenders', () => {
       .returning({ id: schema.tenders.id });
 
     const id = row!.id;
-    await db.insert(schema.tenderCpvCodes).values({ tenderId: id, cpvCode: input.cpv });
+    const cpvCodes = Array.isArray(input.cpv) ? input.cpv : [input.cpv];
+    await db
+      .insert(schema.tenderCpvCodes)
+      .values(cpvCodes.map((cpvCode) => ({ tenderId: id, cpvCode })));
     if (input.regions.length > 0) {
       await db
         .insert(schema.tenderRegions)
@@ -166,5 +174,111 @@ describeDb('searchPublicTenders', () => {
     await seedTender({ sourceId: 'any', cpv: '45000000', regions: ['NO071'] });
     const result = await searchPublicTenders({ cpvInclude: [], now: NOW });
     expect(result.totalConsidered).toBe(0);
+  });
+
+  /**
+   * The fields the anonymous result card and its "Hvorfor traff dette?" panel
+   * are built from. They are widening the same query, so each one is asserted
+   * against a notice that also proves the widening did not change *which*
+   * notices come back.
+   */
+  describe('the fields a result card needs', () => {
+    it('carries the estimated value through, and null when Doffin published none', async () => {
+      // Absent about 47% of the time in the real corpus. A card that showed
+      // "0 kr" for those would be stating a number the source never gave.
+      await seedTender({
+        sourceId: 'priced',
+        cpv: '45000000',
+        regions: ['NO071'],
+        estimatedValueMinNok: 2_500_000,
+      });
+      await seedTender({ sourceId: 'unpriced', cpv: '45000000', regions: ['NO071'] });
+
+      const result = await searchPublicTenders({ cpvInclude: ['45000000'], now: NOW });
+      const byTitle = new Map(result.regional.map((t) => [t.title, t]));
+
+      expect(byTitle.get('Notice priced')?.estimatedValueMinNok).toBe(2_500_000);
+      expect(byTitle.get('Notice unpriced')?.estimatedValueMinNok).toBeNull();
+    });
+
+    it('returns only the CPV codes the caller asked about, not every code on the notice', async () => {
+      // The card names the code that caused the hit. A notice classified under
+      // half a dozen unrelated divisions must not have them all shown as
+      // reasons the reader matched.
+      await seedTender({
+        sourceId: 'multi',
+        cpv: ['45000000', '45100000', '79400000'],
+        regions: ['NO071'],
+      });
+
+      const result = await searchPublicTenders({
+        cpvInclude: ['45000000', '45100000'],
+        now: NOW,
+      });
+
+      expect([...(result.regional[0]?.cpvCodes ?? [])].sort()).toEqual(['45000000', '45100000']);
+    });
+
+    it('reports the keywords found in the title', async () => {
+      await seedTender({
+        sourceId: 'kw',
+        cpv: '45000000',
+        regions: ['NO071'],
+        title: 'Rammeavtale for rehabilitering av skolebygg',
+      });
+
+      const result = await searchPublicTenders({
+        cpvInclude: ['45000000'],
+        keywordsInclude: ['rehabilitering', 'riving'],
+        now: NOW,
+      });
+
+      expect(result.regional[0]?.matchedKeywords).toEqual(['rehabilitering']);
+    });
+
+    it('matches a keyword as a whole word, not as a substring', async () => {
+      // "bad" must not match "badevakt". Same rule as the real matcher, and the
+      // reason `containsPhrase` exists rather than `String.includes`.
+      await seedTender({
+        sourceId: 'substring',
+        cpv: '45000000',
+        regions: ['NO071'],
+        title: 'Innkjøp av badevakter til svømmehall',
+      });
+
+      const result = await searchPublicTenders({
+        cpvInclude: ['45000000'],
+        keywordsInclude: ['bad'],
+        now: NOW,
+      });
+
+      expect(result.regional[0]?.matchedKeywords).toEqual([]);
+    });
+
+    it('does not filter on keywords — a CPV hit with no keyword is still a hit', async () => {
+      // `keywordsInclude` annotates; it must never narrow. If it did, adding
+      // the parameter would silently empty every page that passes it.
+      await seedTender({
+        sourceId: 'nokeyword',
+        cpv: '45000000',
+        regions: ['NO071'],
+        title: 'Anskaffelse uten gjenkjennelige ord',
+      });
+
+      const result = await searchPublicTenders({
+        cpvInclude: ['45000000'],
+        keywordsInclude: ['rehabilitering'],
+        now: NOW,
+      });
+
+      expect(result.regional).toHaveLength(1);
+      expect(result.regional[0]?.matchedKeywords).toEqual([]);
+    });
+
+    it('returns an empty keyword list when the caller supplies none', async () => {
+      await seedTender({ sourceId: 'plain', cpv: '45000000', regions: ['NO071'] });
+      const result = await searchPublicTenders({ cpvInclude: ['45000000'], now: NOW });
+      expect(result.regional[0]?.matchedKeywords).toEqual([]);
+    });
   });
 });

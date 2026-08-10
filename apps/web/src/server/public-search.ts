@@ -1,6 +1,12 @@
 import { and, desc, gte, inArray, isNull, sql } from 'drizzle-orm';
 import * as schema from '@luma/db/schema';
-import { countyCodesIn, landsdelOf, NATIONWIDE_LOCATION_ID, type Landsdel } from '@luma/domain';
+import {
+  countyCodesIn,
+  findMatchingPhrases,
+  landsdelOf,
+  NATIONWIDE_LOCATION_ID,
+  type Landsdel,
+} from '@luma/domain';
 import { getWebDb } from './db';
 
 /**
@@ -34,6 +40,34 @@ export interface PublicTenderSummary {
   readonly regionCodes: readonly string[];
   /** True when the notice applies to the whole country rather than a region. */
   readonly nationwide: boolean;
+  /**
+   * Doffin's estimated value, or `null`.
+   *
+   * Null about 47% of the time (see `tenders.estimatedValueMinNok`), so a
+   * value filter built on this must treat null as *unknown* and never as zero.
+   * The column is named `_nok` but `tenders.currency` is not always NOK.
+   */
+  readonly estimatedValueMinNok: number | null;
+  /**
+   * The notice's own CPV codes that are also in the caller's `cpvInclude`.
+   *
+   * Exactly the codes that caused the hit, so a card can say *which* code
+   * matched rather than listing the whole template. Intersected on exact
+   * equality, matching the `inArray` filter the query itself uses.
+   */
+  readonly cpvCodes: readonly string[];
+  /**
+   * The caller's `keywordsInclude` entries found in the notice **title**.
+   *
+   * Title only, and that is a deliberate limit rather than an oversight. The
+   * description is a large free-text column; pulling it into a `selectDistinct`
+   * over four times the result limit, on a page that exists to be fast and
+   * statically prerendered, costs far more than the extra keyword hits are
+   * worth. `buildPublicReasons` therefore re-checks the title itself and grades
+   * a keyword found elsewhere as weaker, so the rule stays correct if a caller
+   * ever supplies keywords matched against a wider text.
+   */
+  readonly matchedKeywords: readonly string[];
 }
 
 export interface PublicSearchResult {
@@ -66,6 +100,7 @@ interface Row {
   noticeCategory: 'planned' | 'competition' | 'award' | 'other';
   deadlineAt: Date | null;
   publishedAt: Date;
+  estimatedValueMinNok: number | null;
 }
 
 /**
@@ -79,6 +114,12 @@ interface Row {
  */
 export async function searchPublicTenders(input: {
   cpvInclude: readonly string[];
+  /**
+   * The template's keywords, for `matchedKeywords`. Optional and never a
+   * filter: a notice that matches on CPV but mentions none of the words is
+   * still a hit, exactly as before this parameter existed.
+   */
+  keywordsInclude?: readonly string[];
   landsdel?: Landsdel | undefined;
   now: Date;
   limit?: number;
@@ -121,6 +162,7 @@ export async function searchPublicTenders(input: {
       noticeCategory: schema.tenders.noticeCategory,
       deadlineAt: schema.tenders.deadlineAt,
       publishedAt: schema.tenders.publishedAt,
+      estimatedValueMinNok: schema.tenders.estimatedValueMinNok,
     })
     .from(schema.tenders)
     .innerJoin(schema.tenderCpvCodes, sql`${schema.tenderCpvCodes.tenderId} = ${schema.tenders.id}`)
@@ -142,24 +184,45 @@ export async function searchPublicTenders(input: {
     return { regional: [], nationwide: [], totalConsidered: 0 };
   }
 
-  const regionRows = await db
-    .select({
-      tenderId: schema.tenderRegions.tenderId,
-      regionCode: schema.tenderRegions.regionCode,
-    })
-    .from(schema.tenderRegions)
-    .where(
-      inArray(
-        schema.tenderRegions.tenderId,
-        rows.map((row) => row.id),
+  const ids = rows.map((row) => row.id);
+
+  const [regionRows, cpvRows] = await Promise.all([
+    db
+      .select({
+        tenderId: schema.tenderRegions.tenderId,
+        regionCode: schema.tenderRegions.regionCode,
+      })
+      .from(schema.tenderRegions)
+      .where(inArray(schema.tenderRegions.tenderId, ids)),
+    // Only the codes the caller asked about. The join above already proved
+    // each row has at least one, so this re-reads the same rows to find out
+    // *which* — narrowed in the query rather than filtered in memory, since a
+    // notice can carry dozens of codes that are none of the caller's business.
+    db
+      .select({
+        tenderId: schema.tenderCpvCodes.tenderId,
+        cpvCode: schema.tenderCpvCodes.cpvCode,
+      })
+      .from(schema.tenderCpvCodes)
+      .where(
+        and(
+          inArray(schema.tenderCpvCodes.tenderId, ids),
+          inArray(schema.tenderCpvCodes.cpvCode, [...input.cpvInclude]),
+        ),
       ),
-    );
+  ]);
 
   const byTender = new Map<string, string[]>();
   for (const row of regionRows) {
     byTender.set(row.tenderId, [...(byTender.get(row.tenderId) ?? []), row.regionCode]);
   }
 
+  const cpvByTender = new Map<string, string[]>();
+  for (const row of cpvRows) {
+    cpvByTender.set(row.tenderId, [...(cpvByTender.get(row.tenderId) ?? []), row.cpvCode]);
+  }
+
+  const keywords = input.keywordsInclude ?? [];
   const wanted = input.landsdel ? new Set(countyCodesIn(input.landsdel)) : null;
   const regional: PublicTenderSummary[] = [];
   const nationwide: PublicTenderSummary[] = [];
@@ -171,6 +234,10 @@ export async function searchPublicTenders(input: {
       ...row,
       regionCodes: codes.filter((code) => code !== NATIONWIDE_LOCATION_ID),
       nationwide: isNationwide,
+      cpvCodes: cpvByTender.get(row.id) ?? [],
+      // Whole-word / phrase containment, not substring: "bad" must not match
+      // "badevakt". See `containsPhrase` in `@luma/domain`.
+      matchedKeywords: keywords.length === 0 ? [] : findMatchingPhrases(row.title, keywords),
     };
 
     if (isNationwide) {

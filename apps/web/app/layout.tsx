@@ -9,7 +9,7 @@ import type { ReactNode } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Poppins } from 'next/font/google';
-import { buttonClassName, SkipLink } from '@luma/ui';
+import { SkipLink } from '@luma/ui';
 import { privacyPolicyUrl } from '@/lib/legal';
 import { lumaUrl } from '@/lib/luma-links';
 import { basePathed, PRODUCTION_URL } from '@/lib/site';
@@ -150,7 +150,16 @@ function NavDestinations() {
       <Link href="/logg-inn" className="site-nav-link">
         Logg inn
       </Link>
-      <Link href="/#registrering" className={buttonClassName({ variant: 'secondary', size: 'sm' })}>
+      {/* A link, not a button.
+       *
+       * There is one action on this site — creating an alert profile — and it
+       * is called «Opprett varslingsprofil» wherever it is offered. A pill in
+       * the chrome labelled «Kom i gang» was a second name for the same thing,
+       * shown on every page including the ones that already offer the real
+       * form, so a reader met two invitations to the same destination worded
+       * differently. Demoting it to a nav link keeps the route one click from
+       * anywhere without pretending to be a separate action. */}
+      <Link href="/#registrering" className="site-nav-link">
         Kom i gang
       </Link>
     </>

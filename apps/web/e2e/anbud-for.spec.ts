@@ -33,12 +33,85 @@ import { appPath, expect, test } from './support';
 const TRADE = 'bygg-og-anlegg-utforende';
 const TRADE_PATH = appPath(`/anbud-for/${TRADE}`);
 
-/** The «12 kunngjøringer · Bransjemalen» line the explorer renders. */
-const COUNT_LINE = /(\d+) kunngjøring(er)?/;
+/**
+ * The trade the expired-group tests use, and why it is not `TRADE`.
+ *
+ * Not because `TRADE` lacks expired notices — it has six. The reason is that
+ * how many it has depends on how `searchPublicTenders` slices the corpus, and
+ * that has changed twice while these tests were being written:
+ *
+ * | measured 2026-08-10 | bygg rows | expired | renhold rows | expired |
+ * | --- | --- | --- | --- | --- |
+ * | one population, cut by `publishedAt desc` | 37 | 0 | 13 | 2 |
+ * | open/planned/expired, each with its own limit | 50 | 6 | 13 | 2 |
+ *
+ * Under the first shape the group was empty on the densest trades and these
+ * tests skipped themselves — green having checked nothing, on the one group
+ * whose whole point is that it starts out hidden. Under the second it is
+ * populated everywhere. `renhold-og-facility-management` gave the same answer
+ * under both, and it will keep doing so: its entire 90-day result set is 13
+ * rows, so no limit on any population can cut it. That stability is the whole
+ * reason it is the fixture — this suite should not go quiet again the next
+ * time someone reshapes the query.
+ *
+ * `TRADE` is covered too, by «avsluttede konkurranser finnes også på den
+ * tetteste bransjesiden» below. That is the assertion that would have been
+ * permanently skipped under the first shape, so it is worth having as well as
+ * the stable one — between them, one test proves the group renders where it is
+ * hardest to render, and the other cannot stop proving it renders at all.
+ *
+ * The environment guard in each stays regardless: a laptop with an empty
+ * database still has nothing to assert on.
+ */
+const EXPIRED_TRADE = 'renhold-og-facility-management';
+const EXPIRED_TRADE_PATH = appPath(`/anbud-for/${EXPIRED_TRADE}`);
+
+/**
+ * The «26 åpne kunngjøringer · 5 planlagte · Bransjemalen» line (R4, R6).
+ *
+ * The number is the *open* count and no longer the total: expired competitions
+ * moved into their own collapsed group and planned ones into theirs, so a
+ * `li.luma-card` count taken over the whole page is larger than this and is
+ * meant to be.
+ */
+const COUNT_LINE = /(\d+) åpne? kunngjøring(er)?/;
 
 function resultCount(text: string): number {
   const match = COUNT_LINE.exec(text);
   return match ? Number(match[1]) : 0;
+}
+
+/** The main list only. Planned and expired notices live in sibling sections. */
+const MAIN_LIST = 'section[aria-labelledby="apne-treff"] li.luma-card';
+
+const MONTHS_NB = [
+  'januar',
+  'februar',
+  'mars',
+  'april',
+  'mai',
+  'juni',
+  'juli',
+  'august',
+  'september',
+  'oktober',
+  'november',
+  'desember',
+];
+
+/**
+ * The deadline a card renders, as a timestamp, or `null` when it states none.
+ *
+ * Parsed out of the Norwegian text rather than read from a data attribute on
+ * purpose: the assertion V3 and V4 are making is about what the *reader* sees,
+ * and a hidden attribute could be right while the visible line was wrong.
+ */
+function deadlineFromCard(text: string): number | null {
+  const match = /Frist\s+(\d{1,2})\.\s+([a-zæøå]+)\s+(\d{4})/i.exec(text);
+  if (!match) return null;
+  const month = MONTHS_NB.indexOf((match[2] ?? '').toLowerCase());
+  if (month < 0) return null;
+  return Date.UTC(Number(match[3]), month, Number(match[1]));
 }
 
 test.describe('anbud-for uten JavaScript', () => {
@@ -56,8 +129,29 @@ test.describe('anbud-for uten JavaScript', () => {
     const antall = resultCount(tekst);
     test.skip(antall === 0, 'miljøet har ingen kunngjøringer for denne bransjen');
 
-    // Hele settet ligger i markupen, ikke bare de første kortene.
-    await expect(page.locator('main li.luma-card')).toHaveCount(antall);
+    // Hovedlisten er nøyaktig de åpne kunngjøringene tellelinjen lover.
+    await expect(page.locator(MAIN_LIST)).toHaveCount(antall);
+
+    // Og hele settet ligger fortsatt i markupen: de avsluttede og de planlagte
+    // er egne seksjoner, ikke noe som er utelatt fra serverrenderingen.
+    const alle = await page.locator('main li.luma-card').count();
+    expect(alle).toBeGreaterThanOrEqual(antall);
+  });
+
+  test('avsluttede konkurranser ligger i markupen, åpne som gruppe uten JavaScript', async ({
+    page,
+  }) => {
+    await page.goto(EXPIRED_TRADE_PATH);
+    const gruppe = page.locator('section[aria-labelledby="avsluttede-treff"]');
+    test.skip((await gruppe.count()) === 0, 'ingen utløpte kunngjøringer i dette miljøet');
+
+    // Ingen sammenklapping uten JavaScript: en «+»-knapp som ikke kan trykkes
+    // ville skjult dem for godt.
+    await expect(
+      gruppe.getByRole('heading', { name: /Avsluttede konkurranser \(\d+\)/ }),
+    ).toBeVisible();
+    await expect(gruppe).toContainText('Fristen har gått ut.');
+    await expect(gruppe.locator('li.luma-card').first()).toBeVisible();
   });
 
   test('viser begrunnelsene åpne, siden ingen kan klikke dem fram', async ({ page }) => {
@@ -128,6 +222,11 @@ test.describe('anbud-for uten JavaScript', () => {
 });
 
 test.describe('anbud-for med JavaScript', () => {
+  // Bredt vindu, i begge prosjektene. Under 640px flytter filtrene seg inn i
+  // bunnskuffen (R6), så «Avanserte filtre» finnes ikke der — uten dette ville
+  // disse testene betydd to forskjellige ting i `desktop` og i `mobil`.
+  test.use({ viewport: { width: 1280, height: 900 } });
+
   test.beforeEach(async ({ page }) => {
     await page.goto(TRADE_PATH);
   });
@@ -154,20 +253,121 @@ test.describe('anbud-for med JavaScript', () => {
   test('søkefeltet snevrer inn listen, og tilbakestilling gjenoppretter den', async ({ page }) => {
     const start = resultCount(await page.locator('main').innerText());
     test.skip(start < 2, 'trenger minst to kunngjøringer for å måle en innsnevring');
+    const alle = await page.locator('main li.luma-card').count();
 
     const telling = page.getByText(COUNT_LINE).first();
     await expect(telling).toContainText('Bransjemalen');
 
     await page.getByLabel('Søk i tittel eller oppdragsgiver').fill('zzzzikkefinnes');
-    await expect(telling).toContainText('0 kunngjøringer');
-    await expect(telling).toContainText('1 filter aktivt');
+    await expect(telling).toContainText('0 åpne kunngjøringer');
+    await expect(telling).toContainText('1 endring fra malen');
     await expect(page.locator('main li.luma-card')).toHaveCount(0);
 
     await page.getByRole('button', { name: 'Avanserte filtre' }).click();
     await page.getByRole('button', { name: 'Tilbakestill til bransjemalen' }).first().click();
 
     await expect(telling).toContainText('Bransjemalen');
-    await expect(page.locator('main li.luma-card')).toHaveCount(start);
+    await expect(page.locator('main li.luma-card')).toHaveCount(alle);
+  });
+
+  /**
+   * V3 og V4 — det R4 og R5 faktisk lover leseren.
+   *
+   * Begge leses ut av teksten på kortene, ikke ut av et skjult attributt: det
+   * er den synlige fristen som er påstanden, og et attributt kunne vært riktig
+   * mens linjen over var feil.
+   */
+  test('V3: ingen kunngjøring i hovedlisten har frist før nå', async ({ page }) => {
+    const kort = page.locator(MAIN_LIST);
+    const antall = await kort.count();
+    test.skip(antall === 0, 'miljøet har ingen åpne kunngjøringer');
+
+    const iDag = Date.now() - 86_400_000; // ett døgn slingringsmonn for tidssoner
+    for (const tekst of await kort.allInnerTexts()) {
+      expect(tekst).not.toContain('Frist gikk ut');
+      const frist = deadlineFromCard(tekst);
+      if (frist !== null) expect(frist).toBeGreaterThanOrEqual(iDag);
+    }
+  });
+
+  test('V4: fristene i hovedlisten stiger', async ({ page }) => {
+    const kort = page.locator(MAIN_LIST);
+    test.skip((await kort.count()) < 2, 'trenger minst to kort for å måle rekkefølge');
+
+    const frister = (await kort.allInnerTexts())
+      .map(deadlineFromCard)
+      .filter((value): value is number => value !== null);
+
+    expect([...frister].sort((a, b) => a - b)).toEqual(frister);
+  });
+
+  test('landsdekkende kunngjøringer ligger i hovedlisten, ikke i egen seksjon', async ({
+    page,
+  }) => {
+    // R5. Den gamle «Gjelder hele landet»-seksjonen er borte; markøren står på
+    // kortet, og kortet er sortert sammen med alle andre.
+    await expect(page.locator('section[aria-labelledby="nasjonale-treff"]')).toHaveCount(0);
+
+    const markerte = page.locator(MAIN_LIST, { hasText: 'Gjelder hele landet' });
+    test.skip((await markerte.count()) === 0, 'ingen landsdekkende kunngjøringer her');
+    await expect(markerte.first()).toBeVisible();
+  });
+
+  /** V6 — filtrene virker anonymt, uten navigasjon og uten innlogging. */
+  test('V6: å fjerne en CPV-kode endrer tellingen, uten navigasjon og uten innlogging', async ({
+    page,
+  }) => {
+    const før = resultCount(await page.locator('main').innerText());
+    test.skip(før === 0, 'miljøet har ingen kunngjøringer');
+
+    const url = page.url();
+    await page.getByRole('button', { name: 'Avanserte filtre' }).click();
+
+    const chips = page.getByRole('button', { name: /^Fjern «/ });
+    const antallChips = await chips.count();
+    test.skip(antallChips < 2, 'malen har for få CPV-koder til at én kan fjernes uten å tømme alt');
+
+    await chips.first().click();
+    await expect(chips).toHaveCount(antallChips - 1);
+
+    const telling = page.getByText(COUNT_LINE).first();
+    await expect(telling).toContainText('1 endring fra malen');
+    expect(resultCount(await page.locator('main').innerText())).toBeLessThanOrEqual(før);
+
+    // Ingen navigasjon: siden er statisk og filteret er en tilstand i nettleseren.
+    expect(page.url()).toBe(url);
+    // Ingen innlogging: ingenting har sendt leseren mot /logg-inn.
+    await expect(page.locator('main')).not.toContainText('Logg inn for å');
+  });
+
+  /** V8 — ingen prosent, ingen måler, ingen tallverdi nær relevans. */
+  test('V8: verken kortene eller filterpanelet viser en tallverdi for relevans', async ({
+    page,
+  }) => {
+    await page.getByRole('button', { name: 'Avanserte filtre' }).click();
+    await page.getByRole('button', { name: '+ Finn CPV-kode' }).click();
+    await page.getByLabel('Søk etter kategori').fill('vask av vinduer');
+
+    const panel = page.locator('#avanserte-filtre-panel');
+    const tekst = await panel.innerText();
+    expect(tekst).toContain('Vinduspuss');
+    // Rangeringen har en poengsum internt; den skal ikke ut på skjermen.
+    expect(tekst).not.toMatch(/\d+\s*%/);
+    expect(tekst).not.toMatch(/poeng|score|treffprosent/i);
+    // Rangeringen har en vekt per treff internt. Ingen av radene i CPV-lista
+    // viser noe tall utover selve koden, som er en identifikator og ikke et mål.
+    // Avgrenset til treffradene med vilje: «Neste 30 dager» og «500 000+» står
+    // ellers i samme panel, og de er filterverdier, ikke relevans.
+    for (const rad of await page.locator('#avanserte-filtre-panel li button').allInnerTexts()) {
+      for (const tall of rad.match(/\d[\d\s]*/g) ?? []) {
+        expect(tall.replace(/\s/g, '')).toMatch(/^\d{8}$/);
+      }
+    }
+
+    // Ingen måler noe sted på siden, uansett hvor godt den var ment.
+    await expect(page.locator('meter, progress, [role="meter"], [role="progressbar"]')).toHaveCount(
+      0,
+    );
   });
 
   test('landsdellenken navigerer til den regionale siden', async ({ page }) => {
@@ -183,5 +383,94 @@ test.describe('anbud-for med JavaScript', () => {
         name: 'Vestlandet',
       }),
     ).toHaveAttribute('aria-current', 'page');
+  });
+
+  /**
+   * R4 på den tetteste bransjen — den ene siden gruppen aldri nådde.
+   *
+   * Under det gamle utvalget returnerte `bygg-og-anlegg-utforende` 37 rader og
+   * 0 utløpte: kuttet gikk på kunngjøringsdato, og de utløpte er nettopp de
+   * eldst kunngjorte. Denne testen ville vært evig hoppet over. Nå har siden 6,
+   * og vakten under er bare et miljøhensyn.
+   */
+  test('avsluttede konkurranser finnes også på den tetteste bransjesiden', async ({ page }) => {
+    await expect(page.getByLabel('Søk i tittel eller oppdragsgiver')).toBeVisible();
+
+    const knapp = page.getByRole('button', { name: /Avsluttede konkurranser \(\d+\)/ });
+    test.skip((await knapp.count()) === 0, 'ingen utløpte kunngjøringer i dette miljøet');
+
+    await knapp.click();
+    const panel = page.locator('#avsluttede-treff-panel');
+    await expect(panel).toContainText('Frist gikk ut');
+
+    // Og de ligger der de hører hjemme: ingen av dem i hovedlisten.
+    for (const tekst of await page.locator(MAIN_LIST).allInnerTexts()) {
+      expect(tekst).not.toContain('Frist gikk ut');
+    }
+  });
+
+  test('avsluttede konkurranser er lukket som standard og kan åpnes', async ({ page }) => {
+    // Ikke `TRADE`: se noten på `EXPIRED_TRADE` om hvorfor den tynne bransjen
+    // er den som ikke kan skjule gruppen for testen uansett hva spørringen gjør.
+    await page.goto(EXPIRED_TRADE_PATH);
+    // Gruppen er en overskrift før hydrering og en knapp etter. Vent på
+    // søkefeltet, som bare finnes når hydreringen er ferdig — ellers måler
+    // testen serverrenderingen og hopper over seg selv på et kappløp.
+    await expect(page.getByLabel('Søk i tittel eller oppdragsgiver')).toBeVisible();
+
+    const knapp = page.getByRole('button', { name: /Avsluttede konkurranser \(\d+\)/ });
+    test.skip((await knapp.count()) === 0, 'ingen utløpte kunngjøringer i dette miljøet');
+
+    await expect(knapp).toHaveAttribute('aria-expanded', 'false');
+    const panel = page.locator('#avsluttede-treff-panel');
+    await expect(panel).toBeHidden();
+
+    await knapp.click();
+    await expect(panel).toContainText('Fristen har gått ut.');
+    await expect(panel).toContainText('Frist gikk ut');
+  });
+});
+
+test.describe('anbud-for på mobil', () => {
+  test.use({ viewport: { width: 390, height: 844 } });
+
+  test('filtrene ligger i en bunnskuff, og fritekstsøket står fortsatt inline', async ({
+    page,
+  }) => {
+    await page.goto(TRADE_PATH);
+
+    // Fritekst er inline; alt annet er bak «Filtre».
+    await expect(page.getByLabel('Søk i tittel eller oppdragsgiver')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Avanserte filtre' })).toHaveCount(0);
+
+    const åpne = page.getByRole('button', { name: /^Filtre/ });
+    await expect(åpne).toBeVisible();
+    await åpne.click();
+
+    const skuff = page.getByRole('dialog');
+    await expect(skuff).toBeVisible();
+    await expect(skuff.getByRole('heading', { name: /^Filtre/ })).toBeVisible();
+    await expect(skuff.getByText('CPV-koder')).toBeVisible();
+
+    // Bare ett fast element om gangen: skuffen er det eneste `position: fixed`
+    // på siden mens den er åpen — påmeldingsbåndet er statisk under 900px.
+    const faste = await page.evaluate(
+      () =>
+        [...document.querySelectorAll('body *')].filter(
+          (element) => getComputedStyle(element).position === 'fixed',
+        ).length,
+    );
+    expect(faste).toBe(1);
+
+    await page.keyboard.press('Escape');
+    await expect(skuff).toHaveCount(0);
+  });
+
+  test('knappen teller endringer fra malen', async ({ page }) => {
+    await page.goto(TRADE_PATH);
+    await expect(page.getByRole('button', { name: 'Filtre', exact: true })).toBeVisible();
+
+    await page.getByLabel('Søk i tittel eller oppdragsgiver').fill('skole');
+    await expect(page.getByRole('button', { name: 'Filtre (1)', exact: true })).toBeVisible();
   });
 });

@@ -383,12 +383,18 @@ export interface ServiceTemplateChoice {
    */
   readonly supplierForm: 'cross_sector' | 'sector_bound';
   /**
-   * The one-sentence onboarding line written for this template (ADR-17), shown
-   * as the example under the trade's name on the picker.
+   * The one-sentence setup advice written for this template (ADR-17) — «Sett
+   * geografi og terskelverdier først …», «Bruk geografi som hovedavgrensning
+   * …». Advice about filters, not a description of the trade.
+   *
+   * It is read by the surfaces that are showing filters: the results page's
+   * helper line above them, and the profile form at `/varsler/ny`. It is
+   * deliberately *not* on the picker card, which has no filters on it and
+   * carries `description` instead — one line saying what the trade covers.
    *
    * Nullable for the same reason as on `ServiceTemplateOption`: a template
-   * created in admin may not have one yet, and the card shows nothing rather
-   * than inventing generic advice.
+   * created in admin may not have one yet, and the surface shows nothing
+   * rather than inventing generic advice.
    */
   readonly onboardingHint: string | null;
   readonly cpvInclude: readonly string[];

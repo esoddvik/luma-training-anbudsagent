@@ -146,7 +146,13 @@ export const SERVICE_TEMPLATE_SEEDS: readonly ServiceTemplateSeed[] = [
       '90910000', // Cleaning services
       '90911200', // Building-cleaning services
       '79993000', // Building and facilities management services
-      '98300000', // Miscellaneous services
+      // 98300000 «Diverse tjenester» was here and is deliberately gone. It is
+      // the code a buyer picks when none of the precise ones fit, so it
+      // qualified advokattjenester, frisørmøbler, lås og beslag and transport
+      // av døde dyr for a cleaning company's page — every one of them a true
+      // CPV match and none of them a job anyone here can bid on. See
+      // `isBroadCpv` in `@luma/domain`, which is what stops the same code
+      // reaching the surface through a template stored in the database.
     ],
     cpvExclude: [
       '45000000', // Construction work

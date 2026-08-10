@@ -318,11 +318,16 @@
   }
 
   /* The funnel design sets the nav at 15px/500 with 28px between items and no
-   * chrome of its own — the links carry themselves and the pill CTA is the only
-   * shape in the bar. Reproduced with tokens: the horizontal padding is what
-   * produces the spacing (the `Cluster` gap stays small so the 44px targets
-   * still touch), and the weight stays medium so the nav never competes with
-   * the brand lockup beside it. */
+   * chrome of its own — the links carry themselves. Reproduced with tokens:
+   * the horizontal padding is what produces the spacing (the `Cluster` gap
+   * stays small so the 44px targets still touch), and the weight stays medium
+   * so the nav never competes with the brand lockup beside it.
+   *
+   * The design drew a pill on the last item, «Kom i gang». It is a plain link
+   * now: it points at `#registrering`, which is the same action the page there
+   * calls «Opprett varslingsprofil», and a differently-worded button for it in
+   * the chrome of every page was a second primary action competing with the
+   * real one. All four destinations are links, and they look like it. */
   .site-nav-link {
     display: inline-flex;
     align-items: center;

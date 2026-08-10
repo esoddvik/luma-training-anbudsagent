@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { CPV_VOCABULARY, cpvLabel, searchCpv } from './cpv-vocabulary.js';
+import {
+  CPV_VOCABULARY,
+  cpvFamilyLabel,
+  cpvFamilyOf,
+  cpvLabel,
+  EXPLICIT_BROAD_CPV,
+  EXPLICIT_PRECISE_CPV,
+  isBroadCpv,
+  searchCpv,
+} from './cpv-vocabulary.js';
 import { normalizeCpv } from './cpv.js';
 
 /**
@@ -58,6 +67,80 @@ describe('cpvLabel', () => {
   it('returns nonsense unchanged instead of throwing', () => {
     expect(cpvLabel('ikke en kode')).toBe('ikke en kode');
     expect(cpvLabel('')).toBe('');
+  });
+});
+
+describe('isBroadCpv', () => {
+  it('calls a division broad, because it covers a whole branch', () => {
+    expect(isBroadCpv('45000000')).toBe(true);
+    expect(isBroadCpv('90000000')).toBe(true);
+    expect(isBroadCpv('60000000')).toBe(true);
+  });
+
+  it('calls a code below division level precise', () => {
+    expect(isBroadCpv('90910000')).toBe(false);
+    expect(isBroadCpv('90911200')).toBe(false);
+    expect(isBroadCpv('79993000')).toBe(false);
+  });
+
+  it('honours the explicit list for codes the digits alone would miss', () => {
+    // 98300000 «Diverse tjenester» is a group, not a division, so the depth
+    // rule would call it precise. It is the code a buyer picks when none fits,
+    // and it was qualifying advokattjenester and frisørmøbler for a cleaning
+    // company's page. Meaning, not arithmetic, is why it is on the list.
+    expect(isBroadCpv('98300000')).toBe(true);
+    expect(isBroadCpv('79900000')).toBe(true);
+  });
+
+  it('lists the codes the relevance spec named', () => {
+    for (const code of ['98300000', '79900000', '45000000', '85000000', '72000000']) {
+      expect(EXPLICIT_BROAD_CPV, `${code} missing`).toContain(code);
+    }
+  });
+
+  it('lets the precise list override the broad one and the depth rule', () => {
+    // The escape hatch is empty today, so the property is asserted rather than
+    // an example: nothing may sit on both lists, since one would silently win.
+    const broad = new Set(EXPLICIT_BROAD_CPV);
+    for (const code of EXPLICIT_PRECISE_CPV) {
+      expect(isBroadCpv(code)).toBe(false);
+      expect(broad.has(code), `${code} is on both lists`).toBe(false);
+    }
+  });
+
+  it('accepts a check digit', () => {
+    expect(isBroadCpv('45000000-7')).toBe(true);
+    expect(isBroadCpv('90910000-9')).toBe(false);
+  });
+
+  it('calls nonsense precise rather than broad, and never throws', () => {
+    // Suppressing a notice on the strength of a typo would be the worse error.
+    expect(isBroadCpv('ikke en kode')).toBe(false);
+    expect(isBroadCpv('')).toBe(false);
+  });
+});
+
+describe('cpv families', () => {
+  it('takes the first four digits', () => {
+    expect(cpvFamilyOf('90911200')).toBe('9091');
+    expect(cpvFamilyOf('90911200-9')).toBe('9091');
+  });
+
+  it('returns null for an unparseable code', () => {
+    expect(cpvFamilyOf('ikke en kode')).toBeNull();
+  });
+
+  it('names a family from the table rather than repeating its digits', () => {
+    expect(cpvFamilyLabel('9091')).toBe('Renholdstjenester');
+    expect(cpvFamilyLabel('4500')).toBe('Bygge- og anleggsarbeid');
+  });
+
+  it('gives no name to a family outside the vocabulary', () => {
+    // The caller's cue to leave the codes as separate rows. A row headed «CPV:
+    // 5041» would be worse than no merge at all.
+    expect(cpvFamilyLabel('5041')).toBeUndefined();
+    expect(cpvFamilyLabel('90911200')).toBeUndefined();
+    expect(cpvFamilyLabel('')).toBeUndefined();
   });
 });
 

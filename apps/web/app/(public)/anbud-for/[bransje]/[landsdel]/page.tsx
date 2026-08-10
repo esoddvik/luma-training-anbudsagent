@@ -61,6 +61,7 @@ function toExplorerTender(
   template: ServiceTemplateChoice,
   landsdel: Landsdel,
 ): ExplorerTender {
+  const relevance = buildPublicReasons({ template, tender, landsdel });
   return {
     id: tender.id,
     title: tender.title,
@@ -70,10 +71,14 @@ function toExplorerTender(
       .filter((name): name is string => Boolean(name)),
     planned: tender.noticeCategory === 'planned',
     deadlineAt: tender.deadlineAt ? tender.deadlineAt.toISOString() : null,
+    // Ordering for planned procurements, which have no deadline. See
+    // `comparePlanned` — Doffin carries no expected-announcement date.
+    publishedAt: tender.publishedAt.toISOString(),
     estimatedValueMinNok: tender.estimatedValueMinNok,
     cpvCodes: tender.cpvCodes,
     matchedKeywords: tender.matchedKeywords,
-    reasons: buildPublicReasons({ template, tender, landsdel }).map((reason) => ({
+    level: relevance.level,
+    reasons: relevance.reasons.map((reason) => ({
       label: reason.label,
       strength: reason.strength,
       evidence: reason.evidence,
@@ -143,6 +148,7 @@ export default async function RegionalPage({
           templateCpv={template.cpvInclude}
           templateKeywords={template.keywordsInclude}
           regions={regions}
+          onboardingHint={template.onboardingHint}
           nowIso={now.toISOString()}
           rail={
             <InlineSignup

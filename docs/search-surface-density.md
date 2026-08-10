@@ -87,7 +87,15 @@ That held while the nationwide pool ran 1–36 notices. Over 94 days it runs **9
 - `bemanning-og-rekruttering` in six landsdeler on own-counts of **1, 2, 2, 3, 4 and 6**. One regional notice above nine nationwide ones is not a regional page.
 - `it-tjenester-og-konsulentbistand` with 144 shared notices against 20–128 regional. Six pages sharing 144 notices apiece is one page with six URLs.
 
-So the threshold now measures only what makes a page distinct: **a landsdel's own notices**. Nationwide notices still render, in their own labelled section, and still matter to the reader — they no longer justify a page existing. The reader loses nothing and the index gains 17 fewer near-duplicates.
+So the threshold now measures only what makes a page distinct: **a landsdel's own notices**. Nationwide notices still render and still matter to the reader — they no longer justify a page existing. The reader loses nothing and the index gains 17 fewer near-duplicates.
+
+### And that retired the two-section layout (2026-08-10, relevance spec R5)
+
+The 2026-08-09 decision above — «separate sections, and all 27 pages stay» — was made when the threshold still counted nationwide notices, and the section split was carrying the anti-duplication argument on its own. It cannot carry it, and never could: **two headings do not remove a notice from a page, they label it.** Six pages sharing 144 notices are six pages sharing 144 notices whether or not an `<h2>` announces which ones are shared; a crawler comparing the pages reads the same text either way.
+
+What actually removed the duplication is the rule change in this section: 17 near-duplicate pages stopped existing. With `qualifying-pages.ts` carrying the argument, the split was only costing the reader, who had to look in two places to find the competition closing first.
+
+So the results page now renders **one list, ordered by deadline**, with each nationwide notice carrying a «Gjelder hele landet» marker on its own card. Sections remain for the two groups that are genuinely different kinds of thing rather than the same kind from a different place: planned procurements, which have no deadline, and expired competitions, which are collapsed. See the module note in `apps/web/src/components/results-explorer.tsx`.
 
 ### The resulting pages
 

@@ -159,9 +159,17 @@ export default async function LandingPage() {
                 which is where the funnel actually starts; the link stays on the
                 page. `#registrering` is one scroll away and the header keeps a
                 permanent «Kom i gang», so a third call to action here would
-                only split the choice three ways. */}
+                only split the choice three ways.
+
+                The button is outlined, not filled. This page has exactly one
+                filled orange button and it is «Opprett varslingsprofil» at
+                `#registrering` — the action the page exists to get. Two filled
+                buttons on one page is two primary actions, and the reader has
+                to work out which one the page actually wants. «Finn anbud for
+                din bransje» stays exactly where it is and says exactly what it
+                said; it just no longer competes for the same slot. */}
             <div className="flex flex-wrap items-center gap-md">
-              <Link href="/finn-anbud" className={buttonClassName({ variant: 'primary' })}>
+              <Link href="/finn-anbud" className={buttonClassName({ variant: 'secondary' })}>
                 {LANDING_HERO_CTA}
               </Link>
               <a href="#slik-fungerer-det" className="font-semibold">

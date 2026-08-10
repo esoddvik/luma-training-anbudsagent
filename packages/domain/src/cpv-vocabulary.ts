@@ -1,5 +1,5 @@
 import { normalizeSearchText } from './text.js';
-import { normalizeCpv } from './cpv.js';
+import { cpvDepth, normalizeCpv } from './cpv.js';
 
 /**
  * Norwegian names for the CPV codes this product actually uses.
@@ -56,6 +56,7 @@ const SAMFUNN = 'Andre samfunnstjenester og personlige tjenester';
 const SIKKERHETSUTSTYR = 'Sikkerhets-, brannvern- og forsvarsutstyr';
 const DATAUTSTYR = 'Kontor- og datamaskiner, utstyr og rekvisita';
 const MAT = 'Næringsmidler, drikkevarer og tobakk';
+const TRANSPORT = 'Transporttjenester';
 
 export const CPV_VOCABULARY: readonly CpvEntry[] = [
   {
@@ -112,7 +113,15 @@ export const CPV_VOCABULARY: readonly CpvEntry[] = [
     name: 'Bygge- og anleggsarbeid',
     about: 'All utførende bygging, rehabilitering og anleggsarbeid.',
     group: BYGG,
-    synonyms: ['bygg', 'anlegg', 'entreprise', 'totalentreprise', 'byggearbeid', 'nybygg'],
+    synonyms: [
+      'bygg',
+      'anlegg',
+      'entreprise',
+      'totalentreprise',
+      'byggearbeid',
+      'nybygg',
+      'rehabilitering',
+    ],
   },
   {
     code: '45100000',
@@ -253,6 +262,28 @@ export const CPV_VOCABULARY: readonly CpvEntry[] = [
     about: 'Ferdige måltider levert til mottakeren, for eksempel hjemmeboende.',
     group: SERVERING,
     synonyms: ['måltidslevering', 'matombringing', 'middagslevering', 'levering av mat'],
+  },
+  {
+    code: '60000000',
+    name: 'Transporttjenester (unntatt avfallstransport)',
+    about: 'Transport av personer og gods på vei, bane, sjø og i luften.',
+    group: TRANSPORT,
+    synonyms: ['transport', 'transporttjenester', 'frakt', 'befordring'],
+  },
+  {
+    code: '60130000',
+    name: 'Spesialisert persontransport',
+    about: 'Persontransport på bestilling for en avgrenset gruppe, som elever eller pasienter.',
+    group: TRANSPORT,
+    synonyms: [
+      'skoleskyss',
+      'skoletransport',
+      'pasienttransport',
+      'persontransport',
+      'drosje',
+      'taxi',
+      'TT-transport',
+    ],
   },
   {
     code: '71000000',
@@ -515,6 +546,103 @@ export function cpvLabel(code: string): string {
 export function cpvEntry(code: string): CpvEntry | undefined {
   const digits = normalizeCpv(code);
   return digits ? BY_CODE.get(digits) : undefined;
+}
+
+/*
+ * ── Breadth ───────────────────────────────────────────────────────────────
+ *
+ * Some CPV codes say almost nothing about what is being bought. 98300000
+ * «Diverse tjenester» is the clearest case: it is the code a buyer reaches for
+ * when no precise one fits, and on the renhold page it was pulling in
+ * advokattjenester, frisørmøbler, lås og beslag, and transport av døde dyr —
+ * all of them tagged, correctly, as «miscellaneous services», and all of them
+ * shown as a strong match because the surface could not tell a vague code from
+ * a precise one.
+ *
+ * So breadth is **data, not code**. The default rule reads the digits: a code
+ * at division level — two significant digits, six trailing zeros — covers a
+ * whole branch of the vocabulary and cannot be evidence of a specific trade.
+ * Two lists sit on top of it, and both exist because the digits are only a
+ * good default and never a law:
+ *
+ * - `EXPLICIT_BROAD_CPV` names codes that are broad despite being deeper than
+ *   a division. 98300000 and 79900000 are group-level codes whose *meaning* is
+ *   «the rest», which no arithmetic on their digits can discover.
+ * - `EXPLICIT_PRECISE_CPV` is the escape hatch in the other direction, for a
+ *   division that genuinely is the trade rather than a branch above it. It is
+ *   empty today and is here so that adding to it is an edit to a table rather
+ *   than an exception written into a matching rule.
+ *
+ * The lists win over the digits, and `EXPLICIT_PRECISE_CPV` wins over
+ * `EXPLICIT_BROAD_CPV`, so an editor can always override the layer below.
+ */
+
+/** Broad even though the digits alone would not say so. */
+export const EXPLICIT_BROAD_CPV: readonly string[] = [
+  '45000000', // Bygge- og anleggsarbeid — a division, listed so it is visible
+  '72000000', // IT-tjenester — a division, listed so it is visible
+  '79900000', // Diverse forretningstjenester: a group meaning «the rest»
+  '85000000', // Helse- og sosialtjenester — a division, listed so it is visible
+  '98300000', // Diverse tjenester: the code a buyer picks when none fits
+];
+
+/**
+ * Precise despite being a division. Empty, and deliberately kept as a table.
+ *
+ * A template that depends on a whole division being treated as evidence adds
+ * its code here rather than teaching the rule an exception.
+ */
+export const EXPLICIT_PRECISE_CPV: readonly string[] = [];
+
+const BROAD_SET: ReadonlySet<string> = new Set(EXPLICIT_BROAD_CPV);
+const PRECISE_SET: ReadonlySet<string> = new Set(EXPLICIT_PRECISE_CPV);
+
+/**
+ * True when a code is too broad to be evidence of a trade on its own.
+ *
+ * Never throws and returns `false` for nonsense: an unparseable code is not a
+ * *broad* code, and treating it as one would silently suppress notices on the
+ * strength of a typo.
+ */
+export function isBroadCpv(code: string): boolean {
+  const digits = normalizeCpv(code);
+  if (!digits) return false;
+  if (PRECISE_SET.has(digits)) return false;
+  if (BROAD_SET.has(digits)) return true;
+  return cpvDepth(digits) <= 2;
+}
+
+/*
+ * ── Families ──────────────────────────────────────────────────────────────
+ *
+ * A notice tagged 90910000, 90911200 and 90911300 has told the reader one
+ * thing, not three, and an explanation that lists it three times reads as three
+ * independent confirmations. Codes sharing their first four digits are
+ * therefore one family (IDE Agent Spec, R3).
+ */
+
+/** The four-digit family a code belongs to, or `null` for an unparseable one. */
+export function cpvFamilyOf(code: string): string | null {
+  return normalizeCpv(code)?.slice(0, 4) ?? null;
+}
+
+/**
+ * The Norwegian name for a four-digit family, or `undefined`.
+ *
+ * Derived rather than curated. Every family the service templates reach has a
+ * `XXXX0000` entry in the table above, so the family name is that entry's name
+ * — which keeps one list to maintain instead of two that can disagree about
+ * what 9091 is called.
+ *
+ * `undefined` rather than the bare digits when nothing is known, because a row
+ * headed «CPV: 5041» would be worse than no merge at all. The caller's rule is
+ * then to leave those codes as their own rows, where `cpvLabel`'s existing
+ * fallback prints the full eight-digit code — something a reader can at least
+ * look up.
+ */
+export function cpvFamilyLabel(family: string): string | undefined {
+  if (!/^\d{4}$/.test(family)) return undefined;
+  return BY_CODE.get(`${family}0000`)?.name;
 }
 
 const DEFAULT_SEARCH_LIMIT = 12;

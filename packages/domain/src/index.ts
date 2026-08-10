@@ -15,6 +15,7 @@ export * from './tender.js';
 export * from './text.js';
 export * from './cpv.js';
 export * from './cpv-vocabulary.js';
+export * from './cpv-search.js';
 export * from './regions.js';
 export * from './alert-profile.js';
 export * from './matching.js';

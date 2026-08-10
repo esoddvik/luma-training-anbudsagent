@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Stack } from '@luma/ui';
 import { FunnelBeacon } from '@/components/funnel-beacon';
 import { PICKER_HEADING, PICKER_HELPER, PICKER_INTRO } from '@/content/copy';
+import { tradeMonogram } from '@/lib/trade-monogram';
 import { listServiceTemplateChoices } from '@/server/profiles';
 
 export const metadata: Metadata = {
@@ -19,22 +20,6 @@ export const metadata: Metadata = {
  * a rule for public pages, and this one is meant to be indexed and instant.
  */
 export const revalidate = 3600;
-
-/**
- * The badge on each card: the first letter of each of the first two words.
- *
- * Derived rather than authored, so a template added in admin gets a badge
- * without anyone remembering to pick one. Single-word names get a single
- * letter, which is the correct answer rather than a padded one.
- */
-function initials(name: string): string {
-  return name
-    .split(/\s+/)
-    .filter((word) => word.length > 0)
-    .slice(0, 2)
-    .map((word) => word.charAt(0).toLocaleUpperCase('nb-NO'))
-    .join('');
-}
 
 export default async function FinnAnbudPage() {
   const templates = await listServiceTemplateChoices();
@@ -56,7 +41,16 @@ export default async function FinnAnbudPage() {
       {/* Four across at desktop, two at tablet, one on a phone. The whole card
           is one `<Link>` rather than a card wrapping a link: there is exactly
           one destination per card, so anything less than the whole surface
-          being clickable is a smaller target for no reason. */}
+          being clickable is a smaller target for no reason.
+
+          A card carries the trade's name and one line saying what it covers,
+          and nothing else. It used to carry `onboardingHint` instead — advice
+          on how to set a profile up («Sett geografi og terskelverdier først …»)
+          — which is real advice given at the wrong moment: nobody here has a
+          profile yet, and eight cards of it turns a choice into a wall of
+          reading. That text belongs on the results page, above the filters it
+          is about, and it is still on `ServiceTemplateChoice.onboardingHint`
+          for that page to read. */}
       <ul className="m-0 grid list-none gap-md p-0 sm:grid-cols-2 lg:grid-cols-4">
         {templates.map((template) => (
           <li key={template.slug} className="flex">
@@ -68,12 +62,10 @@ export default async function FinnAnbudPage() {
                 aria-hidden="true"
                 className="inline-flex h-[2.5rem] w-[2.5rem] items-center justify-center rounded-md bg-primary-soft font-semibold text-primary"
               >
-                {initials(template.name)}
+                {tradeMonogram(template.name)}
               </span>
               <span className="text-lg font-semibold text-text">{template.name}</span>
-              <span className="text-sm text-text-muted">
-                {template.onboardingHint ?? template.description}
-              </span>
+              <span className="text-sm text-text-muted">{template.description}</span>
             </Link>
           </li>
         ))}

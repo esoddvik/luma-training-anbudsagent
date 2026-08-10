@@ -221,6 +221,64 @@ export async function rerunIngest(ctx: ApiContext, actor: Actor) {
   return report;
 }
 
+/**
+ * How far back a backfill may be asked to reach, in days.
+ *
+ * A cap rather than a free parameter. Each fortnight window is its own set of
+ * requests against a source this system is deliberately gentle with, so "reach
+ * back five years" is a mistyped number away from a very long run nobody
+ * intended. A year is more than the two the product needs — the density
+ * measurement wants 90 days — and small enough that the worst typo is bounded.
+ */
+const MAX_BACKFILL_DAYS = 365;
+
+export const backfillSchema = z.object({
+  /**
+   * Issue dates this many days back. Defaults to the 90 the density
+   * measurement is specified over (IDE Agent Spec v3, section 3.2).
+   */
+  days: z.number().int().min(1).max(MAX_BACKFILL_DAYS).default(90),
+});
+
+/**
+ * Filling in history the hourly sync cannot reach (`jobs/backfill.ts`).
+ *
+ * Admin-triggered and never scheduled, which is the point. A backfill re-walks
+ * months of issue-date windows; on a cron it would do that every time, for a
+ * corpus it already holds, against an API with a request budget. It is a thing
+ * an operator does when the corpus is known to be short — after a fresh
+ * environment, or before re-measuring the search-surface density — not a thing
+ * that should happen quietly on a timer.
+ *
+ * Rate limited hard at the route, and it runs inline rather than being
+ * enqueued: the operator who pressed the button is the one who should see the
+ * report, and a backfill that vanishes into a queue is one nobody knows the
+ * outcome of. That makes it a long request, which is why the route's limit is
+ * one per five minutes.
+ */
+export async function runBackfillForAdmin(ctx: ApiContext, actor: Actor, body: unknown) {
+  requireAdmin(actor.role);
+  const input = parseOrThrow(backfillSchema, body ?? {});
+  const report = await ctx.jobs.runBackfill({ days: input.days, adminUserId: actor.userId });
+
+  await writeAuditEvent(ctx, {
+    actor,
+    action: 'ingest.backfill',
+    entityType: 'ingestion_run',
+    after: {
+      days: input.days,
+      windows: report.windows,
+      fetched: report.fetched,
+      created: report.created,
+      // Recorded because a truncated window is a known gap in the corpus, and
+      // the audit log is where someone looks when the numbers seem short.
+      truncatedWindows: [...report.truncatedWindows],
+    },
+  });
+
+  return report;
+}
+
 export const rerunMatchingSchema = z.object({
   tenderIds: z.array(z.uuid()).max(1000).optional(),
   alertProfileId: z.uuid().optional(),

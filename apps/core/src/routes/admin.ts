@@ -1,6 +1,12 @@
 import { z } from 'zod';
 import { orderStatusSchema } from '@luma/domain';
-import { getIngestStatus, rerunIngest, rerunMatching, suppressTender } from '../services/admin.js';
+import {
+  getIngestStatus,
+  rerunIngest,
+  rerunMatching,
+  runBackfillForAdmin,
+  suppressTender,
+} from '../services/admin.js';
 import { listAuditEvents } from '../services/audit.js';
 import { handleOrderRequest, listAllOrderRequests } from '../services/orders.js';
 import { paginationQuerySchema } from '../services/pagination.js';
@@ -37,6 +43,27 @@ export function registerAdminRoutes(app: ApiInstance, ctx: ApiContext): void {
       },
     },
     async (request) => rerunIngest(ctx, actorOf(request)),
+  );
+
+  /*
+   * One per five minutes, far tighter than the others, because this one is
+   * long. It walks a fortnight window at a time against Doffin and returns
+   * when it is done, so two overlapping runs would double the request rate
+   * against the source for no benefit — the second would find everything the
+   * first had already written.
+   */
+  app.post(
+    '/admin/ingestion/backfill',
+    {
+      config: {
+        rateLimit: {
+          max: 1,
+          timeWindow: '5 minutes',
+          errorResponseBuilder: rateLimitError,
+        },
+      },
+    },
+    async (request) => runBackfillForAdmin(ctx, actorOf(request), request.body),
   );
 
   app.post(

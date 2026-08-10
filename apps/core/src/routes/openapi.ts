@@ -4,7 +4,7 @@ import {
   createOrderInputSchema,
   sharedTenderViewSchema,
 } from '@luma/domain';
-import { rerunMatchingSchema, suppressTenderSchema } from '../services/admin.js';
+import { backfillSchema, rerunMatchingSchema, suppressTenderSchema } from '../services/admin.js';
 import { updateCompanyInputSchema } from '../services/company.js';
 import { recordConsentInputSchema } from '../services/consent.js';
 import { acceptLegalInputSchema } from '../services/legal.js';
@@ -379,6 +379,14 @@ export const OPERATIONS: Readonly<Record<string, Operation>> = {
     summary: 'Re-run Doffin ingest. Audited.',
     tag: 'admin',
     success: 200,
+  },
+  'POST /api/v1/admin/ingestion/backfill': {
+    summary:
+      'Backfill Doffin history the hourly sync cannot reach. Runs inline and may take minutes. Audited.',
+    tag: 'admin',
+    requestBody: backfillSchema,
+    success: 200,
+    errors: [400],
   },
   'POST /api/v1/admin/matching/run': {
     summary: 'Re-run matching. Audited.',

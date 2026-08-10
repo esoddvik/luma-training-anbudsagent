@@ -14,6 +14,7 @@ import {
 import { DoffinApiAdapter } from '@luma/doffin';
 import { createEmailClientFromEnv } from '@luma/email';
 import { createLogger } from '@luma/observability';
+import { runBackfill } from './jobs/backfill.js';
 import { runIngest } from './jobs/ingest.js';
 import { runMatching } from './jobs/match.js';
 import { queueDependencyCheck, queueStatus, registerJobs, startQueue } from './queue/index.js';
@@ -99,6 +100,13 @@ async function main(): Promise<void> {
           now: new Date(),
           ...(input.tenderIds ? { tenderIds: input.tenderIds } : {}),
           ...(input.alertProfileId ? { alertProfileId: input.alertProfileId } : {}),
+        }),
+      runBackfill: async ({ days }) =>
+        runBackfill({
+          db: database.db,
+          adapter,
+          logger,
+          from: new Date(Date.now() - days * 86_400_000),
         }),
     },
   });

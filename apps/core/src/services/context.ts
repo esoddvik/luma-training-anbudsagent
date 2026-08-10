@@ -80,7 +80,7 @@ export interface OrderStatusWriter {
 }
 
 /**
- * The two background jobs an administrator can trigger from the API (§45).
+ * The background jobs an administrator can trigger from the API (§45).
  *
  * A seam rather than a direct import of `jobs/ingest.ts`, because ingest needs
  * a `TenderSourceAdapter` and wiring the live Doffin adapter into the HTTP
@@ -95,6 +95,24 @@ export interface JobRunner {
     tenderIds?: readonly string[];
     alertProfileId?: string;
   }): Promise<{ tendersConsidered: number; profilesConsidered: number; matchesWritten: number }>;
+  /**
+   * Fills in history the hourly sync cannot reach.
+   *
+   * Separate from `runIngest` rather than a flag on it, because the two do
+   * genuinely different things: ingest walks forward from a checkpoint and
+   * enqueues matching, and a backfill walks issue-date windows backwards and
+   * deliberately enqueues none. A boolean would put those two behaviours behind
+   * one name and one set of counters.
+   */
+  runBackfill(input: { days: number; adminUserId: string }): Promise<{
+    windows: number;
+    fetched: number;
+    created: number;
+    updated: number;
+    unchanged: number;
+    failed: number;
+    truncatedWindows: readonly string[];
+  }>;
 }
 
 /**

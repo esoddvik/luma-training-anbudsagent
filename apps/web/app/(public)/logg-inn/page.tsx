@@ -42,76 +42,86 @@ export default async function Page({ searchParams }: PageProps) {
   const returnPath = safeReturnPath(typeof rawReturn === 'string' ? rawReturn : undefined);
 
   return (
-    <Stack gap="lg">
-      <h1 className="page-heading">Logg inn</h1>
-
-      <ActionMessage code={params['melding']} />
-
-      <Stack gap="md" className="prose-measure">
-        <p className="m-0">
-          Du logger inn med en engangslenke på e-post. Skriv inn adressen du registrerte deg med, så
-          sender vi deg en lenke som er gyldig i {MAGIC_LINK_TTL_MINUTES} minutter og kan brukes én
-          gang.
-        </p>
-      </Stack>
-
-      <Card
-        as="section"
-        heading="Få innloggingslenke"
-        titleLevel={2}
-        tone="raised"
-        className="prose-measure"
-      >
-        <form action={requestLoginLinkAction}>
+    <div className="bleed">
+      <div className="luma-panel mx-auto flex max-w-5xl flex-col items-center gap-lg py-2xl">
+        {/*
+          B7 in the funnel design is one centred card on the cream panel, and
+          the h1 lives inside it rather than above it. The heading is still an
+          h1 and still reads «Logg inn» — the e2e suite asserts both, and the
+          page would be wrong without them either way.
+        */}
+        <Card as="section" tone="raised" className="w-full max-w-lg">
           <Stack gap="md">
-            {/*
-              The destination travels with the form rather than being read from
-              the URL by the action, so a submission is self-contained. It is
-              validated on the way in, again on the redirect, and a third time
-              before it is written into the emailed link.
-            */}
-            {returnPath === undefined ? null : (
-              <input type="hidden" name="retur" value={returnPath} />
-            )}
-            <Field
-              id="epost"
-              label="E-postadresse"
-              hint="Adressen du bruker på varslingsprofilen din."
-              required
-            >
-              {(controlProps) => (
-                <Input
-                  {...controlProps}
-                  name="epost"
-                  type="email"
-                  autoComplete="email"
-                  inputMode="email"
-                  placeholder="navn@virksomhet.no"
-                />
-              )}
-            </Field>
-            <div>
-              <Button type="submit" variant="primary">
-                Send meg innloggingslenke
-              </Button>
-            </div>
-          </Stack>
-        </form>
-      </Card>
+            <h1 className="page-heading m-0">Logg inn</h1>
 
-      <Stack gap="md" className="prose-measure">
-        <h2 className="section-heading m-0">Har du ikke varslingsprofil ennå?</h2>
-        <p className="m-0">
-          Vi sender innloggingslenke bare til adresser som allerede har en varslingsprofil, og av
-          hensyn til personvernet sier bekreftelsen ovenfor det samme uansett hvilken adresse du
-          skriver inn. Kommer det ingen e-post, er det mest sannsynlig fordi adressen ikke er
-          registrert hos oss. <Link href="/#registrering">Opprett varslingsprofil</Link> — det er
-          gratis og tar noen minutter.
-        </p>
-        <p className="m-0 text-sm text-text-muted">
-          Sjekk også søppelposten. Har du bedt om flere lenker, er det den nyeste som virker.
-        </p>
-      </Stack>
-    </Stack>
+            <ActionMessage code={params['melding']} />
+
+            <p className="m-0">
+              Skriv e-posten din, så sender vi en lenke. Ingen passord å huske. Lenken er gyldig i{' '}
+              {MAGIC_LINK_TTL_MINUTES} minutter og kan brukes én gang.
+            </p>
+
+            <form action={requestLoginLinkAction}>
+              <Stack gap="md">
+                {/*
+                  The destination travels with the form rather than being read
+                  from the URL by the action, so a submission is self-contained.
+                  It is validated on the way in, again on the redirect, and a
+                  third time before it is written into the emailed link.
+                */}
+                {returnPath === undefined ? null : (
+                  <input type="hidden" name="retur" value={returnPath} />
+                )}
+                <Field
+                  id="epost"
+                  label="E-postadresse"
+                  hint="Adressen du bruker på varslingsprofilen din."
+                  required
+                >
+                  {(controlProps) => (
+                    <Input
+                      {...controlProps}
+                      name="epost"
+                      type="email"
+                      autoComplete="email"
+                      inputMode="email"
+                      placeholder="navn@firma.no"
+                    />
+                  )}
+                </Field>
+                <Button type="submit" variant="primary" fullWidth>
+                  Send meg innloggingslenke
+                </Button>
+              </Stack>
+            </form>
+
+            <p className="m-0 text-sm">
+              <Link href="/personvern">Personvern</Link>
+            </p>
+          </Stack>
+        </Card>
+
+        {/*
+          Below the card, not inside it. The confirmation cannot say "you have
+          no profile yet" without turning the form into a customer-list oracle
+          (spec 10), so the page says it in advance, to everyone, before they
+          type — otherwise someone without an account waits for an email that
+          is never coming and has no way to find out why.
+        */}
+        <Stack gap="sm" className="prose-measure w-full max-w-lg">
+          <h2 className="section-heading m-0">Har du ikke varslingsprofil ennå?</h2>
+          <p className="m-0">
+            Vi sender innloggingslenke bare til adresser som allerede har en varslingsprofil, og av
+            hensyn til personvernet sier bekreftelsen ovenfor det samme uansett hvilken adresse du
+            skriver inn. Kommer det ingen e-post, er det mest sannsynlig fordi adressen ikke er
+            registrert hos oss. <Link href="/#registrering">Opprett varslingsprofil</Link> — det er
+            gratis og tar noen minutter.
+          </p>
+          <p className="m-0 text-sm text-text-muted">
+            Sjekk også søppelposten. Har du bedt om flere lenker, er det den nyeste som virker.
+          </p>
+        </Stack>
+      </div>
+    </div>
   );
 }

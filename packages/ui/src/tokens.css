@@ -50,12 +50,19 @@
    * makes every `tone="raised"` card lift off the page instead of blending
    * into it, and it is why the service reads as Luma's at a glance.
    *
-   * Contrast is unaffected — `--luma-color-text` on #fdf6ee is 15.6:1, and
+   * The two warm values are luma-training.com's own, sampled from the running
+   * site rather than chosen by eye: `#FFF5E6` is the cream it bands its
+   * sections with, `#FFE8DC` the warm stop its header and hero gradients open
+   * on. An earlier version of this block guessed `#fdf6ee` and `#f5ebe0`,
+   * which are neither — near-misses that made the service subtly not-quite
+   * Luma on a page sitting one click from Luma's own.
+   *
+   * Contrast is unaffected — `--luma-color-text` on #FFF5E6 is 16.6:1, and
    * every soft-token pairing in the contrast suite is measured against
    * `surface`, `surface-raised` and `surface-sunken` alike. */
-  --luma-color-surface: #fdf6ee;
+  --luma-color-surface: #fff5e6;
   --luma-color-surface-raised: #ffffff;
-  --luma-color-surface-sunken: #f5ebe0;
+  --luma-color-surface-sunken: #ffe8dc;
   --luma-color-text: #1a1614;
   --luma-color-text-muted: #57504b;
   --luma-color-border: #8a817a;
@@ -74,6 +81,25 @@
    * text. Pair it with --luma-color-brand-on. */
   --luma-color-brand: #ff6b35;
   --luma-color-brand-on: #26150c;
+
+  /* --- Ink panel --------------------------------------------------------- *
+   * The one deliberately dark surface in a light-themed app: the "Spør
+   * assistenten din" panel on the landing page, where a transcript between a
+   * reader and their own assistant is shown. It is dark because it is quoting a
+   * chat window, not because dark is decorative — inverting the surface is what
+   * makes it read as someone else's tool rather than as one more Luma card.
+   *
+   * It is a cool near-black rather than a warm one. Warming it would put a
+   * third cream-adjacent surface next to `surface` and `promotion-surface`,
+   * and the whole point of the panel is that it is not of that family.
+   *
+   * `ink-accent` is the only orange that may sit on it; `--luma-color-primary`
+   * is tuned for light surfaces and drops to 2.4:1 here.
+   * ----------------------------------------------------------------------- */
+  --luma-color-ink: #1e2235;
+  --luma-color-ink-on: #e8eaf2;
+  --luma-color-ink-muted: #b9becf;
+  --luma-color-ink-accent: #ff8f63;
 
   /* --- Semantic ---------------------------------------------------------- */
   --luma-color-success: #1a6b3f;
@@ -98,14 +124,14 @@
    * Spec 23.4: Luma promotion must be visually separated from tender content
    * and labelled as Luma content.
    *
-   * This used to be the brand cream `#FFF5E6` outright. It could not stay
-   * there once the page surface became a cream of its own: the two were 12
-   * apart on the perceptual scale below, and a promotion block tinted 12 away
-   * from the page it sits on is not a separate block. Deepened to `#FFECCC`,
-   * the same hue carried further into amber, which puts it 52 from the page
-   * and 33 from the sunken band. Nothing else about 23.4 changes — it is still
-   * the warmest surface in the system and still the only one that is Luma
-   * speaking rather than the service speaking.
+   * This used to be `#FFF5E6`. It could not keep it: that value is
+   * luma-training.com's section cream, and the page surface above is now that
+   * cream for real, so the promotion block would have been tinted identically
+   * to the page it is supposed to stand out from. Deepened to `#FFECCC`, the
+   * same hue carried further into amber, which puts it 41 from the page, 82
+   * from a white card and 24 from the sunken band. Nothing else about 23.4
+   * changes — it is still the warmest surface in the system and still the only
+   * one that is Luma speaking rather than the service speaking.
    *
    * The separation is deliberate and runs the opposite way to the obvious design:
    * tender surfaces are near-neutral and the *promotion* is unmistakably Luma's
@@ -232,6 +258,13 @@
     --luma-color-brand: #ff6b35;
     --luma-color-brand-on: #1a0c05;
 
+    /* Lifted off the light-theme value: at #1e2235 the panel would sit almost
+     * on top of the dark surface it is meant to stand apart from. */
+    --luma-color-ink: #2a2f45;
+    --luma-color-ink-on: #f0f2f8;
+    --luma-color-ink-muted: #c3c8d8;
+    --luma-color-ink-accent: #ffa783;
+
     --luma-color-success: #62c48d;
     --luma-color-success-on: #04170d;
     --luma-color-success-soft: #12291d;
@@ -285,6 +318,13 @@
    * text. Pair it with --luma-color-brand-on. */
   --luma-color-brand: #ff6b35;
   --luma-color-brand-on: #1a0c05;
+
+  /* Lifted off the light-theme value: at #1e2235 the panel would sit almost
+   * on top of the dark surface it is meant to stand apart from. */
+  --luma-color-ink: #2a2f45;
+  --luma-color-ink-on: #f0f2f8;
+  --luma-color-ink-muted: #c3c8d8;
+  --luma-color-ink-accent: #ffa783;
 
   --luma-color-success: #62c48d;
   --luma-color-success-on: #04170d;

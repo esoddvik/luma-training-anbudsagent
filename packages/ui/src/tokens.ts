@@ -29,6 +29,11 @@ export type ColorTokenName =
   // Signature brand orange, decorative and Luma-voice surfaces only
   | 'color-brand'
   | 'color-brand-on'
+  // The one deliberately dark surface in a light app — see tokens.css
+  | 'color-ink'
+  | 'color-ink-on'
+  | 'color-ink-muted'
+  | 'color-ink-accent'
   // Semantic
   | 'color-success'
   | 'color-success-on'
@@ -57,9 +62,9 @@ export type ColorTokenName =
 export type ColorScale = Readonly<Record<ColorTokenName, string>>;
 
 export const lightColors: ColorScale = {
-  'color-surface': '#fdf6ee',
+  'color-surface': '#fff5e6',
   'color-surface-raised': '#ffffff',
-  'color-surface-sunken': '#f5ebe0',
+  'color-surface-sunken': '#ffe8dc',
   'color-text': '#1a1614',
   'color-text-muted': '#57504b',
   'color-border': '#8a817a',
@@ -74,6 +79,11 @@ export const lightColors: ColorScale = {
 
   'color-brand': '#ff6b35',
   'color-brand-on': '#26150c',
+
+  'color-ink': '#1e2235',
+  'color-ink-on': '#e8eaf2',
+  'color-ink-muted': '#b9becf',
+  'color-ink-accent': '#ff8f63',
 
   'color-success': '#1a6b3f',
   'color-success-on': '#ffffff',
@@ -121,6 +131,11 @@ export const darkColors: ColorScale = {
 
   'color-brand': '#ff6b35',
   'color-brand-on': '#1a0c05',
+
+  'color-ink': '#2a2f45',
+  'color-ink-on': '#f0f2f8',
+  'color-ink-muted': '#c3c8d8',
+  'color-ink-accent': '#ffa783',
 
   'color-success': '#62c48d',
   'color-success-on': '#04170d',
@@ -227,6 +242,24 @@ export const contrastPairs: readonly ContrastPair[] = [
     background: 'color-brand',
     kind: 'text',
     usage: 'Luma-merkede flater i signaturoransje',
+  },
+  {
+    foreground: 'color-ink-on',
+    background: 'color-ink',
+    kind: 'text',
+    usage: 'Brødtekst i assistentpanelet',
+  },
+  {
+    foreground: 'color-ink-muted',
+    background: 'color-ink',
+    kind: 'text',
+    usage: 'Spørsmålslinja i assistentpanelets transkript',
+  },
+  {
+    foreground: 'color-ink-accent',
+    background: 'color-ink',
+    kind: 'text',
+    usage: 'Merkelapp og lenke i assistentpanelet',
   },
   {
     foreground: 'color-primary-on',

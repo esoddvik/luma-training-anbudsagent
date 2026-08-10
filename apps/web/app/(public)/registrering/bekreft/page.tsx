@@ -4,7 +4,16 @@ import { redirect } from 'next/navigation';
 import { Alert, buttonClassName, Stack } from '@luma/ui';
 import { recordFunnelEvent } from '@/server/funnel';
 import { confirmSignup } from '@/server/registration';
-import { withMessage } from '@/server/actions/messages';
+
+/**
+ * Where a confirmed signup goes: the review step, with the profile that was
+ * just created and — when there is one — the return path it should end at.
+ */
+function reviewPath(profileId: string, returnPath: string | undefined): string {
+  const query = new URLSearchParams({ profil: profileId });
+  if (returnPath) query.set('retur', returnPath);
+  return `/registrering/profil?${query.toString()}`;
+}
 
 export const metadata: Metadata = {
   // The URL carries a live credential. Keeping it out of any index is the
@@ -24,10 +33,23 @@ export const metadata: Metadata = {
  * same — the token is single use and short-lived, so a mail scanner's prefetch
  * burns the link rather than handing anyone an account.
  *
- * On success the person lands on their new profile with the message the
- * profile page already shows for a freshly created one, because that is
- * exactly what has happened: `confirmSignup` creates it paused, and the
- * preview on that page is what they are meant to look at before activating.
+ * On success the person lands on the review step, `(app)/registrering/profil`.
+ * `confirmSignup` creates the profile paused, and that page is where they see
+ * what was built from their choices, take out what does not fit, and switch it
+ * on — the last step of the funnel (design B5, spec section 3.2).
+ *
+ * ## What happened to `returnPath`
+ *
+ * The stored return path exists so somebody who signed up from a trade page
+ * lands back on it. It is **not dropped and it does not win here** — it is
+ * carried into the review step as `retur` and honoured by the activation, which
+ * redirects there instead of `/oversikt`.
+ *
+ * Letting it win at this point was the obvious alternative and it is the wrong
+ * one: it would send the person back to a public results page holding a paused
+ * profile that nobody has told them to activate, and a profile that is never
+ * activated sends nothing to anyone. Preempting costs one screen; skipping
+ * costs the whole reason they gave us an address. Carrying it costs neither.
  */
 export default async function Page({
   searchParams,
@@ -48,9 +70,7 @@ export default async function Page({
       type: 'signup_completed',
       ...(result.serviceTemplateSlug ? { serviceTemplateSlug: result.serviceTemplateSlug } : {}),
     });
-    // The stored return path wins when there is one; otherwise the new
-    // profile, which is the thing they came here to get.
-    redirect(result.returnPath ?? withMessage(`/varsler/${result.profileId}`, 'profil-opprettet'));
+    redirect(reviewPath(result.profileId, result.returnPath));
   }
 
   return (

@@ -17,9 +17,14 @@ import { withMessage } from './messages';
  *
  * Spec section 4.4 lists what the user must be able to do to a profile — edit
  * it, pause it, exclude keywords, buyers and CPV codes, change the frequency,
- * delete it — and every one of those is an action in this file. Nothing else
- * writes to `alert_profiles`: the matcher reads it, the editorial layer never
- * touches it (ADR-6).
+ * delete it — and every one of those is an action in this file. The matcher
+ * reads `alert_profiles`; the editorial layer never touches it (ADR-6).
+ *
+ * One other module writes to it: `onboarding-actions.ts`, which prunes and
+ * activates the profile `confirmSignup` has just created. It is a separate
+ * file because its two actions answer to a single screen that exists once per
+ * account and then never again, and because both re-check ownership themselves
+ * rather than leaning on the route group. Any *third* writer belongs here.
  *
  * Criteria are replaced wholesale on save rather than diffed. The four
  * criterion tables have composite primary keys, so a delete-then-insert inside

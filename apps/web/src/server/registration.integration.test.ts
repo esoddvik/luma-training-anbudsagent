@@ -42,6 +42,19 @@ const TERMS_VERSION = '2026-01-utkast';
 /** Captures what the page would set, without a Next request context. */
 const cookieJar = new Map<string, { value: string; options: unknown }>();
 
+/**
+ * `redirect` throws in Next, and the confirmation page depends on that: the
+ * funnel event is recorded on the line before it, and everything after it must
+ * not run. The stand-in throws too, carrying the target so a test can read it.
+ */
+vi.mock('next/navigation', () => ({
+  redirect: (path: string) => {
+    const signal = new Error('NEXT_REDIRECT') as Error & { redirectPath?: string };
+    signal.redirectPath = path;
+    throw signal;
+  },
+}));
+
 vi.mock('next/headers', () => ({
   cookies: async () => ({
     get: (name: string) => {
@@ -88,6 +101,18 @@ function tokenFromEmail(email: FakePostmarkClient, index = 0): string {
   const token = new URL(url).searchParams.get('token');
   if (!token) throw new Error('confirmation link carries no token');
   return token;
+}
+
+/** Runs something that is expected to redirect, and returns where to. */
+async function redirectTargetOf(run: () => Promise<unknown>): Promise<string> {
+  try {
+    await run();
+  } catch (error) {
+    const path = (error as { redirectPath?: unknown }).redirectPath;
+    if (typeof path === 'string') return path;
+    throw error;
+  }
+  throw new Error('expected a redirect, and nothing redirected');
 }
 
 describeDb('the search-first entry door', () => {
@@ -408,6 +433,117 @@ describeDb('the search-first entry door', () => {
       // profile sending without the user asking at confirmation time.
       expect(profile!.active).toBe(false);
     });
+  });
+
+  /**
+   * Where a confirmed signup lands.
+   *
+   * The redirect target is not decoration. `confirmSignup` creates the profile
+   * paused, so whichever page it hands the reader to is the only page that
+   * normally switches it on — and a profile that is never switched on sends
+   * nobody anything. These run the real page module against the real database,
+   * with only `next/navigation.redirect` replaced, so the assertion is about
+   * where a browser would actually go.
+   */
+  describe('where a confirmed signup lands', () => {
+    async function confirmThrough(searchParams: Record<string, string>): Promise<string> {
+      const { default: ConfirmPage } = await import(
+        '../../app/(public)/registrering/bekreft/page'
+      );
+      return redirectTargetOf(() =>
+        ConfirmPage({ searchParams: Promise.resolve(searchParams) }),
+      );
+    }
+
+    it('sends the reader to the review step, carrying the profile it just created', async () => {
+      await requestSignupConfirmation({ email: UNKNOWN, draft: draft() });
+      const token = tokenFromEmail(email);
+
+      const target = await confirmThrough({ token });
+
+      const [path, query] = target.split('?');
+      expect(path).toBe('/registrering/profil');
+      const profileId = new URLSearchParams(query).get('profil');
+
+      // The id in the URL has to be the paused profile belonging to the account
+      // the same request created. If it were anything else the review page
+      // would either 404 for its own user or — far worse — name a row the
+      // ownership check has to reject.
+      const [profile] = await db
+        .select({ id: schema.alertProfiles.id, active: schema.alertProfiles.active })
+        .from(schema.alertProfiles);
+      expect(profileId).toBe(profile!.id);
+      expect(profile!.active).toBe(false);
+    });
+
+    it('carries the stored return path into the review step rather than jumping to it', async () => {
+      await requestSignupConfirmation({
+        email: UNKNOWN,
+        draft: draft(),
+        returnPath: '/varsler',
+      });
+      const token = tokenFromEmail(email);
+
+      const target = await confirmThrough({ token });
+
+      // Not `/varsler`. Landing there would leave a paused profile behind with
+      // nobody having been asked to start it; the review step redirects onward
+      // to this path once it has been.
+      const query = new URLSearchParams(target.split('?')[1]);
+      expect(target.startsWith('/registrering/profil?')).toBe(true);
+      expect(query.get('retur')).toBe('/varsler');
+    });
+
+    it('records the funnel completion before redirecting', async () => {
+      await requestSignupConfirmation({
+        email: UNKNOWN,
+        draft: draft(),
+        serviceTemplateSlug: 'renhold-og-facility-management',
+      });
+      const token = tokenFromEmail(email);
+
+      await confirmThrough({ token });
+
+      const events = await db
+        .select({ type: schema.funnelEvents.type, slug: schema.funnelEvents.serviceTemplateSlug })
+        .from(schema.funnelEvents);
+      expect(events).toContainEqual({
+        type: 'signup_completed',
+        slug: 'renhold-og-facility-management',
+      });
+    });
+
+    it('refuses a profile id in the URL that belongs to somebody else', async () => {
+      // The confirming user's session cookie is set by `confirmSignup`, and the
+      // mocked jar hands it back to `requireUser`, so this is a signed-in reader
+      // asking the review page for a profile that is not theirs.
+      await requestSignupConfirmation({ email: UNKNOWN, draft: draft() });
+      await confirmThrough({ token: tokenFromEmail(email) });
+
+      const other = await db.insert(schema.users).values({ email: KNOWN }).returning({
+        id: schema.users.id,
+      });
+      const [foreign] = await db
+        .insert(schema.alertProfiles)
+        .values({ userId: other[0]!.id, name: 'Ikke din profil', active: false })
+        .returning({ id: schema.alertProfiles.id });
+
+      const { default: ReviewPage } = await import('../../app/(app)/registrering/profil/page');
+      const target = await redirectTargetOf(() =>
+        ReviewPage({ searchParams: Promise.resolve({ profil: foreign!.id }) }),
+      );
+
+      // Indistinguishable from a profile that does not exist. `loadProfile`
+      // scopes by user id in the `where`, so the page never learns the row is
+      // real, and neither does whoever typed the id.
+      expect(target).toBe('/varsler?melding=ukjent-profil');
+    });
+
+    // The failure branch is not asserted here. It returns JSX, and this package's
+    // Vitest project runs in `node` with no JSX runtime configured, so rendering
+    // a page component throws `React is not defined` before any assertion about
+    // it can mean anything. What is testable from here is the redirect, and that
+    // is what the three cases above cover.
   });
 
   describe('the emailed link', () => {

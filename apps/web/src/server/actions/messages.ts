@@ -85,6 +85,34 @@ export const ACTION_MESSAGES_NB = {
     tone: 'danger',
     text: 'Vi klarte ikke å bekrefte adressen. Sett opp varslingen på nytt, så sender vi en ny lenke.',
   },
+  'innhenting-ferdig': { tone: 'success', text: 'Innhentingen er kjørt.' },
+  'innhenting-delvis': {
+    tone: 'warning',
+    text: 'Innhentingen kjørte, men noen kunngjøringer feilet. Sjekkpunktet står stille til en kjøring går helt gjennom.',
+  },
+  'innhenting-feilet': {
+    tone: 'danger',
+    text: 'Innhentingen kunne ikke kjøres. Se kjøringene under.',
+  },
+  'backfill-ferdig': {
+    tone: 'success',
+    text: 'Etterfyllingen er ferdig. Korpuset dekker nå hele perioden du ba om.',
+  },
+  'backfill-delvis': {
+    tone: 'warning',
+    text: 'Etterfyllingen er ferdig, men minst ett tidsvindu traff taket på 1000 treff og kan mangle kunngjøringer. Kjør på nytt med færre dager om gangen.',
+  },
+  'backfill-tidsavbrudd': {
+    tone: 'info',
+    // Deliberately not an error: the run is inline and long, so an aborted
+    // request usually means the work is still going. Telling an operator it
+    // failed is how a second one gets started on top of the first.
+    text: 'Etterfyllingen svarte ikke innen tidsfristen, men er trolig fortsatt i gang. Vent litt og last siden på nytt før du prøver igjen.',
+  },
+  'backfill-feilet': {
+    tone: 'danger',
+    text: 'Etterfyllingen kunne ikke kjøres.',
+  },
   ugyldig: {
     tone: 'danger',
     text: 'Forespørselen var ugyldig. Last siden på nytt og prøv igjen.',

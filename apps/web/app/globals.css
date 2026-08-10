@@ -1,5 +1,37 @@
 @import 'tailwindcss';
 
+/* The `@luma/ui` primitives, placed in Tailwind's `components` layer.
+ *
+ * This import has to live here, and it has to come *after* `tailwindcss`.
+ *
+ * Layered CSS always loses to unlayered CSS, whatever the specificity. So while
+ * `styles.css` was imported as a plain stylesheet from `app/layout.tsx`, every
+ * `.luma-*` rule beat every Tailwind utility: `<Card className="flex">` stayed
+ * `display: block`, because `.luma-card` was unlayered and `.flex` sits in
+ * `@layer utilities`. Nothing errored — the utility was simply discarded, which
+ * is why the landing page grew wrapper `<div>`s whose only job was to be the
+ * flex container the card refused to be.
+ *
+ * Putting the primitives in `components` fixes that by design: utilities beat
+ * components, so a caller can always override a primitive without `!important`
+ * and without a wrapper element.
+ *
+ * The ordering is not cosmetic. The first `@layer` a browser sees fixes that
+ * layer's position, and `@import 'tailwindcss'` is what emits the canonical
+ * `@layer theme, base, components, utilities`. Declare `components` before that
+ * line — by wrapping `styles.css` in `@layer components { … }` at source, or by
+ * importing it above — and `components` is registered first, which pushes
+ * `base` *after* it. Tailwind's preflight lives in `base`, so `.luma-button`
+ * loses its padding to `button { padding: 0 }` and every primitive quietly
+ * deflates. Verified: that arrangement computes `padding: 0px` on `.luma-button`
+ * where this one computes `8px 24px`.
+ *
+ * It is imported here rather than from `app/layout.tsx` so the layer assignment
+ * happens in the file that owns the layer order. `styles.css` itself stays
+ * unlayered on disk, which keeps `@luma/ui` usable by a consumer that has no
+ * Tailwind and no layers at all. */
+@import '@luma/ui/styles.css' layer(components);
+
 /* Explicit source roots: the app is a workspace package, so relying on
  * Tailwind's automatic detection alone is fragile in the monorepo. */
 @source '../app';
@@ -173,6 +205,28 @@
     max-width: 72rem;
     margin-inline: auto;
     padding-inline: var(--luma-space-md);
+  }
+
+  /* A card that *is* a top-level block keeps its own padding.
+   *
+   * The shell gutter above and `.luma-card`'s padding are two different things
+   * that land on the same property. For a plain `<section>` the gutter insets
+   * the content from the viewport edge, which is what it is for. For a card the
+   * element itself is the visible box, so the rule stops being a gutter and
+   * just overwrites the card's interior padding — 24px to 16px, on the inline
+   * axis only, leaving it visibly narrower left-to-right than top-to-bottom.
+   *
+   * Unlayered `styles.css` used to mask this: `.luma-card` beat `.site-main > *`
+   * by being outside the cascade layers entirely. Moving it into `components`
+   * put the two at equal specificity in one layer, where source order hands it
+   * to whichever file came second. Restated here so it is a decision rather
+   * than an accident of import order. Only `/` hits it today — the landing page
+   * closes on a `<Card as="section">` — but the rule is what stops the next
+   * top-level card from silently losing 8px a side.
+   *
+   * Still a `components` rule, so a caller's `px-*` utility overrides it. */
+  .site-main > .luma-card {
+    padding-inline: var(--luma-space-lg);
   }
 
   /* The main landmark. Vertical rhythm lives here rather than on each page, so

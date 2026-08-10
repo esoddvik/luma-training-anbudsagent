@@ -7,6 +7,15 @@
  * swap to a single-file change.
  *
  * Import order in the consuming app: `tokens.css` first, then this file.
+ *
+ * This file is intentionally **unlayered**, so it works in a consumer that has
+ * no cascade layers. A consumer that has them must put it in one — under
+ * Tailwind, `@import '@luma/ui/styles.css' layer(components);` below the
+ * `@import 'tailwindcss'` line — or these rules will beat that consumer's
+ * layered rules at any specificity. Do not wrap this file in `@layer` here:
+ * declaring a layer in the package registers it before Tailwind states the
+ * canonical order, which reorders `base` after `components` and lets preflight
+ * strip the padding off `.luma-button`. The layer belongs at the call site.
  * ========================================================================== */
 
 /* --- Focus -----------------------------------------------------------------

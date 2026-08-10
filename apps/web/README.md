@@ -24,7 +24,9 @@ Colour, spacing, radius and elevation all come from `@luma/ui` tokens. Tailwind'
 
 `bg-brand` is Luma's signature orange and is for decorative surfaces only. `text-brand` and `border-brand` also exist, because Tailwind v4 mints the whole utility family from one `--color-*` declaration, and both render `#FF6B35` as a foreground at 2.84:1 — failing WCAG AA. An eslint rule in the root config rejects them; use `text-primary` for text, or `bg-brand` with `text-brand-on`.
 
-`@luma/ui/styles.css` is **unlayered**, so `.luma-*` rules beat Tailwind utilities at equal specificity. `<Card tone="flat" className="shadow-md">` silently renders with no shadow.
+`@luma/ui/styles.css` is imported by `app/globals.css` into Tailwind's **`components`** layer, so utilities beat primitives: `<Card tone="flat" className="shadow-md">` gets the shadow, and `<Card className="flex">` really is a flex container. Override a primitive with a utility rather than a wrapper element.
+
+That import is load-bearing and order-sensitive — it must stay below `@import 'tailwindcss'`, which is what registers the layer order. Wrapping the stylesheet in `@layer components` at source instead, or importing it above that line, registers `components` first and pushes `base` after it, at which point Tailwind's preflight strips `.luma-button`'s padding. The note above the import in `globals.css` has the detail.
 
 ## Verifying UI changes in this environment
 

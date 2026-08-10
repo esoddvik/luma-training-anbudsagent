@@ -1,5 +1,7 @@
 import '@luma/ui/tokens.css';
-import '@luma/ui/styles.css';
+// `@luma/ui/styles.css` is imported from `globals.css`, not here: it has to be
+// assigned to Tailwind's `components` layer, and only that file knows the layer
+// order. See the note above the import there before moving it back.
 import './globals.css';
 
 import type { Metadata, Viewport } from 'next';

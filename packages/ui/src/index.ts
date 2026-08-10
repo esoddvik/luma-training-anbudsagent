@@ -1,10 +1,19 @@
 /**
  * `@luma/ui` — shared design tokens and accessible primitives.
  *
- * Import the stylesheets once, in the app's root layout:
+ * Import the stylesheets once. `tokens.css` goes in the app's root layout:
  *
  *   import '@luma/ui/tokens.css';
- *   import '@luma/ui/styles.css';
+ *
+ * `styles.css` is deliberately unlayered here, so that a consumer with no
+ * cascade layers gets it working by default. An app that *does* use layers must
+ * assign it one, or these rules will beat every layered rule it has regardless
+ * of specificity. Under Tailwind that means importing it from the same file as
+ * `@import 'tailwindcss'`, and below that line:
+ *
+ *   @import '@luma/ui/styles.css' layer(components);
+ *
+ * `apps/web/app/globals.css` documents why the position matters.
  *
  * Every component here is a plain function component with no hooks and no
  * browser APIs, so it renders as a React Server Component without a

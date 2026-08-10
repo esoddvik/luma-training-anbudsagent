@@ -1,6 +1,6 @@
-import { createHmac, timingSafeEqual } from 'node:crypto';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
+import { MACHINE_SIGNATURE_HEADER, machineSignatureMatches } from '@/server/machine-signature';
 
 /**
  * On-demand revalidation, called by the ingest worker
@@ -19,11 +19,11 @@ import { z } from 'zod';
  *
  * ## Why it is signed rather than merely secret
  *
- * A bare shared secret in a query string ends up in access logs, in browser
- * history if anyone pastes it, and in any proxy between here and Railway. The
- * body is HMAC-signed with `CRON_SECRET` instead, so the token never travels
- * in a URL and a captured request cannot be replayed against a different set
- * of ids.
+ * See `@/server/machine-signature`, which now holds the check — it was written
+ * out here and again in `/synk-tjenestemaler`, and a constant-time comparison
+ * copied twice is one drift away from not being constant-time. It also could
+ * not be tested while it lived in `app/`, which the web vitest project does not
+ * collect.
  *
  * Purging a cache is not destructive — the worst a forged call achieves is
  * making pages regenerate — but it is free denial-of-service if unauthenticated,
@@ -33,17 +33,6 @@ import { z } from 'zod';
 const body = z.object({
   tenderIds: z.array(z.uuid()).min(1).max(500),
 });
-
-function signatureMatches(raw: string, provided: string | null, secret: string): boolean {
-  if (!provided) return false;
-  const expected = createHmac('sha256', secret).update(raw, 'utf8').digest('hex');
-  const a = Buffer.from(expected, 'utf8');
-  const b = Buffer.from(provided, 'utf8');
-  // Length check first: `timingSafeEqual` throws on a mismatch rather than
-  // returning false, and a thrown 500 is itself an oracle.
-  if (a.length !== b.length) return false;
-  return timingSafeEqual(a, b);
-}
 
 export async function POST(request: Request): Promise<Response> {
   const secret = process.env['CRON_SECRET'];
@@ -55,7 +44,7 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   const raw = await request.text();
-  if (!signatureMatches(raw, request.headers.get('x-luma-signature'), secret)) {
+  if (!machineSignatureMatches(raw, request.headers.get(MACHINE_SIGNATURE_HEADER), secret)) {
     return Response.json({ error: 'invalid_signature' }, { status: 401 });
   }
 

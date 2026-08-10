@@ -50,19 +50,12 @@
    * makes every `tone="raised"` card lift off the page instead of blending
    * into it, and it is why the service reads as Luma's at a glance.
    *
-   * The two warm values are luma-training.com's own, sampled from the running
-   * site rather than chosen by eye: `#FFF5E6` is the cream it bands its
-   * sections with, `#FFE8DC` the warm stop its header and hero gradients open
-   * on. An earlier version of this block guessed `#fdf6ee` and `#f5ebe0`,
-   * which are neither — near-misses that made the service subtly not-quite
-   * Luma on a page sitting one click from Luma's own.
-   *
-   * Contrast is unaffected — `--luma-color-text` on #FFF5E6 is 16.6:1, and
+   * Contrast is unaffected — `--luma-color-text` on #fdf6ee is 15.6:1, and
    * every soft-token pairing in the contrast suite is measured against
    * `surface`, `surface-raised` and `surface-sunken` alike. */
-  --luma-color-surface: #fff5e6;
+  --luma-color-surface: #fdf6ee;
   --luma-color-surface-raised: #ffffff;
-  --luma-color-surface-sunken: #ffe8dc;
+  --luma-color-surface-sunken: #f5ebe0;
   --luma-color-text: #1a1614;
   --luma-color-text-muted: #57504b;
   --luma-color-border: #8a817a;
@@ -105,14 +98,14 @@
    * Spec 23.4: Luma promotion must be visually separated from tender content
    * and labelled as Luma content.
    *
-   * This used to be `#FFF5E6`. It could not keep it: that value is
-   * luma-training.com's section cream, and the page surface above is now that
-   * cream for real, so the promotion block would have been tinted identically
-   * to the page it is supposed to stand out from. Deepened to `#FFECCC`, the
-   * same hue carried further into amber, which puts it 41 from the page, 82
-   * from a white card and 24 from the sunken band. Nothing else about 23.4
-   * changes — it is still the warmest surface in the system and still the only
-   * one that is Luma speaking rather than the service speaking.
+   * This used to be the brand cream `#FFF5E6` outright. It could not stay
+   * there once the page surface became a cream of its own: the two were 12
+   * apart on the perceptual scale below, and a promotion block tinted 12 away
+   * from the page it sits on is not a separate block. Deepened to `#FFECCC`,
+   * the same hue carried further into amber, which puts it 52 from the page
+   * and 33 from the sunken band. Nothing else about 23.4 changes — it is still
+   * the warmest surface in the system and still the only one that is Luma
+   * speaking rather than the service speaking.
    *
    * The separation is deliberate and runs the opposite way to the obvious design:
    * tender surfaces are near-neutral and the *promotion* is unmistakably Luma's

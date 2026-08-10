@@ -27,8 +27,26 @@ export {
   type ButtonVariant,
 } from './components/Button.js';
 export { Card, type CardProps, type CardTone } from './components/Card.js';
+export {
+  Chip,
+  chipClassName,
+  RemovableChip,
+  ToggleChip,
+  type ChipProps,
+  type ChipStyleOptions,
+  type ChipTone,
+  type RemovableChipProps,
+  type ToggleChipProps,
+} from './components/Chip.js';
+export { Disclosure, type DisclosureProps, type DisclosureTone } from './components/Disclosure.js';
 export { Field, type FieldProps } from './components/Field.js';
 export { Promotion, type PromotionProps } from './components/Promotion.js';
+export {
+  StrengthBar,
+  type StrengthBarProps,
+  type StrengthLevel,
+} from './components/StrengthBar.js';
+export { Toggle, type ToggleProps } from './components/Toggle.js';
 export {
   Checkbox,
   Input,

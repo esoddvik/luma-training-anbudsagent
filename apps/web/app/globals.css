@@ -52,6 +52,15 @@
   --color-brand: var(--luma-color-brand);
   --color-brand-on: var(--luma-color-brand-on);
 
+  /* The one inverted surface in the app — the assistant panel on the landing
+   * page. `bg-ink` may carry `text-ink-on`, `text-ink-muted` and
+   * `text-ink-accent` and nothing else: every other foreground token in the
+   * system is tuned for a near-white background and fails on this one. */
+  --color-ink: var(--luma-color-ink);
+  --color-ink-on: var(--luma-color-ink-on);
+  --color-ink-muted: var(--luma-color-ink-muted);
+  --color-ink-accent: var(--luma-color-ink-accent);
+
   --color-success: var(--luma-color-success);
   --color-success-soft: var(--luma-color-success-soft);
   --color-success-soft-text: var(--luma-color-success-soft-text);
@@ -362,6 +371,63 @@
    * cards that sit on it keep an edge. */
   .luma-soft-band {
     background: var(--luma-color-surface-sunken);
+  }
+
+  /* The rounded cream panel the funnel design puts nearly every section on: a
+   * soft-edged block of `surface` lifted off the page with `shadow-md`. It is a
+   * *page* container, not a card — `.luma-card` keeps its border and its
+   * `surface-raised` white, so cards continue to read as objects sitting on this
+   * panel rather than as the panel itself.
+   *
+   * The design fixes this at 1440; here it is a container that fills whatever
+   * `.app-shell` gives it. Below 640 the generous padding would eat most of a
+   * 390px viewport, so it drops a step and the corners tighten with it. */
+  .luma-panel {
+    background: var(--luma-color-surface);
+    border-radius: var(--luma-radius-xl);
+    box-shadow: var(--luma-shadow-md);
+    padding: var(--luma-space-xl);
+  }
+
+  @media (max-width: 640px) {
+    .luma-panel {
+      border-radius: var(--luma-radius-lg);
+      padding: var(--luma-space-md);
+    }
+  }
+
+  /* Results beside the signup rail. `minmax(0, 1fr)` rather than `1fr` because a
+   * grid track defaults to `min-content` width: one long untruncatable tender
+   * title would otherwise push the rail off screen instead of wrapping.
+   *
+   * It collapses at 900 rather than at a device breakpoint — that is the width
+   * at which a 360px rail leaves the result cards too narrow to hold a title,
+   * a buyer line and a chip row without wrapping every one of them. */
+  .funnel-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: var(--luma-space-xl);
+    align-items: start;
+  }
+
+  @media (max-width: 900px) {
+    .funnel-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  /* The signup card follows the reader down a long result list. It goes static
+   * at the same breakpoint the grid collapses at: once the rail is stacked under
+   * the results, sticking would pin it to the viewport for the whole scroll. */
+  .sticky-rail {
+    position: sticky;
+    top: var(--luma-space-lg);
+  }
+
+  @media (max-width: 900px) {
+    .sticky-rail {
+      position: static;
+    }
   }
 
   .eyebrow {

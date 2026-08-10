@@ -19,6 +19,9 @@
 .luma-textarea:focus-visible,
 .luma-select:focus-visible,
 .luma-checkbox__control:focus-visible,
+.luma-chip:focus-visible,
+.luma-toggle__control:focus-visible,
+.luma-disclosure__trigger:focus-visible,
 .luma-skip-link:focus-visible {
   outline: var(--luma-focus-ring-width) solid var(--luma-color-focus-ring);
   outline-offset: var(--luma-focus-ring-offset);
@@ -520,9 +523,302 @@
   font-weight: var(--luma-font-weight-semibold);
 }
 
+/* --- Chip ---------------------------------------------------------------------
+ * One base class for every pill in the funnel: CPV labels, match reasons,
+ * region choices, filter values. `min-height` is the 44px hit target even on the
+ * static tones, so a row of chips never changes height when one of them becomes
+ * interactive.
+ *
+ * `.luma-chip` is applied to `<span>`, `<button>` and `<a>` alike (see
+ * `chipClassName`), which is why the base block resets `font-family` and
+ * `text-decoration` — a button does not inherit the page font, and an anchor
+ * arrives underlined.
+ * ------------------------------------------------------------------------------ */
+.luma-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--luma-space-2xs);
+  min-height: var(--luma-hit-target-min);
+  padding: var(--luma-space-2xs) var(--luma-space-md);
+  border: var(--luma-border-width) solid transparent;
+  border-radius: var(--luma-radius-pill);
+  font-family: inherit;
+  font-size: var(--luma-font-size-sm);
+  font-weight: var(--luma-font-weight-medium);
+  line-height: var(--luma-line-height-snug);
+  text-align: left;
+  text-decoration: none;
+}
+
+.luma-chip--neutral {
+  background: var(--luma-color-surface-sunken);
+  color: var(--luma-color-text);
+}
+
+.luma-chip--soft {
+  background: var(--luma-color-primary-soft);
+  color: var(--luma-color-primary-soft-text);
+}
+
+.luma-chip--outline {
+  background: transparent;
+  color: var(--luma-color-text);
+  border-color: var(--luma-color-border);
+}
+
+/* Two-state chip. The unselected state keeps a border and a raised surface so
+ * it still reads as a control while it is off — a chip that only looks like a
+ * control once it is on gives the reader nothing to click first. */
+.luma-chip--toggle {
+  background: var(--luma-color-surface-raised);
+  color: var(--luma-color-text);
+  border-color: var(--luma-color-border);
+  cursor: pointer;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    color 120ms ease;
+}
+
+.luma-chip--toggle:hover {
+  border-color: var(--luma-color-border-strong);
+  background: var(--luma-color-surface-sunken);
+}
+
+.luma-chip--selected {
+  background: var(--luma-color-primary);
+  color: var(--luma-color-primary-on);
+  border-color: var(--luma-color-primary);
+  font-weight: var(--luma-font-weight-semibold);
+}
+
+.luma-chip--selected:hover {
+  background: var(--luma-color-primary-hover);
+  border-color: var(--luma-color-primary-hover);
+  color: var(--luma-color-primary-on);
+}
+
+/* Removable filter chip. Hover turns it danger-coloured because the whole chip
+ * is the remove button — the `×` is decoration, not a second target, so the
+ * destructive signal has to be carried by the surface the pointer is over. */
+.luma-chip--remove {
+  border-color: var(--luma-color-border);
+  cursor: pointer;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    color 120ms ease;
+}
+
+.luma-chip--remove:hover {
+  background: var(--luma-color-danger-soft);
+  color: var(--luma-color-danger-soft-text);
+  border-color: var(--luma-color-danger);
+}
+
+.luma-chip__glyph {
+  flex: none;
+  font-size: var(--luma-font-size-lg);
+  line-height: 1;
+}
+
+/* --- Toggle switch --------------------------------------------------------------
+ * `<button role="switch">`, so the track and knob are pure decoration and are
+ * hidden from the accessibility tree; `aria-checked` carries the state.
+ * ------------------------------------------------------------------------------- */
+.luma-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--luma-space-xs);
+}
+
+.luma-toggle__control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  min-height: var(--luma-hit-target-min);
+  min-width: var(--luma-hit-target-min);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.luma-toggle__track {
+  position: relative;
+  display: block;
+  /* 52 × 28 from the design, expressed in spacing steps rather than pixels. */
+  width: calc(var(--luma-space-2xl) + var(--luma-space-2xs));
+  height: calc(var(--luma-space-lg) + var(--luma-space-2xs));
+  border: var(--luma-border-width) solid var(--luma-color-border);
+  border-radius: var(--luma-radius-pill);
+  background: var(--luma-color-surface-sunken);
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease;
+}
+
+.luma-toggle__control[aria-checked='true'] .luma-toggle__track {
+  background: var(--luma-color-primary);
+  border-color: var(--luma-color-primary);
+}
+
+.luma-toggle__knob {
+  position: absolute;
+  top: var(--luma-space-3xs);
+  left: var(--luma-space-3xs);
+  display: block;
+  width: calc(var(--luma-space-lg) - var(--luma-space-3xs));
+  height: calc(var(--luma-space-lg) - var(--luma-space-3xs));
+  border-radius: var(--luma-radius-pill);
+  background: var(--luma-color-surface-raised);
+  box-shadow: var(--luma-shadow-sm);
+  transition: transform 120ms ease;
+}
+
+.luma-toggle__control[aria-checked='true'] .luma-toggle__knob {
+  transform: translateX(var(--luma-space-lg));
+}
+
+.luma-toggle__label {
+  font-size: var(--luma-font-size-md);
+  line-height: var(--luma-line-height-normal);
+  color: var(--luma-color-text);
+}
+
+/* --- Disclosure ------------------------------------------------------------------
+ * Controlled, so nothing here reacts to a `[open]` attribute; the panel is shown
+ * or hidden by React with `hidden`, and the `+`/`−` glyph is swapped in the
+ * component. The rules below only have to make the trigger look like a heading
+ * that can be pressed.
+ * -------------------------------------------------------------------------------- */
+.luma-disclosure--card {
+  padding: var(--luma-space-md);
+  border: var(--luma-border-width) solid var(--luma-color-border);
+  border-radius: var(--luma-radius-lg);
+  background: var(--luma-color-surface-raised);
+}
+
+.luma-disclosure__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--luma-space-sm);
+  width: 100%;
+  min-height: var(--luma-hit-target-min);
+  padding: var(--luma-space-2xs) 0;
+  border: 0;
+  background: transparent;
+  color: var(--luma-color-text);
+  font-family: inherit;
+  font-size: var(--luma-font-size-md);
+  font-weight: var(--luma-font-weight-semibold);
+  line-height: var(--luma-line-height-snug);
+  text-align: left;
+  cursor: pointer;
+  transition: color 120ms ease;
+}
+
+.luma-disclosure__trigger:hover {
+  color: var(--luma-color-primary);
+}
+
+.luma-disclosure__sign {
+  flex: none;
+  font-size: var(--luma-font-size-xl);
+  line-height: 1;
+  color: var(--luma-color-primary);
+}
+
+.luma-disclosure__panel {
+  padding-block-start: var(--luma-space-xs);
+  color: var(--luma-color-text);
+}
+
+.luma-disclosure__panel > :last-child {
+  margin-bottom: 0;
+}
+
+/* --- StrengthBar ------------------------------------------------------------------
+ * Spec 4.3 forbids showing a match score, so the three widths below are the only
+ * place a quantity exists at all — they are keyed to the word, never computed,
+ * and the bar carries `aria-hidden` in the component. Do not add a fourth level
+ * here without adding the word for it first.
+ *
+ * The fill is `--luma-color-brand` thinned with `color-mix` rather than a new
+ * token: it is decoration on a sunken track, it never carries text, and the
+ * brand orange at full strength would out-shout the deadline and the title.
+ * ---------------------------------------------------------------------------------- */
+.luma-strength {
+  display: flex;
+  flex-direction: column;
+  gap: var(--luma-space-3xs);
+}
+
+.luma-strength__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--luma-space-xs);
+  margin: 0;
+  font-size: var(--luma-font-size-sm);
+  line-height: var(--luma-line-height-snug);
+}
+
+.luma-strength__label {
+  color: var(--luma-color-text);
+  font-weight: var(--luma-font-weight-medium);
+}
+
+.luma-strength__level {
+  flex: none;
+  color: var(--luma-color-text-muted);
+  font-weight: var(--luma-font-weight-semibold);
+}
+
+.luma-strength__track {
+  display: block;
+  width: 100%;
+  height: var(--luma-space-xs);
+  border-radius: var(--luma-radius-pill);
+  background: var(--luma-color-surface-sunken);
+  overflow: hidden;
+}
+
+.luma-strength__fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--luma-radius-pill);
+  background: color-mix(in srgb, var(--luma-color-brand) 72%, transparent);
+}
+
+.luma-strength__fill--sterk {
+  width: 90%;
+}
+
+.luma-strength__fill--middels {
+  width: 55%;
+}
+
+.luma-strength__fill--svak {
+  width: 25%;
+}
+
+.luma-strength__evidence {
+  margin: 0;
+  font-size: var(--luma-font-size-sm);
+  line-height: var(--luma-line-height-snug);
+  color: var(--luma-color-text-muted);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .luma-button,
   .luma-card--interactive,
+  .luma-chip,
+  .luma-disclosure__trigger,
+  .luma-toggle__track,
+  .luma-toggle__knob,
   .luma-skip-link {
     transition: none;
   }

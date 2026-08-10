@@ -5,11 +5,26 @@ It is exported here so that scripts/check-citations.js can resolve the v3
 citations in the code against real headings — before this file existed they
 matched no pattern and nothing verified them.
 
-Two consequences worth knowing. The copy can drift from the note, and nothing
-detects that: re-export by hand after editing the note. And the section
-numbering is its own, independent of v2 — v3 §3 is the search-first funnel,
-v2 §3 is the trust contract. That is why the two are separate files with
-separate citation forms rather than one merged pool.
+The section numbering is its own, independent of v2 — v3 §3 is the
+search-first funnel, v2 §3 is the trust contract. That is why the two are
+separate files with separate citation forms rather than one merged pool.
+
+Export receipt, verified by `pnpm check:spec-copy`, which CI runs:
+
+    rable-note:   f1781a17-8552-413d-8a7b-f5caaaa6639a
+    note-updated: 2026-08-07T11:52:22.556Z
+    body-sha256:  6fcb9966ce40c69f4ed505cdc7d04e201b85b4ffe5ef0c0e9657ec9dc1e872e7
+
+Do not edit the text below by hand — the hash covers it and CI will refuse
+the change. Edit the note in Rable and re-export, which is a job for an
+agent session with the Rable connector: read the note, replace everything
+after this comment, then `node scripts/check-spec-copy.js --record`.
+
+What that receipt can and cannot prove: it proves the copy has not been
+edited in place, which is the drift that happens by accident. It cannot
+prove the copy still matches the note, because a GitHub runner has no
+credential for Rable and no way to ask. That direction needs a session that
+does — see `docs/spec-sync.md`.
 -->
 
 # Luma Anbudsvarsling IDE Agent Spec v3: Søk-først, Pluss og dokumentpipeline

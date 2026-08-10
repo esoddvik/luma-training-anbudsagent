@@ -80,6 +80,18 @@ jobs:
       - name: Lint
         run: pnpm lint
 
+      # The v3 specification is authored in Rable; this repository holds a
+      # copy so the citation check has real headings to resolve against. This
+      # step catches the copy being edited here. It cannot catch the note
+      # moving on without it — a runner has no credential for Rable. See
+      # docs/spec-sync.md for the direction CI cannot see.
+      #
+      # Ordered before the citation check on purpose: if the copy has been
+      # tampered with, every citation resolving against it proves nothing, and
+      # the first failure a reader sees should name the cause.
+      - name: Check the tracked specification copy
+        run: pnpm check:spec-copy
+
       # Resolves every §-citation in the repo against the specification's
       # headings. Cheap, and needs no build, so it runs before typecheck.
       - name: Check specification citations

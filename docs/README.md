@@ -16,6 +16,7 @@ Customer-facing text is Norwegian. Code, schema, logs and these documents are En
 | [`adr/`](adr/) | Architecture decision records. Sixteen accepted decisions, listed below. |
 | [`deployment.md`](deployment.md) | Operator guide: what runs where, Vercel and Railway configuration, environment variable names per service. |
 | [`phase-7-billing-reference.md`](phase-7-billing-reference.md) | The v1 order and subscription model, kept as reference for phase 7 per spec §28.3. Nothing in it is implemented. |
+| [`spec-sync.md`](spec-sync.md) | The v3 specification is authored in Rable and copied into this repository. Which direction of drift CI catches, which it structurally cannot, and how to re-export. |
 
 ## Architecture decision records
 

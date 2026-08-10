@@ -24,38 +24,42 @@ import { listServiceTemplateChoices } from './profiles';
  * document to argue with.
  *
  * **It is a measurement, not a constant.** Re-run the query in
- * `search-surface-density.md` against a full 90-day corpus and update this
- * list; the one below was measured over 37 days and therefore *undercounts*.
- * `PAGES_MEASURED_OVER_DAYS` records that so the staleness is visible here and
- * not only in prose.
+ * `search-surface-density.md` and update this list. `PAGES_MEASURED_OVER_DAYS`
+ * records the window it was taken over, so staleness is visible here and not
+ * only in prose.
+ *
+ * The 94-day window is the real one the spec asks for, reached by
+ * `runBackfill` — the hourly sync cannot get there on its own, because Doffin
+ * serves at most 1000 hits per query and that is roughly five weeks of
+ * notices.
  */
 
 /** The window the list below was measured over. The spec asks for 90. */
-export const PAGES_MEASURED_OVER_DAYS = 37;
+export const PAGES_MEASURED_OVER_DAYS = 94;
 export const PAGES_MEASURED_ON = '2026-08-10';
-/** Notices needed in the window before a pair gets its own page. */
-export const QUALIFYING_THRESHOLD = 8;
 
 /**
- * A pair must also have at least this many notices *of its own*.
+ * Notices a landsdel needs **of its own** before it gets a page.
  *
- * Nationwide notices count towards `QUALIFYING_THRESHOLD` — that was a
- * deliberate product decision, because a nationwide competition is a real
- * opportunity for a supplier in that landsdel and hiding it to make the page
- * look more distinctive would optimise the page against its reader.
+ * The "of its own" is the whole rule, and it was not always so. Nationwide
+ * notices used to count towards this — a deliberate decision, on the good
+ * grounds that a nationwide competition is a real opportunity for a supplier
+ * in that landsdel and hiding it would optimise the page against its reader.
  *
- * Measured against production, that rule alone produces a degenerate result:
- * **Svalbard og Jan Mayen qualifies for four templates on zero regional
- * notices.** Every one of its counts is borrowed from the nationwide pool, so
- * the page would render an empty regional section above a "gjelder hele
- * landet" list identical to the other six landsdeler — the emptiest possible
- * page, and duplicate content pointed at a search engine.
+ * That held while the corpus was 37 days and the nationwide pool ran from 1 to
+ * 36 notices. Backfilled to 94 days it runs from 9 to **144**, and the rule
+ * inverted: the shared pool alone cleared the threshold everywhere, so 48 of
+ * the 56 possible pairs "qualified" — including `bemanning-og-rekruttering` in
+ * six landsdeler on own-counts of 1, 2, 2, 3, 4 and 6. A page carrying one
+ * regional notice above nine nationwide ones is not a regional page, and six
+ * `it-tjenester` pages sharing 144 notices apiece are one page with six URLs.
  *
- * So the regional half has to justify the page's existence. One notice is a
- * deliberately low bar: the threshold is what decides whether a page is worth
- * having, and this only rules out the case where "regional page" is a lie.
+ * So the threshold now measures only what makes a page *distinct*. Nationwide
+ * notices still render, in their own labelled section, and still matter to the
+ * reader — they simply no longer justify a page's existence. The reader loses
+ * nothing; the index gains 17 fewer near-duplicates.
  */
-export const MINIMUM_OWN_NOTICES = 1;
+export const QUALIFYING_THRESHOLD = 8;
 
 /**
  * Template slug → landsdel codes that cleared the threshold.
@@ -67,16 +71,24 @@ export const MINIMUM_OWN_NOTICES = 1;
  * weeks, and an empty page in an index is worse than no page.
  */
 export const QUALIFYING_REGIONAL_PAGES: Readonly<Record<string, readonly string[]>> = {
+  // Own notices in the 94-day window, for the record:
+  // 187 / 84 / 228 / 60 / 97 / 181 across NO08 NO09 NO0A NO02 NO06 NO07.
   'bygg-og-anlegg-utforende': ['NO08', 'NO09', 'NO0A', 'NO02', 'NO06', 'NO07'],
+  // 128 / 22 / 55 / 29 / 20 / 37.
   'it-tjenester-og-konsulentbistand': ['NO08', 'NO09', 'NO0A', 'NO02', 'NO06', 'NO07'],
+  // 120 / 43 / 95 / 30 / 30 / 73. NO0B has 1 and does not qualify.
   'drift-og-vedlikehold-av-eiendom': ['NO08', 'NO09', 'NO0A', 'NO02', 'NO06', 'NO07'],
+  // 84 / 32 / 71 / 24 / 36 / 54.
   'radgivende-ingeniortjenester': ['NO08', 'NO09', 'NO0A', 'NO02', 'NO06', 'NO07'],
-  'renhold-og-facility-management': ['NO08', 'NO07'],
-  // Added on the 2026-08-10 re-measurement against production. Both clear the
-  // threshold only once nationwide notices are counted — 3 of their own plus 5
-  // shared — which is exactly the case the counting rule was chosen to admit.
-  'kantine-og-matservering': ['NO08', 'NO0A'],
-  'vakthold-og-sikkerhet': ['NO08'],
+  // 15 / 6 / 31 / 5 / 11 / 17 — NO09 and NO02 fall short.
+  'renhold-og-facility-management': ['NO08', 'NO0A', 'NO06', 'NO07'],
+  // 15 / 5 / 9 / 2 / 1 / 6 — only Oslo og Viken and Vestlandet clear it.
+  'vakthold-og-sikkerhet': ['NO08', 'NO0A'],
+  // 18 / 1 / 6 / 0 / 6 / 2 — Oslo og Viken alone.
+  'kantine-og-matservering': ['NO08'],
+  // `bemanning-og-rekruttering` appears nowhere: its best landsdel has 6 own
+  // notices in 94 days. It has a national page and nothing else, which is the
+  // mechanism working rather than a gap.
 };
 
 /** Does this pair have its own page, or does it collapse to the national one? */

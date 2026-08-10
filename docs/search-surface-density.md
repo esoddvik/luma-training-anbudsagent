@@ -72,7 +72,43 @@ This is not an argument against the pages. It is an argument that a regional pag
 
 **2. The `cross_sector` templates are the ones that struggle regionally.** Three of the four templates that fail or barely clear the threshold are `cross_sector`, and that is consistent with ADR-17's reasoning: for a cross-sector supplier the buyer can be anyone, so demand is thin and evenly spread rather than clustered. Spec v3 section 3.2's requirement that national pages for `cross_sector` templates carry a visible region selector is doing real work here — for those suppliers, national *is* the correct default view and the selector is how they narrow it themselves.
 
-## The 2026-08-10 re-measurement
+## The 2026-08-10 backfilled measurement — this is the current one
+
+**94 days, 4017 notices, 2671 active in the window.** Reached with `runBackfill`, which partitions by issue-date fortnights; the hourly sync cannot get there, because Doffin serves at most 1000 hits per query and that is about five weeks of notices. Seven windows, 4105 fetched, zero failures, no window truncated.
+
+**31 pairs qualify**, and the rule changed to get there.
+
+### Nationwide notices stopped counting towards the threshold
+
+They used to, deliberately: a nationwide competition is a real opportunity for a supplier in that landsdel, and hiding it would optimise the page against its reader.
+
+That held while the nationwide pool ran 1–36 notices. Over 94 days it runs **9–144**, and the rule inverted — the shared pool alone cleared the threshold everywhere, so **48 of the 56 possible pairs qualified**, including:
+
+- `bemanning-og-rekruttering` in six landsdeler on own-counts of **1, 2, 2, 3, 4 and 6**. One regional notice above nine nationwide ones is not a regional page.
+- `it-tjenester-og-konsulentbistand` with 144 shared notices against 20–128 regional. Six pages sharing 144 notices apiece is one page with six URLs.
+
+So the threshold now measures only what makes a page distinct: **a landsdel's own notices**. Nationwide notices still render, in their own labelled section, and still matter to the reader — they no longer justify a page existing. The reader loses nothing and the index gains 17 fewer near-duplicates.
+
+### The resulting pages
+
+Own notices in the 94-day window; a landsdel needs 8.
+
+| Template | NO08 | NO09 | NO0A | NO02 | NO06 | NO07 | Pages |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `bygg-og-anlegg-utforende` | 187 | 84 | 228 | 60 | 97 | 181 | 6 |
+| `it-tjenester-og-konsulentbistand` | 128 | 22 | 55 | 29 | 20 | 37 | 6 |
+| `drift-og-vedlikehold-av-eiendom` | 120 | 43 | 95 | 30 | 30 | 73 | 6 |
+| `radgivende-ingeniortjenester` | 84 | 32 | 71 | 24 | 36 | 54 | 6 |
+| `renhold-og-facility-management` | 15 | 6 | 31 | 5 | 11 | 17 | 4 |
+| `vakthold-og-sikkerhet` | 15 | 5 | 9 | 2 | 1 | 6 | 2 |
+| `kantine-og-matservering` | 18 | 1 | 6 | 0 | 6 | 2 | 1 |
+| `bemanning-og-rekruttering` | 3 | 2 | 6 | 2 | 1 | 4 | **0** |
+
+`NO0B` (Svalbard og Jan Mayen) has 1 own notice across the entire corpus and gets no page anywhere.
+
+`bemanning-og-rekruttering` has a national page and nothing else. Six own notices in Vestlandet over three months is a trade whose demand does not cluster geographically, which is the mechanism working rather than a gap.
+
+## The earlier 2026-08-10 measurement, over 37 days
 
 Re-run against production once `service_templates` was seeded there. **29 pairs qualify**, up from 27, and the counting rule gained a second condition.
 

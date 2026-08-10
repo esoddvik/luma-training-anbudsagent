@@ -13,10 +13,35 @@ import type { SourceTenderNotice } from './source-notice.js';
  */
 export interface FetchNoticesInput {
   /**
-   * Return notices published on or after this date. The caller is responsible
-   * for subtracting an overlap window; the adapter takes the value literally.
+   * Return notices published on or after this date.
+   *
+   * **Applied by the caller, not by the source.** `publicationDate` is
+   * sortable but not filterable (`docs/doffin-api-findings.md`), so the
+   * adapter cannot narrow on it and `runSync` trims the tail client-side after
+   * the fact. Kept in the port because it is what the *sync* is expressed in —
+   * the checkpoint is a publication-date watermark — but it does not reduce
+   * what the source sends.
    */
   publishedFrom?: Date;
+  /**
+   * Inclusive bounds on `issueDate`, which is the one date the source will
+   * actually filter on, at day granularity.
+   *
+   * These exist for one purpose: **partitioning a backfill.** Doffin serves at
+   * most 1000 hits per query however you page, so reaching further back than
+   * that is impossible without splitting the query — and an issue-date window
+   * is the only split the API offers that is dense enough to be useful. A
+   * single month returned 939 hits when measured, so a month is roughly the
+   * coarsest safe window.
+   *
+   * **`issueDate` is not `publicationDate`.** A notice can be published up to
+   * seven days after it was issued (verified, same document), so a caller
+   * wanting a publication-date range must widen the issue-date window at both
+   * ends and filter the result. That asymmetry is why the ordinary forward
+   * sync watermarks on publication date and ignores these entirely.
+   */
+  issuedFrom?: Date;
+  issuedTo?: Date;
   /** 1-indexed. Doffin rejects page 0. */
   page?: number;
   pageSize?: number;

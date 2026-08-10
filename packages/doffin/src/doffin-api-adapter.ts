@@ -52,6 +52,14 @@ const ALLOWED_PARAMS = [
 
 type AllowedParam = (typeof ALLOWED_PARAMS)[number];
 
+/**
+ * `YYYY-MM-DD` in UTC, which is the only format the date filters accept —
+ * anything else returns `400 {"reason":"Wrong issue date format…"}`.
+ */
+function toDayString(value: Date): string {
+  return value.toISOString().slice(0, 10);
+}
+
 /** Gateway errors use statusCode+message; application errors use reason. */
 const errorBodySchema = z.union([
   z.object({ statusCode: z.number(), message: z.string() }),
@@ -106,6 +114,14 @@ export class DoffinApiAdapter implements TenderSourceAdapter {
       // publication-date watermark, and it is also the API default.
       sortBy: 'PUBLICATION_DATE_DESC',
     };
+
+    // Sent only when asked for. The forward sync never asks: it watermarks on
+    // publication date, which the source cannot filter, so narrowing on issue
+    // date would silently drop notices issued before the window and published
+    // inside it. A backfill asks, because partitioning is the only way past
+    // the 1000-hit ceiling.
+    if (input.issuedFrom) params.issueDateFrom = toDayString(input.issuedFrom);
+    if (input.issuedTo) params.issueDateTo = toDayString(input.issuedTo);
 
     const body = await this.request('/public/v2/search', params);
     const parsed = doffinSearchResponseSchema.parse(body);

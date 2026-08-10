@@ -43,13 +43,17 @@ export interface PublicSearchResult {
    * Notices that apply to the whole country.
    *
    * Kept as a separate list rather than merged into `regional`, and that is a
-   * decision with a reason. For `it-tjenester-og-konsulentbistand`, 36 of its
-   * qualifying hits are nationwide, so merging would make its six landsdel
-   * pages roughly 86% identical — near-duplicate content pointed at a search
-   * engine, and six pages that differ only in their heading. Rendering them as
-   * two labelled sections keeps each page's regional half genuinely its own,
-   * while still showing the reader every competition they can actually bid on.
-   * See `docs/search-surface-density.md`.
+   * decision with a reason that got sharper the more data arrived. Over 94
+   * days `it-tjenester-og-konsulentbistand` has **144** nationwide notices
+   * against 20–128 regional ones per landsdel, so a merged list would make its
+   * six pages between 53% and 88% the same content — near-duplicate pages
+   * differing mostly in their heading.
+   *
+   * Two labelled sections keep each page's regional half genuinely its own
+   * while still showing the reader every competition they can bid on. The same
+   * numbers are why a page's *existence* is decided on regional notices alone
+   * (`qualifying-pages.ts`): the shared pool is worth showing and not worth
+   * building a page around. See `docs/search-surface-density.md`.
    */
   readonly nationwide: readonly PublicTenderSummary[];
   readonly totalConsidered: number;

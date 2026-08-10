@@ -35,9 +35,32 @@ export class FixtureTenderSourceAdapter implements TenderSourceAdapter {
     const page = input.page ?? 1;
     const pageSize = input.pageSize ?? 100;
 
-    const matching = input.publishedFrom
-      ? this.notices.filter((notice) => notice.publishedAt >= input.publishedFrom!)
-      : this.notices;
+    /*
+     * `issuedFrom`/`issuedTo` filter on `issueDate`, not on publication date,
+     * because that is the one the live API filters on — and reproducing that
+     * distinction is the point of this adapter. A fixture that narrowed on
+     * publication date would make a backfill's windows look exact while the
+     * real one drops notices issued before a window and published inside it.
+     */
+    const issued = (notice: SourceTenderNotice): Date | null => {
+      const raw = (notice.payload as { issueDate?: unknown }).issueDate;
+      if (typeof raw !== 'string') return null;
+      const parsed = new Date(raw);
+      return Number.isNaN(parsed.getTime()) ? null : parsed;
+    };
+
+    const matching = this.notices.filter((notice) => {
+      if (input.publishedFrom && notice.publishedAt < input.publishedFrom) return false;
+      if (input.issuedFrom || input.issuedTo) {
+        const at = issued(notice);
+        // A notice with no readable issue date cannot satisfy an issue-date
+        // window. Dropping it matches the API, which filters server-side.
+        if (!at) return false;
+        if (input.issuedFrom && at < input.issuedFrom) return false;
+        if (input.issuedTo && at > input.issuedTo) return false;
+      }
+      return true;
+    });
 
     const accessibleMatches = Math.min(matching.length, 1000);
     const start = (page - 1) * pageSize;

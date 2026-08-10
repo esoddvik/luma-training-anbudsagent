@@ -90,12 +90,37 @@ test.describe('anbud-for uten JavaScript', () => {
     await expect(page.getByRole('heading', { level: 1 })).toContainText('Vestlandet');
   });
 
-  test('registreringsskjemaet sendes inn og havner på sjekk-e-post', async ({ page }) => {
+  test('registreringsskjemaet er et ekte skjema med de feltene handlingen leser', async ({
+    page,
+  }) => {
     await page.goto(TRADE_PATH);
 
-    await page.getByLabel('E-postadresse').fill(`e2e+${Date.now()}@example.com`);
     // Ingen avkryssingsboks: vilkårene godtas når lenken i e-posten åpnes, og
     // det er `confirmSignup` som skriver akseptraden med versjon og tidsstempel.
+    await expect(page.getByLabel('E-postadresse')).toHaveAttribute('type', 'email');
+    await expect(page.getByRole('button', { name: 'Opprett varslingsprofil' })).toBeVisible();
+
+    // Bransjen reiser med skjemaet, ikke i URL-en — det er det som lar siden
+    // være statisk. Verdien blir slått opp på nytt på serveren uansett.
+    const skjema = page.locator('form:has(input[name="tjenestemal"])');
+    await expect(skjema.locator('input[name="tjenestemal"]')).toHaveValue(TRADE);
+  });
+
+  /**
+   * Selve innsendingen krever Postmark, og en maskin uten
+   * `POSTMARK_SERVER_TOKEN` får en 500 fra handlingen i stedet for en
+   * omdirigering. Testen hopper over i stedet for å feile, fordi et rødt
+   * resultat da hadde handlet om miljøet og ikke om koden — men den hopper på
+   * en variabel som CI faktisk setter, ikke på noe den leser ut av siden.
+   */
+  test('innsending havner på sjekk-e-post', async ({ page }) => {
+    test.skip(
+      !process.env['POSTMARK_SERVER_TOKEN'],
+      'krever POSTMARK_SERVER_TOKEN for å kunne sende bekreftelseslenken',
+    );
+
+    await page.goto(TRADE_PATH);
+    await page.getByLabel('E-postadresse').fill(`e2e+${Date.now()}@example.com`);
     await page.getByRole('button', { name: 'Opprett varslingsprofil' }).click();
 
     await expect(page).toHaveURL(/registrering\/sjekk-e-post/);

@@ -50,7 +50,7 @@ export default async function Page({ searchParams }: PageProps) {
           h1 and still reads «Logg inn» — the e2e suite asserts both, and the
           page would be wrong without them either way.
         */}
-        <Card as="section" tone="raised" className="w-full max-w-lg">
+        <Card as="section" tone="raised" className="luma-column">
           <Stack gap="md">
             <h1 className="page-heading m-0">Logg inn</h1>
 
@@ -108,7 +108,7 @@ export default async function Page({ searchParams }: PageProps) {
           type — otherwise someone without an account waits for an email that
           is never coming and has no way to find out why.
         */}
-        <Stack gap="sm" className="prose-measure w-full max-w-lg">
+        <Stack gap="sm" className="luma-column">
           <h2 className="section-heading m-0">Har du ikke varslingsprofil ennå?</h2>
           <p className="m-0">
             Vi sender innloggingslenke bare til adresser som allerede har en varslingsprofil, og av

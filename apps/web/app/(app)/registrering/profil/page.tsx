@@ -111,7 +111,7 @@ export default async function Page({ searchParams }: PageProps) {
   return (
     <div className="bleed">
       <div className="luma-panel">
-        <Stack gap="lg" className="mx-auto max-w-3xl">
+        <Stack gap="lg" className="luma-column luma-column--wide">
           <div className="flex items-center gap-sm">
             {/* Two of three filled. Decoration only — «Siste steg» beside it is
                 the accessible statement of where the reader is. */}

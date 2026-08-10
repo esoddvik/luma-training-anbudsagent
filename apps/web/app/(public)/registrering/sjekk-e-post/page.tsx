@@ -31,7 +31,7 @@ export default async function Page({
   return (
     <div className="bleed">
       <div className="luma-panel mx-auto flex max-w-5xl justify-center py-2xl">
-        <Card tone="raised" className="w-full max-w-xl">
+        <Card tone="raised" className="luma-column">
           <Stack gap="md">
             <h1 className="page-heading m-0">Sjekk innboksen</h1>
             {message ? (

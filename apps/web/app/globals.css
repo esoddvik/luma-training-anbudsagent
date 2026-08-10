@@ -96,6 +96,9 @@
   --leading-snug: var(--luma-line-height-snug);
   --leading-normal: var(--luma-line-height-normal);
 
+  /* These names shadow Tailwind's container scale, so `max-w-lg` resolves to
+   * `--spacing-lg` (24px) rather than 32rem. See the `.luma-column` block
+   * below before reaching for any `max-w-<name>` utility. */
   --spacing-2xs: var(--luma-space-2xs);
   --spacing-xs: var(--luma-space-xs);
   --spacing-sm: var(--luma-space-sm);
@@ -199,6 +202,39 @@
 
   .prose-measure {
     max-width: var(--luma-measure);
+  }
+
+  /* ===========================================================================
+   * Column caps — and a booby trap to know about
+   * ===========================================================================
+   *
+   * **Never write `max-w-lg`, `max-w-xl`, `max-w-2xl` or `max-w-3xl` in this
+   * app.** They do not mean what they mean in a stock Tailwind project.
+   *
+   * Tailwind v4 resolves `max-w-<name>` against the `--container-*` namespace
+   * and falls back to `--spacing-*`. The `@theme inline` block above names its
+   * spacing steps `sm`/`md`/`lg`/`xl`/`2xl`/`3xl`, which collide with the
+   * container names — so `max-w-lg` resolves to `--spacing-lg`, and a card that
+   * was meant to be 32rem wide comes out **24 pixels** wide. It does not fail
+   * loudly: the card still renders, still has height, and every word inside it
+   * wraps to one character per line. `max-w-5xl` works only because there is no
+   * `--spacing-5xl` to shadow it.
+   *
+   * This shipped. `/logg-inn` went out with a 24px-wide card and the e2e suite
+   * caught it as «h1 is hidden», which is what a zero-width heading looks like
+   * from the outside.
+   *
+   * Use these instead. They are named for the job rather than for a scale step,
+   * so there is nothing to collide with.
+   * ----------------------------------------------------------------------- */
+  .luma-column {
+    width: 100%;
+    max-width: 34rem;
+    margin-inline: auto;
+  }
+
+  .luma-column--wide {
+    max-width: 48rem;
   }
 
   .page-heading {

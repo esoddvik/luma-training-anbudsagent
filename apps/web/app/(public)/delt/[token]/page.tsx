@@ -1,12 +1,12 @@
+import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Badge, Card, Cluster, Stack } from '@luma/ui';
-import { SHARE_INVITATION_NB, SHARE_UNAVAILABLE_NB } from '@luma/domain';
-import { getWebDb } from '@/server/db';
+import { Badge, Card, Chip, Stack, buttonClassName } from '@luma/ui';
+import { cpvLabel, SHARE_INVITATION_NB, SHARE_UNAVAILABLE_NB } from '@luma/domain';
+import { getWebDb, shareTtlDays } from '@/server/db';
 import {
   describeDeadline,
   describeRegions,
-  formatCodeList,
   formatDate,
   formatDateTime,
   isoDate,
@@ -38,6 +38,17 @@ import { getSharedTenderView, recordShareView } from '@/server/shares';
  * Expired and revoked links render the same neutral page as an unknown token.
  * Distinguishing them would confirm to whoever guessed a token that it was once
  * real.
+ *
+ * ## Why there are no strength bars here
+ *
+ * The funnel design draws a `StrengthBar` per reason in the explanation card.
+ * It cannot be drawn honestly. `simplifyForSharing` returns reason *types* and
+ * nothing else — by construction, so that widening the full explanation cannot
+ * widen this page — and per-reason strength lives on the match rows the shared
+ * payload deliberately never reads. A bar here would therefore be a width
+ * invented at render time and presented as a measurement of someone else's
+ * match. The reasons are chips instead, which is the same information the data
+ * actually carries.
  */
 
 export const metadata: Metadata = {
@@ -80,76 +91,70 @@ export default async function SharedTenderPage({ params }: SharedTenderPageProps
   const explanation = simplifyForSharing(view.matchReasonTypes);
 
   return (
-    <Stack gap="lg">
-      <Cluster gap="xs">
-        <Badge variant="neutral">Delt anbud</Badge>
+    <Stack gap="md" className="min-w-0">
+      {/* The design reads «lenken virker til {dato}». The share's own
+          `expiresAt` is not part of `SharedTenderView` and must not be added to
+          it just for a line of copy, so this states the policy — the configured
+          lifetime — rather than a date it does not have. */}
+      <p className="m-0 text-sm font-semibold text-text-muted">
+        Delt med deg · delte lenker virker i {shareTtlDays()} dager
+      </p>
+
+      <h1 className="page-heading m-0">{view.title}</h1>
+
+      <div>
         <Badge variant={planned ? 'planlagt' : 'treff'}>
           {NOTICE_CATEGORY_LABEL_NB[view.noticeCategory]}
         </Badge>
-      </Cluster>
+      </div>
 
-      <Stack gap="xs">
-        <h1 className="page-heading">{view.title}</h1>
-        <p className="m-0 text-text-muted">{view.buyerName}</p>
-      </Stack>
+      <dl className="m-0 flex flex-wrap gap-x-xl gap-y-md border-y border-line py-md">
+        <Fact term="Oppdragsgiver">{view.buyerName}</Fact>
+        <Fact term="Frist">
+          {deadline.kind === 'date' ? (
+            <time dateTime={deadline.iso}>{deadline.text}</time>
+          ) : (
+            deadline.text
+          )}
+        </Fact>
+        <Fact term="Område">{describeRegions(view.regions)}</Fact>
+        <Fact term="Publisert">
+          <time dateTime={isoDate(view.publishedAt)}>{formatDate(view.publishedAt)}</time>
+        </Fact>
+      </dl>
 
-      {planned ? (
-        <p className="prose-measure m-0">
-          Dette er en planlagt anskaffelse. Konkurransen er ikke publisert ennå, så den har ingen
-          tilbudsfrist.
-        </p>
+      {view.cpvCodes.length > 0 ? (
+        <ul className="m-0 flex list-none flex-wrap gap-xs p-0">
+          {view.cpvCodes.map((code) => (
+            <li key={code}>
+              <Chip tone="outline">
+                <span className="font-mono text-xs">{code}</span>
+                <span>{cpvLabel(code)}</span>
+              </Chip>
+            </li>
+          ))}
+        </ul>
       ) : null}
 
-      <Card as="section" heading="Om anbudet" titleLevel={2}>
-        <dl className="m-0 grid grid-cols-1 gap-md sm:grid-cols-2">
-          <div>
-            <dt className="m-0 text-xs uppercase tracking-wide text-text-muted">Frist</dt>
-            <dd className="m-0">
-              {deadline.kind === 'date' ? (
-                <time dateTime={deadline.iso}>{deadline.text}</time>
-              ) : (
-                deadline.text
-              )}
-            </dd>
-          </div>
-          <div>
-            <dt className="m-0 text-xs uppercase tracking-wide text-text-muted">Publisert</dt>
-            <dd className="m-0">
-              <time dateTime={isoDate(view.publishedAt)}>{formatDate(view.publishedAt)}</time>
-            </dd>
-          </div>
-          <div>
-            <dt className="m-0 text-xs uppercase tracking-wide text-text-muted">Geografi</dt>
-            <dd className="m-0">{describeRegions(view.regions)}</dd>
-          </div>
-          <div>
-            <dt className="m-0 text-xs uppercase tracking-wide text-text-muted">CPV-koder</dt>
-            <dd className="m-0">{formatCodeList(view.cpvCodes)}</dd>
-          </div>
-        </dl>
-      </Card>
-
       {view.description ? (
-        <Card as="section" heading="Beskrivelse fra kunngjøringen" titleLevel={2}>
-          <p className="prose-measure m-0 whitespace-pre-line">{view.description}</p>
-        </Card>
+        <p className="prose-measure m-0 whitespace-pre-line">{view.description}</p>
       ) : null}
 
       {/* Spec 17: forenklet matchforklaring — bare typene, aldri profilverdiene,
           og ingen poengsum. */}
-      <Card as="section" heading="Hvorfor anbudet ble plukket ut" titleLevel={2} tone="flat">
+      <Card as="section" heading="Hvorfor anbudet ble plukket ut" titleLevel={2}>
         {explanation.labels.length === 0 ? (
           <p className="m-0">{SHARED_EXPLANATION_EMPTY_NB}</p>
         ) : (
           <Stack gap="sm">
             <p className="m-0">{SHARED_EXPLANATION_INTRO_NB}</p>
-            <Cluster as="ul" gap="xs" className="m-0 list-none p-0">
+            <ul className="m-0 flex list-none flex-wrap gap-xs p-0">
               {explanation.labels.map((label) => (
                 <li key={label}>
-                  <Badge variant="neutral">{label}</Badge>
+                  <Chip tone="soft">{label}</Chip>
                 </li>
               ))}
-            </Cluster>
+            </ul>
             <p className="m-0 text-sm text-text-muted">
               Vi viser ikke hvilke kriterier eller verdier varslingsprofilen bruker.
             </p>
@@ -172,6 +177,7 @@ export default async function SharedTenderPage({ params }: SharedTenderPageProps
       </Card>
 
       <ShareInvitation />
+      <Attribution />
     </Stack>
   );
 }
@@ -179,39 +185,92 @@ export default async function SharedTenderPage({ params }: SharedTenderPageProps
 /**
  * The single invitation block (spec sections 17 and 43).
  *
- * Section 17 permits exactly one, and no other promotion in this view. It is
- * the last thing on the page, after the tender content, and the link carries
- * the attribution parameter that makes `share_to_signup` measurable
+ * Section 17 permits exactly one, and no other promotion in this view — which
+ * is why the design's cream band is built here rather than with `Promotion`:
+ * `Promotion` is the Luma course surface, and a course offer on a page built
+ * from someone else's data is the second promotion section 17 forbids.
+ *
+ * It is the last thing before the attribution, after the tender content, and
+ * the link carries the parameters that make `share_to_signup` measurable
  * (section 44.2).
  */
 function ShareInvitation() {
   return (
-    <Card as="section" heading={SHARE_INVITATION_NB.heading} titleLevel={2} tone="flat">
-      <Stack gap="sm">
-        <p className="m-0">{SHARE_INVITATION_NB.body}</p>
-        <p className="m-0">
-          <Link href="/?utm_source=anbudsvarsling&utm_medium=delt-visning&utm_campaign=deling">
-            Opprett din egen varslingsprofil
-          </Link>
-        </p>
+    <section
+      aria-labelledby="invitasjon-tittel"
+      className="flex flex-wrap items-center justify-between gap-md rounded-lg bg-primary-soft p-lg"
+    >
+      <Stack gap="xs" className="min-w-0">
+        <h2 id="invitasjon-tittel" className="m-0 text-lg font-bold">
+          {SHARE_INVITATION_NB.heading}
+        </h2>
+        <p className="m-0 text-sm text-primary-soft-text">{SHARE_INVITATION_NB.body}</p>
       </Stack>
-    </Card>
+      <Link
+        className={buttonClassName({ variant: 'primary' })}
+        href="/finn-anbud?utm_source=anbudsvarsling&utm_medium=delt-visning&utm_campaign=deling"
+      >
+        Opprett din egen varslingsprofil
+      </Link>
+    </section>
   );
 }
 
-/** Expired, revoked and unknown all land here, and all read the same. */
+/**
+ * Expired, revoked and unknown all land here, and all read the same.
+ *
+ * The design's heading is «Lenken er utløpt». That wording is not available:
+ * it would tell whoever guessed a token that the token was once real, which is
+ * exactly the distinction `getSharedTenderView` refuses to make. The neutral
+ * heading and body from `@luma/domain` stay; the design's illustration slot,
+ * its explanation of the lifetime and its CTA are what carry over.
+ */
 function ShareUnavailable() {
   return (
-    <Stack gap="lg">
-      <h1 className="page-heading">{SHARE_UNAVAILABLE_NB.heading}</h1>
-      <Stack gap="md" className="prose-measure">
-        <p className="m-0">{SHARE_UNAVAILABLE_NB.body}</p>
-        <p className="m-0">
-          <Link href="/?utm_source=anbudsvarsling&utm_medium=delt-visning&utm_campaign=utlopt-lenke">
-            Se hva Luma Anbudsvarsling er
-          </Link>
-        </p>
-      </Stack>
+    <Stack gap="md" className="prose-measure">
+      {/* Decorative slot. A rounded soft square, no image asset — the design's
+          «robot-figur» placeholder is a drawing that does not exist yet, and an
+          empty box is more honest than a stock illustration. */}
+      <span aria-hidden="true" className="block size-24 rounded-lg bg-primary-soft" />
+
+      <h1 className="page-heading m-0">{SHARE_UNAVAILABLE_NB.heading}</h1>
+
+      <p className="m-0">{SHARE_UNAVAILABLE_NB.body}</p>
+
+      <p className="m-0 text-text-muted">
+        Delte lenker virker i {shareTtlDays()} dager. Be den som delte om en ny, eller finn anbudet
+        selv — det er offentlig.
+      </p>
+
+      <p className="m-0">
+        <Link
+          className={buttonClassName({ variant: 'primary' })}
+          href="/finn-anbud?utm_source=anbudsvarsling&utm_medium=delt-visning&utm_campaign=utlopt-lenke"
+        >
+          Finn anbud for din bransje
+        </Link>
+      </p>
     </Stack>
+  );
+}
+
+function Fact({ term, children }: { term: string; children: ReactNode }) {
+  return (
+    <div className="flex flex-col gap-2xs">
+      <dt className="m-0 text-sm text-text-muted">{term}</dt>
+      <dd className="m-0 font-semibold">{children}</dd>
+    </div>
+  );
+}
+
+/* Required by CC BY 4.0 wherever announcement data is republished to someone
+   who did not fetch it themselves (ADR-0018). Reads exactly
+   `Data: Doffin/DFØ (CC BY 4.0)` as text, with the licence carrying the link. */
+function Attribution() {
+  return (
+    <p className="m-0 text-xs text-text-muted">
+      Data: Doffin/DFØ (
+      <Link href="https://creativecommons.org/licenses/by/4.0/deed.no">CC BY 4.0</Link>)
+    </p>
   );
 }

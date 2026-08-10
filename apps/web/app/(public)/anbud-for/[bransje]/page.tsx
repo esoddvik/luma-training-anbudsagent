@@ -1,12 +1,15 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Stack } from '@luma/ui';
+import { COUNTY_NAMES } from '@luma/domain';
 import { FunnelBeacon } from '@/components/funnel-beacon';
 import { InlineSignup } from '@/components/inline-signup';
-import { PublicResults } from '@/components/public-results';
+import { ResultsExplorer, type RegionLink } from '@/components/results-explorer';
+import type { ExplorerTender } from '@/components/results-filter';
 import { loadTemplateChoice } from '@/server/profiles';
-import { searchPublicTenders } from '@/server/public-search';
+import type { ServiceTemplateChoice } from '@/server/profiles';
+import { buildPublicReasons } from '@/server/public-match-reasons';
+import { searchPublicTenders, type PublicTenderSummary } from '@/server/public-search';
 import { landsdelerFor, nationalPageParams } from '@/server/qualifying-pages';
 
 /**
@@ -21,6 +24,14 @@ import { landsdelerFor, nationalPageParams } from '@/server/qualifying-pages';
  * anyone, geography is the load-bearing second axis, so national is the correct
  * default and narrowing is the reader's own choice rather than a guess made
  * for them.
+ *
+ * ## Still a server component, and still static
+ *
+ * The results are filtered in the browser by `ResultsExplorer`, but nothing
+ * about that reaches this function: it reads no `searchParams` — which is the
+ * one rule these routes exist under, since a page that reads them cannot be
+ * prerendered — and hands the client component a plain serialisable array. The
+ * whole result set is therefore in the HTML before any script runs.
  */
 export const revalidate = 3600;
 
@@ -42,18 +53,57 @@ export async function generateMetadata({
   };
 }
 
+/**
+ * `PublicTenderSummary` → the wire format the client component reads.
+ *
+ * Dates become ISO strings and county codes become names here, on the server:
+ * a `Date` does not survive the boundary, and `COUNTY_NAMES` has no business
+ * being shipped to the browser to look up six strings.
+ */
+function toExplorerTender(
+  tender: PublicTenderSummary,
+  template: ServiceTemplateChoice,
+): ExplorerTender {
+  return {
+    id: tender.id,
+    title: tender.title,
+    buyerName: tender.buyerName,
+    counties: tender.regionCodes
+      .map((code) => COUNTY_NAMES[code])
+      .filter((name): name is string => Boolean(name)),
+    planned: tender.noticeCategory === 'planned',
+    deadlineAt: tender.deadlineAt ? tender.deadlineAt.toISOString() : null,
+    estimatedValueMinNok: tender.estimatedValueMinNok,
+    cpvCodes: tender.cpvCodes,
+    matchedKeywords: tender.matchedKeywords,
+    reasons: buildPublicReasons({ template, tender }).map((reason) => ({
+      label: reason.label,
+      strength: reason.strength,
+      evidence: reason.evidence,
+    })),
+  };
+}
+
 export default async function NationalPage({ params }: { params: Promise<{ bransje: string }> }) {
   const { bransje } = await params;
   const template = await loadTemplateChoice(bransje);
   if (!template) notFound();
 
+  const now = new Date();
   const result = await searchPublicTenders({
     cpvInclude: template.cpvInclude,
-    now: new Date(),
+    keywordsInclude: template.keywordsInclude,
+    now,
   });
 
-  const regions = landsdelerFor(template.slug);
-  const showsRegionPicker = template.supplierForm === 'cross_sector' && regions.length > 0;
+  const regions: RegionLink[] = [
+    { name: 'Hele landet', href: `/anbud-for/${template.slug}`, current: true },
+    ...landsdelerFor(template.slug).map((region) => ({
+      name: region.name,
+      href: `/anbud-for/${template.slug}/${region.slug}`,
+      current: false,
+    })),
+  ];
 
   return (
     <Stack gap="xl">
@@ -64,36 +114,23 @@ export default async function NationalPage({ params }: { params: Promise<{ brans
       <Stack gap="md" className="prose-measure">
         <h1 className="page-heading">Anbud for {template.name}</h1>
         <p className="m-0">{template.description}</p>
+        {template.supplierForm === 'cross_sector' && regions.length > 1 ? (
+          <p className="m-0 text-sm text-text-muted">
+            Virksomheter som leverer dette selger over hele landet. Vil du se én landsdel?
+          </p>
+        ) : null}
       </Stack>
 
-      {regions.length > 0 ? (
-        <nav
-          aria-label="Velg landsdel"
-          // Above the results for a cross-sector trade, below the heading for
-          // a sector-bound one. Same links either way; the difference is how
-          // prominently the narrowing is offered.
-          className={showsRegionPicker ? 'order-first' : undefined}
-        >
-          <Stack gap="sm">
-            <p className="m-0 font-medium">
-              {showsRegionPicker
-                ? 'Virksomheter som leverer dette selger over hele landet. Vil du se én landsdel?'
-                : 'Se én landsdel:'}
-            </p>
-            <ul className="m-0 flex list-none flex-wrap gap-sm p-0">
-              {regions.map((region) => (
-                <li key={region.code}>
-                  <Link href={`/anbud-for/${template.slug}/${region.slug}`}>{region.name}</Link>
-                </li>
-              ))}
-            </ul>
-          </Stack>
-        </nav>
-      ) : null}
-
-      <PublicResults result={result} />
-
-      <InlineSignup templateSlug={template.slug} templateName={template.name} />
+      <ResultsExplorer
+        templateName={template.name}
+        regional={result.regional.map((tender) => toExplorerTender(tender, template))}
+        nationwide={result.nationwide.map((tender) => toExplorerTender(tender, template))}
+        templateCpv={template.cpvInclude}
+        templateKeywords={template.keywordsInclude}
+        regions={regions.length > 1 ? regions : []}
+        nowIso={now.toISOString()}
+        rail={<InlineSignup templateSlug={template.slug} templateName={template.name} />}
+      />
     </Stack>
   );
 }

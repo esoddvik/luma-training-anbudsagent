@@ -2,12 +2,20 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { Stack } from '@luma/ui';
+import { COUNTY_NAMES, type Landsdel } from '@luma/domain';
 import { FunnelBeacon } from '@/components/funnel-beacon';
 import { InlineSignup } from '@/components/inline-signup';
-import { PublicResults } from '@/components/public-results';
-import { loadTemplateChoice } from '@/server/profiles';
-import { searchPublicTenders } from '@/server/public-search';
-import { landsdelFromParam, qualifies, qualifyingRegionalParams } from '@/server/qualifying-pages';
+import { ResultsExplorer, type RegionLink } from '@/components/results-explorer';
+import type { ExplorerTender } from '@/components/results-filter';
+import { loadTemplateChoice, type ServiceTemplateChoice } from '@/server/profiles';
+import { buildPublicReasons } from '@/server/public-match-reasons';
+import { searchPublicTenders, type PublicTenderSummary } from '@/server/public-search';
+import {
+  landsdelFromParam,
+  landsdelerFor,
+  qualifies,
+  qualifyingRegionalParams,
+} from '@/server/qualifying-pages';
 
 /**
  * A trade in one landsdel (IDE Agent Spec v3, section 3.2).
@@ -23,6 +31,9 @@ import { landsdelFromParam, qualifies, qualifyingRegionalParams } from '@/server
  * measured over 37 days rather than 90, so it undercounts. A pair that starts
  * qualifying after a fuller re-run renders on demand instead of 404ing until
  * someone remembers to redeploy.
+ *
+ * Like the national page it reads no `searchParams`: the filtering happens in
+ * the browser, over a result set that is already in the prerendered HTML.
  */
 export const revalidate = 3600;
 
@@ -44,6 +55,32 @@ export async function generateMetadata({
   };
 }
 
+/** See the twin in the national page: dates and county codes resolve here. */
+function toExplorerTender(
+  tender: PublicTenderSummary,
+  template: ServiceTemplateChoice,
+  landsdel: Landsdel,
+): ExplorerTender {
+  return {
+    id: tender.id,
+    title: tender.title,
+    buyerName: tender.buyerName,
+    counties: tender.regionCodes
+      .map((code) => COUNTY_NAMES[code])
+      .filter((name): name is string => Boolean(name)),
+    planned: tender.noticeCategory === 'planned',
+    deadlineAt: tender.deadlineAt ? tender.deadlineAt.toISOString() : null,
+    estimatedValueMinNok: tender.estimatedValueMinNok,
+    cpvCodes: tender.cpvCodes,
+    matchedKeywords: tender.matchedKeywords,
+    reasons: buildPublicReasons({ template, tender, landsdel }).map((reason) => ({
+      label: reason.label,
+      strength: reason.strength,
+      evidence: reason.evidence,
+    })),
+  };
+}
+
 export default async function RegionalPage({
   params,
 }: {
@@ -61,11 +98,22 @@ export default async function RegionalPage({
     redirect(`/anbud-for/${template.slug}`);
   }
 
+  const now = new Date();
   const result = await searchPublicTenders({
     cpvInclude: template.cpvInclude,
+    keywordsInclude: template.keywordsInclude,
     landsdel: region,
-    now: new Date(),
+    now,
   });
+
+  const regions: RegionLink[] = [
+    { name: 'Hele landet', href: `/anbud-for/${template.slug}`, current: false },
+    ...landsdelerFor(template.slug).map((entry) => ({
+      name: entry.name,
+      href: `/anbud-for/${template.slug}/${entry.slug}`,
+      current: entry.code === region.code,
+    })),
+  ];
 
   return (
     <Stack gap="xl">
@@ -83,13 +131,23 @@ export default async function RegionalPage({
         </p>
       </Stack>
 
-      <PublicResults result={result} landsdelName={region.name} />
-
-      <InlineSignup
-        templateSlug={template.slug}
+      <ResultsExplorer
         templateName={template.name}
-        landsdelSlug={region.slug}
         landsdelName={region.name}
+        regional={result.regional.map((tender) => toExplorerTender(tender, template, region))}
+        nationwide={result.nationwide.map((tender) => toExplorerTender(tender, template, region))}
+        templateCpv={template.cpvInclude}
+        templateKeywords={template.keywordsInclude}
+        regions={regions}
+        nowIso={now.toISOString()}
+        rail={
+          <InlineSignup
+            templateSlug={template.slug}
+            templateName={template.name}
+            landsdelSlug={region.slug}
+            landsdelName={region.name}
+          />
+        }
       />
     </Stack>
   );

@@ -1,9 +1,29 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Button, Card, Field, Input, Stack } from '@luma/ui';
+import { Button, buttonClassName, Field, Input, Promotion, Stack } from '@luma/ui';
+import { landsdelOf } from '@luma/domain';
 import {
+  ASSISTANT_LABEL,
+  ASSISTANT_LINK,
+  ASSISTANT_SAMPLE_ANSWER,
+  ASSISTANT_SAMPLE_QUESTION,
+  COVERAGE_HEADING,
+  COVERAGE_TEXT,
+  LANDING_FAQ,
+  LANDING_FAQ_HEADING,
   LANDING_HEADING,
+  LANDING_HERO_CTA,
+  LANDING_HERO_REASSURANCE,
+  LANDING_HERO_SECONDARY,
   LANDING_INTRO,
+  LANDING_LIVE_HEADING,
+  LANDING_PROMOTION_HEADING,
+  LANDING_PROMOTION_LINK,
+  LANDING_PROMOTION_TEXT,
+  LANDING_STEPS,
+  LANDING_STEPS_HEADING,
+  LANDING_TRANSPARENCY_CAPTION,
+  LANDING_TRANSPARENCY_SUPPORT,
   MCP_HEADING,
   MCP_TEXT,
   SERVICE_TAGLINE,
@@ -16,8 +36,11 @@ import {
   SIGNUP_TEMPLATE_LABEL,
   TRUST_TEXT,
 } from '@/content/copy';
+import { FaqList } from '@/components/faq-list';
 import { requestSignupAction } from '@/server/actions/registration-actions';
 import { listServiceTemplateChoices } from '@/server/profiles';
+import { searchPublicTenders, type PublicTenderSummary } from '@/server/public-search';
+import { describeRegions, formatDate, NATIONWIDE_NB } from '@/server/format';
 import { lumaUrl } from '@/lib/luma-links';
 import { privacyPolicyUrl } from '@/lib/legal';
 import { PRODUCTION_URL } from '@/lib/site';
@@ -33,6 +56,8 @@ export const metadata: Metadata = {
   // form is a redirect to this one — a canonical pointing at a hop.
   alternates: { canonical: PRODUCTION_URL },
 };
+
+const LICENCE_URL = 'https://creativecommons.org/licenses/by/4.0/deed.no';
 
 /**
  * The phrase lifted into the brand colour inside the h1 — luma-training.com
@@ -60,28 +85,50 @@ function HeroHeading() {
 }
 
 /**
- * What the panel beside the headline says.
- *
- * Every line is a fact the service can be held to, not a benefit: the price,
- * the source, the two delivery modes, what it takes to sign up. That is the
- * section 42 register — praktisk og ærlig, null hype — and it is also the only
- * honest thing to put here, since the marketing site fills this half of the
- * hero with a product photograph and this service has no product to photograph.
- */
-const HERO_FACTS = [
-  { term: 'Pris', description: 'Gratis' },
-  { term: 'Kilde', description: 'Kunngjøringer publisert på Doffin' },
-  { term: 'Varsling', description: 'Daglig sammendrag eller straks — du velger' },
-  { term: 'Planlagte anskaffelser', description: 'Egen kategori, tydelig merket' },
-  { term: 'Du trenger', description: 'En e-postadresse' },
-] as const;
-
-/**
  * Rebuilt hourly rather than pinned at deploy, so a template added in admin
  * appears without a deploy (spec section 11.2). Static, never `force-dynamic`:
  * IDE Agent Spec v3 section 3.2 makes that a rule for public pages.
  */
 export const revalidate = 3600;
+
+/** The landsdel a card should name, or the nationwide phrase. */
+function heroRegion(tender: PublicTenderSummary): string {
+  if (tender.nationwide) return NATIONWIDE_NB;
+  for (const code of tender.regionCodes) {
+    const landsdel = landsdelOf(code);
+    if (landsdel) return landsdel.name;
+  }
+  return describeRegions(tender.regionCodes);
+}
+
+/** What the third segment of a card's meta line says. */
+function heroDeadline(tender: PublicTenderSummary): string {
+  if (tender.noticeCategory === 'planned') return 'Planlagt anskaffelse';
+  if (!tender.deadlineAt) return 'Frist ikke oppgitt';
+  return `Frist ${formatDate(tender.deadlineAt)}`;
+}
+
+/**
+ * Four real notices for the hero, or none at all.
+ *
+ * The union of every template's CPV codes, because the hero is not about one
+ * trade — it is the proof that the pipeline is live, and it has to work on a
+ * page that has not asked the reader anything yet.
+ *
+ * **There is no placeholder branch on purpose.** This page's entire argument is
+ * «ekte kunngjøringer fra Doffin, ikke eksempler», and it is prerendered, so a
+ * fabricated card would sit in the HTML for an hour telling a lie the page
+ * itself contradicts three sections further down. An empty right-hand column is
+ * the honest failure mode, and `searchPublicTenders` already returns empty
+ * rather than throwing on a database-less build.
+ */
+async function loadHeroTenders(cpvInclude: readonly string[]): Promise<PublicTenderSummary[]> {
+  if (cpvInclude.length === 0) return [];
+  const result = await searchPublicTenders({ cpvInclude, now: new Date(), limit: 4 });
+  return [...result.regional, ...result.nationwide]
+    .sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime())
+    .slice(0, 4);
+}
 
 export default async function LandingPage() {
   // Database first, editorial seeds as the fallback — see
@@ -90,68 +137,181 @@ export default async function LandingPage() {
   // live table, so a forged option value cannot write arbitrary criteria into
   // a profile.
   const templates = await listServiceTemplateChoices();
+  const cpvUnion = [...new Set(templates.flatMap((template) => template.cpvInclude))];
+  const heroTenders = await loadHeroTenders(cpvUnion);
 
   return (
     <>
       <section className="bleed luma-hero">
-        <div className="app-shell grid items-center gap-xl py-2xl md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] md:py-3xl">
+        <div
+          className={`app-shell grid items-start gap-xl py-2xl md:py-3xl ${
+            heroTenders.length > 0 ? 'md:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]' : ''
+          }`}
+        >
           <div className="flex flex-col gap-lg">
             <p className="eyebrow">{SERVICE_TAGLINE}</p>
             <h1 className="hero-heading">
               <HeroHeading />
             </h1>
             <p className="prose-measure m-0 text-lg text-text-muted">{LANDING_INTRO[0]}</p>
-            <p className="prose-measure m-0 text-lg text-text-muted">{LANDING_INTRO[1]}</p>
-            {/*
-             * No button here.
-             *
-             * The hero used to carry a «Opprett varslingsprofil» link that
-             * jumped to `#registrering`, one screen down. The signup form now
-             * sits directly below the hero with the same label on its own
-             * submit button, so the link was sending people past nothing to
-             * reach a button they could already see — and it made the page
-             * read as though it had two calls to action when it has one.
-             *
-             * The header's «Kom i gang» still points at `#registrering`, which
-             * is what that anchor is for on pages further down the site.
-             */}
+            {/* One button, one text link. The button leaves for the picker,
+                which is where the funnel actually starts; the link stays on the
+                page. `#registrering` is one scroll away and the header keeps a
+                permanent «Kom i gang», so a third call to action here would
+                only split the choice three ways. */}
+            <div className="flex flex-wrap items-center gap-md">
+              <Link href="/finn-anbud" className={buttonClassName({ variant: 'primary' })}>
+                {LANDING_HERO_CTA}
+              </Link>
+              <a href="#slik-fungerer-det" className="font-semibold">
+                {LANDING_HERO_SECONDARY}
+              </a>
+            </div>
+            <p className="m-0 text-sm text-text-muted">{LANDING_HERO_REASSURANCE}</p>
           </div>
 
-          <Card heading="Kort fortalt" titleLevel={2} tone="raised">
-            <dl className="m-0 flex flex-col gap-sm">
-              {HERO_FACTS.map((fact) => (
-                <div key={fact.term}>
-                  <dt className="m-0 text-xs uppercase tracking-wide text-text-muted">
-                    {fact.term}
-                  </dt>
-                  <dd className="m-0">{fact.description}</dd>
-                </div>
-              ))}
-            </dl>
-          </Card>
+          {heroTenders.length > 0 ? (
+            <div className="flex flex-col gap-sm">
+              <h2 className="eyebrow text-text-muted">{LANDING_LIVE_HEADING}</h2>
+              <ul className="m-0 flex list-none flex-col gap-sm p-0">
+                {heroTenders.map((tender) => (
+                  <li key={tender.id} className="luma-card luma-card--raised luma-card--interactive">
+                    <Link href={`/kunngjoring/${tender.id}`} className="font-semibold">
+                      {tender.title}
+                    </Link>
+                    <p className="m-0 mt-2xs text-sm text-text-muted">
+                      {tender.buyerName} · {heroRegion(tender)} · {heroDeadline(tender)}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+              {/* Required by CC BY 4.0 on every surface that redistributes
+                  announcement data to someone who did not ask for it themselves
+                  (ADR-0018). Reads exactly `Data: Doffin/DFØ (CC BY 4.0)`. */}
+              <p className="m-0 text-xs text-text-muted">
+                Data: Doffin/DFØ (<Link href={LICENCE_URL}>CC BY 4.0</Link>)
+              </p>
+            </div>
+          ) : null}
         </div>
       </section>
 
-      <Stack gap="2xl">
-        {/*
-         * Signup, sitting directly on the page.
-         *
-         * It used to be a `Card`, which drew a box around the one thing on the
-         * page nobody needs persuading to look at, indented its contents away
-         * from the left edge every other block on the page starts at, and gave
-         * the form a second border inside the card's own. A section heading, a
-         * line of intro and the form itself line up with the hero above them
-         * and the trust text below, so the eye runs straight down one edge.
-         *
-         * `prose-measure` caps the column so the input does not stretch the
-         * full shell width — a 72rem-wide e-mail field looks like a mistake.
-         */}
-        <section aria-labelledby="registrering-tittel" className="prose-measure" id="registrering">
+      <section aria-labelledby="slik-fungerer-det-tittel" id="slik-fungerer-det">
+        <Stack gap="lg">
+          <h2 id="slik-fungerer-det-tittel" className="page-heading">
+            {LANDING_STEPS_HEADING}
+          </h2>
+          {/* The flex column inside each card is an inner element rather than
+              the card itself: `.luma-card` ships unlayered from `@luma/ui`, so
+              its `display: block` beats a Tailwind `flex` in `@layer utilities`
+              no matter the specificity. Anything that would fight a primitive's
+              own declaration goes on a child. */}
+          <ol className="m-0 grid list-none gap-md p-0 md:grid-cols-3">
+            {LANDING_STEPS.map((step, index) => (
+              <li key={step.title} className="luma-card luma-card--raised">
+                <div className="flex flex-col gap-xs">
+                  <span
+                    aria-hidden="true"
+                    className="inline-flex h-[2.375rem] w-[2.375rem] items-center justify-center rounded-[var(--luma-radius-pill)] bg-primary-soft font-semibold text-primary"
+                  >
+                    {index + 1}
+                  </span>
+                  <span className="text-lg font-semibold">{step.title}</span>
+                  <span className="text-sm text-text-muted">{step.body}</span>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </Stack>
+      </section>
+
+      <section aria-labelledby="apenhet-tittel">
+        {/* The section's own name is carried by the two blocks inside it — the
+            quote and the assistant panel each say what they are. A visible
+            heading over both would be a label for a pairing, not for a topic. */}
+        <h2 id="apenhet-tittel" className="luma-visually-hidden">
+          Åpenhet og AI-verktøy
+        </h2>
+        <div className="grid gap-md md:grid-cols-2">
+          {/* The transparency promise. `TRUST_TEXT` is spec section 43 verbatim
+              and an e2e test asserts it is visible, so it is the quote itself
+              rather than a paraphrase of it. */}
+          <blockquote className="m-0 flex flex-col gap-sm rounded-lg bg-primary-soft p-lg">
+            <p className="m-0 text-xl font-semibold leading-snug">{TRUST_TEXT}</p>
+            <p className="m-0 text-sm text-text-muted">{LANDING_TRANSPARENCY_SUPPORT}</p>
+            <footer className="text-sm text-text-muted">{LANDING_TRANSPARENCY_CAPTION}</footer>
+          </blockquote>
+
+          {/* The one inverted surface in the app. `bg-ink` may only carry the
+              three `ink` foregrounds — every other text token in the system is
+              tuned for a near-white background. */}
+          <div className="flex flex-col gap-sm rounded-lg bg-ink p-lg text-ink-on">
+            <p className="eyebrow m-0 text-ink-accent">{ASSISTANT_LABEL}</p>
+            <h3 className="m-0 text-lg font-semibold">{MCP_HEADING}</h3>
+            <p className="m-0 text-sm">{MCP_TEXT}</p>
+            <div className="flex flex-col gap-xs rounded-md border border-ink-muted p-md text-sm">
+              <span className="text-ink-muted">{ASSISTANT_SAMPLE_QUESTION}</span>
+              <span>{ASSISTANT_SAMPLE_ANSWER}</span>
+            </div>
+            <p className="m-0">
+              <Link href="/ai-verktoy" className="font-semibold text-ink-accent">
+                {ASSISTANT_LINK}
+              </Link>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="dekning-tittel">
+        <div className="flex flex-col gap-xs rounded-lg border border-line p-lg">
+          <h2 id="dekning-tittel" className="section-heading">
+            {COVERAGE_HEADING}
+          </h2>
+          <p className="m-0 text-text-muted">{COVERAGE_TEXT}</p>
+        </div>
+      </section>
+
+      {/* Labelling, the «dette er informasjon om kurs» disclosure and the
+          promotion surface all come from `Promotion`, so this block cannot ship
+          without the section 23.4 marking. Placement is still this page's job:
+          it sits after the service's own content and before the signup. */}
+      <Promotion heading={LANDING_PROMOTION_HEADING}>
+        <p className="m-0">{LANDING_PROMOTION_TEXT}</p>
+        <p className="m-0 mt-xs">
+          <a
+            href={lumaUrl('/kurs/vinn-flere-anbud-med-ai', {
+              medium: 'landingsside',
+              campaign: 'vinn-flere-anbud-med-ai',
+              content: 'promoteringsblokk',
+            })}
+          >
+            {LANDING_PROMOTION_LINK}
+          </a>
+        </p>
+      </Promotion>
+
+      <section aria-labelledby="faq-tittel">
+        <Stack gap="md">
+          <h2 id="faq-tittel" className="page-heading">
+            {LANDING_FAQ_HEADING}
+          </h2>
+          <FaqList items={LANDING_FAQ} />
+        </Stack>
+      </section>
+
+      {/*
+       * Signup, in the design's card.
+       *
+       * `prose-measure` caps the column so the input does not stretch the full
+       * shell width — a 72rem-wide e-mail field looks like a mistake.
+       */}
+      <section aria-labelledby="registrering-tittel" id="registrering">
+        <div className="luma-card luma-card--raised prose-measure">
           <Stack gap="md">
-            <h2 id="registrering-tittel" className="section-heading">
+            <h2 id="registrering-tittel" className="page-heading">
               {SIGNUP_HEADING}
             </h2>
-            <p className="m-0">{SIGNUP_INTRO}</p>
+            <p className="m-0 text-text-muted">{SIGNUP_INTRO}</p>
             {/* Wired to `requestSignupAction` (IDE Agent Spec v3, section 3.1).
                 The service template is picked here rather than after signup so
                 the address and the criteria arrive together — the whole point
@@ -202,43 +362,8 @@ export default async function LandingPage() {
               <a href={privacyPolicyUrl()}>Luma Trainings personvernerklæring</a>.
             </p>
           </Stack>
-        </section>
-
-        <section aria-labelledby="tillit" className="prose-measure">
-          <h2 id="tillit" className="section-heading mb-sm">
-            Rangeringen er upartisk
-          </h2>
-          <p className="m-0">{TRUST_TEXT}</p>
-        </section>
-      </Stack>
-
-      <Card as="section" heading={MCP_HEADING} titleLevel={2}>
-        <Stack gap="md" className="prose-measure">
-          <p className="m-0">{MCP_TEXT}</p>
-          {/*
-           * States the order plainly. The connection needs a token, the token
-           * needs an account, so this is something registering unlocks — not a
-           * second way in. Saying so here is cheaper than letting someone
-           * follow the link and work it out from a page that cannot help them.
-           */}
-          <p className="m-0">
-            Du oppretter tilgangstokenet inne i tjenesten, så dette gjør du etter at du har
-            registrert varslingsprofilen din.
-          </p>
-          <p className="m-0">
-            <Link href="/ai-verktoy">Les hva du kan gjøre med koblingen</Link> —{' '}
-            <a
-              href={lumaUrl('/kurs/vinn-flere-anbud-med-ai', {
-                medium: 'landingsside',
-                campaign: 'vinn-flere-anbud-med-ai',
-                content: 'mcp-seksjon',
-              })}
-            >
-              les om kurset «Vinn flere anbud med AI»
-            </a>
-          </p>
-        </Stack>
-      </Card>
+        </div>
+      </section>
     </>
   );
 }

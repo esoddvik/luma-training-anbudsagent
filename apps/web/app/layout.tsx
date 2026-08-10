@@ -25,6 +25,9 @@ import { SERVICE_NAME } from '@/content/copy';
  */
 const LOGO_SRC = basePathed('/luma-logo-orange-transparent.png');
 
+/** The licence the Doffin/DFØ announcement data is republished under. */
+const LICENCE_URL = 'https://creativecommons.org/licenses/by/4.0/deed.no';
+
 /**
  * Poppins is Luma Training's typeface (luma-training.com loads 400/500/600/700).
  *
@@ -132,9 +135,15 @@ function SiteHeader() {
       {/* Wraps to two rows on a narrow screen rather than collapsing into a
           hamburger. Three destinations do not earn a disclosure widget, and a
           menu that needs JavaScript to open is a menu that can fail to open. */}
-      <div className="app-shell flex flex-wrap items-center justify-between gap-sm py-sm">
+      <div className="app-shell flex flex-wrap items-center justify-between gap-sm py-md">
         <BrandLockup />
         <Cluster as="nav" gap="xs" aria-label="Hovedmeny">
+          {/* The picker is the top of the funnel, so it belongs in the chrome
+              and not only in the hero: someone who lands three pages deep from
+              a search result has no other way back to it. */}
+          <Link href="/finn-anbud" className="site-nav-link">
+            Finn anbud
+          </Link>
           <Link href="/ai-verktoy" className="site-nav-link">
             AI-verktøy
           </Link>
@@ -175,31 +184,52 @@ function SiteHeader() {
 function SiteFooter() {
   return (
     <footer className="site-footer mt-3xl py-2xl">
-      <div className="app-shell flex flex-col gap-lg md:flex-row md:gap-3xl">
-        <Image
-          src={LOGO_SRC}
-          alt="Luma Training"
-          width={273}
-          height={164}
-          className="site-footer__logo"
-        />
-        <nav aria-label="Bunnmeny" className="flex flex-col gap-sm md:ms-3xl">
-          <Link href="/personvern" className="site-footer__link">
-            Retningslinjer for personvern
-          </Link>
-          <Link href="/vilkar" className="site-footer__link">
-            Bruksvilkår
-          </Link>
-          <a href={privacyPolicyUrl()} className="site-footer__link">
-            Luma Trainings personvernerklæring
+      <div className="app-shell flex flex-col gap-lg">
+        <div className="flex flex-col gap-lg md:flex-row md:gap-3xl">
+          <Image
+            src={LOGO_SRC}
+            alt="Luma Training"
+            width={273}
+            height={164}
+            className="site-footer__logo"
+          />
+          <nav aria-label="Bunnmeny" className="flex flex-col gap-sm md:ms-3xl">
+            <Link href="/personvern" className="site-footer__link">
+              Retningslinjer for personvern
+            </Link>
+            <Link href="/vilkar" className="site-footer__link">
+              Bruksvilkår
+            </Link>
+            <a href={privacyPolicyUrl()} className="site-footer__link">
+              Luma Trainings personvernerklæring
+            </a>
+            <a
+              href={lumaUrl('/', { medium: 'nettsted', content: 'bunnmeny' })}
+              className="site-footer__link"
+            >
+              Luma Training
+            </a>
+          </nav>
+        </div>
+        {/*
+         * The CC BY attribution, in the chrome rather than on each page.
+         *
+         * Every public surface republishes announcement data, so the notice has
+         * to be within a glance of all of them; putting it in the footer is how
+         * it stays there when a new page is added. The pages that carry it
+         * themselves keep it — a reader looking at a list of notices should not
+         * have to scroll to the end of the site to learn where they came from.
+         *
+         * ADR-0018 fixes the wording, so the rendered text reads exactly
+         * `Data: Doffin/DFØ (CC BY 4.0)` and the licence name carries the link.
+         */}
+        <p className="site-footer__note">
+          Data: Doffin/DFØ (
+          <a href={LICENCE_URL} className="site-footer__link">
+            CC BY 4.0
           </a>
-          <a
-            href={lumaUrl('/', { medium: 'nettsted', content: 'bunnmeny' })}
-            className="site-footer__link"
-          >
-            Luma Training
-          </a>
-        </nav>
+          )
+        </p>
       </div>
     </footer>
   );

@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Card, Stack } from '@luma/ui';
+import { Stack } from '@luma/ui';
 import { FunnelBeacon } from '@/components/funnel-beacon';
+import { PICKER_HEADING, PICKER_HELPER, PICKER_INTRO } from '@/content/copy';
 import { listServiceTemplateChoices } from '@/server/profiles';
 
 export const metadata: Metadata = {
@@ -19,6 +20,22 @@ export const metadata: Metadata = {
  */
 export const revalidate = 3600;
 
+/**
+ * The badge on each card: the first letter of each of the first two words.
+ *
+ * Derived rather than authored, so a template added in admin gets a badge
+ * without anyone remembering to pick one. Single-word names get a single
+ * letter, which is the correct answer rather than a padded one.
+ */
+function initials(name: string): string {
+  return name
+    .split(/\s+/)
+    .filter((word) => word.length > 0)
+    .slice(0, 2)
+    .map((word) => word.charAt(0).toLocaleUpperCase('nb-NO'))
+    .join('');
+}
+
 export default async function FinnAnbudPage() {
   const templates = await listServiceTemplateChoices();
 
@@ -31,24 +48,39 @@ export default async function FinnAnbudPage() {
           not once per reader. */}
       <FunnelBeacon type="picker_viewed" />
       <Stack gap="md" className="prose-measure">
-        <h1 className="page-heading">Finn anbud i din bransje</h1>
-        <p className="m-0">
-          Velg hva virksomheten din leverer, så viser vi kunngjøringene som er publisert på Doffin
-          de siste 90 dagene. Du trenger ikke registrere deg for å se dem.
-        </p>
+        <h1 className="page-heading">{PICKER_HEADING}</h1>
+        <p className="m-0">{PICKER_INTRO}</p>
+        <p className="m-0 text-text-muted">{PICKER_HELPER}</p>
       </Stack>
 
-      <ul className="m-0 grid list-none gap-md p-0 md:grid-cols-2">
+      {/* Four across at desktop, two at tablet, one on a phone. The whole card
+          is one `<Link>` rather than a card wrapping a link: there is exactly
+          one destination per card, so anything less than the whole surface
+          being clickable is a smaller target for no reason. */}
+      <ul className="m-0 grid list-none gap-md p-0 sm:grid-cols-2 lg:grid-cols-4">
         {templates.map((template) => (
-          <li key={template.slug}>
-            <Card heading={template.name} titleLevel={2}>
-              <Stack gap="sm">
-                <p className="m-0">{template.description}</p>
-                <p className="m-0">
-                  <Link href={`/anbud-for/${template.slug}`}>Se anbud for {template.name}</Link>
-                </p>
-              </Stack>
-            </Card>
+          <li key={template.slug} className="flex">
+            <Link
+              href={`/anbud-for/${template.slug}`}
+              className="luma-card luma-card--raised luma-card--interactive w-full no-underline"
+            >
+              {/* The flex column is a child, not the card: `.luma-card` ships
+                  unlayered from `@luma/ui` and its `display: block` beats a
+                  Tailwind `flex` in `@layer utilities` regardless of
+                  specificity. */}
+              <span className="flex flex-col gap-xs">
+                <span
+                  aria-hidden="true"
+                  className="inline-flex h-[2.5rem] w-[2.5rem] items-center justify-center rounded-md bg-primary-soft font-semibold text-primary"
+                >
+                  {initials(template.name)}
+                </span>
+                <span className="text-lg font-semibold text-text">{template.name}</span>
+                <span className="text-sm text-text-muted">
+                  {template.onboardingHint ?? template.description}
+                </span>
+              </span>
+            </Link>
           </li>
         ))}
       </ul>

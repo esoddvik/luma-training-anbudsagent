@@ -213,11 +213,17 @@
     font-weight: var(--luma-font-weight-semibold);
   }
 
+  /* The funnel design sets the nav at 15px/500 with 28px between items and no
+   * chrome of its own — the links carry themselves and the pill CTA is the only
+   * shape in the bar. Reproduced with tokens: the horizontal padding is what
+   * produces the spacing (the `Cluster` gap stays small so the 44px targets
+   * still touch), and the weight stays medium so the nav never competes with
+   * the brand lockup beside it. */
   .site-nav-link {
     display: inline-flex;
     align-items: center;
     min-height: var(--luma-hit-target-min);
-    padding-inline: var(--luma-space-xs);
+    padding-inline: var(--luma-space-sm);
     border-radius: var(--luma-radius-sm);
     color: var(--luma-color-text);
     font-weight: var(--luma-font-weight-medium);
@@ -306,6 +312,18 @@
     font-size: var(--luma-font-size-md);
     font-weight: var(--luma-font-weight-medium);
     text-decoration: none;
+  }
+
+  /* The CC BY attribution line. Smaller than the footer's links because it is a
+   * statement about the data rather than a destination — but the licence name
+   * inside it is a real link and keeps `.site-footer__link`'s full size, so the
+   * one thing in the sentence that can be clicked is also the largest thing in
+   * it. `inherit` on the colour keeps the white the band needs without a second
+   * literal in the file. */
+  .site-footer__note {
+    margin: 0;
+    color: inherit;
+    font-size: var(--luma-font-size-sm);
   }
 
   .site-footer__link:hover {

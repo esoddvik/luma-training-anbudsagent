@@ -44,6 +44,132 @@ export const SHARE_INVITATION =
 /** Seksjon 43, merking av promotering. */
 export const PROMOTION_LABEL = 'Fra Luma Training';
 
+/* ---------------------------------------------------------------------------
+ * Landingssiden, seksjon for seksjon.
+ *
+ * Alt som står på siden bor her framfor i JSX-en, slik at teksten kan leses og
+ * rettes uten å lese markup — og slik at e2e-testene kan importere nøyaktig den
+ * strengen siden faktisk viser.
+ * ------------------------------------------------------------------------- */
+
+/** Hovedhandlingen i heroen. Fører til bransjevelgeren, ikke til skjemaet. */
+export const LANDING_HERO_CTA = 'Finn anbud for din bransje';
+
+/** Den sekundære lenken i heroen, som hopper ned til forklaringen. */
+export const LANDING_HERO_SECONDARY = 'Slik fungerer det';
+
+/**
+ * Setningen under knappene.
+ *
+ * Den svarer på de to spørsmålene folk faktisk har før de skriver inn en
+ * e-postadresse: koster dette noe, og kommer jeg meg ut igjen.
+ */
+export const LANDING_HERO_REASSURANCE =
+  'Ingen kortopplysninger. Du kan pause eller slette når som helst.';
+
+/**
+ * Overskriften over kunngjøringene i heroen.
+ *
+ * Designet skriver «Publisert på Doffin i dag». Det ville vært en påstand om
+ * data vi ikke har: listen hentes fra et 90-dagersvindu og siden bygges på nytt
+ * hver time, så en kunngjøring her kan være noen dager gammel. Ordlyden er
+ * derfor senket til noe som er sant uansett hva spørringen returnerer.
+ */
+export const LANDING_LIVE_HEADING = 'Nylig publisert på Doffin';
+
+export const LANDING_STEPS_HEADING = 'Slik fungerer det';
+
+export const LANDING_STEPS = [
+  {
+    title: 'Velg bransje og område',
+    body: 'Ferdige maler for de vanligste bransjene. Du kan justere CPV-koder og søkeord etterpå.',
+  },
+  {
+    title: 'Se treffene før du melder deg på',
+    body: 'Ekte kunngjøringer fra Doffin, ikke eksempler.',
+  },
+  {
+    title: 'Få dem på e-post',
+    body: 'Daglig sammendrag eller straks. Med forklaring på hvert eneste treff.',
+  },
+] as const;
+
+/** Bildeteksten under tillitsteksten, som sier hvem løftet kommer fra. */
+export const LANDING_TRANSPARENCY_CAPTION = 'Vårt løfte om åpenhet';
+
+export const LANDING_TRANSPARENCY_SUPPORT =
+  'Ingen svarte bokser. Hvert treff kan åpnes og vise nøyaktig hva som traff — CPV-kode, søkeord og område.';
+
+/** Etiketten over MCP-panelet. Panelet er den ene mørke flaten på siden. */
+export const ASSISTANT_LABEL = 'Spør assistenten din';
+
+export const ASSISTANT_SAMPLE_QUESTION =
+  'Hvilke renholdsanbud i Vestland har frist de neste to ukene?';
+
+/**
+ * Svaret i eksempelet.
+ *
+ * Bevisst uten tall, navn og datoer: et illustrasjonssvar som ser ut som ekte
+ * treffdata blir lest som ekte treffdata. Dette beskriver hva assistenten gjør,
+ * uten å oppgi kunngjøringer som ikke finnes.
+ */
+export const ASSISTANT_SAMPLE_ANSWER =
+  'Assistenten svarer med kunngjøringene fra din egen profil, med frist, oppdragsgiver og hvorfor hver enkelt traff.';
+
+export const ASSISTANT_LINK = 'Se hvordan du kobler til';
+
+/** Kursbåndet nederst. Merkingen kommer fra `Promotion` i @luma/ui. */
+export const LANDING_PROMOTION_HEADING = 'En gratis tjeneste fra Luma Training';
+
+export const LANDING_PROMOTION_TEXT =
+  'Vi lever av kurs i anbudsarbeid. Varslingen er gratis, og blir det. Du betaler eventuelt for arbeid vi gjør for deg, aldri for data.';
+
+export const LANDING_PROMOTION_LINK = 'Se kursdatoer';
+
+export const LANDING_FAQ_HEADING = 'Ofte stilte spørsmål';
+
+/**
+ * Spørsmålene siden faktisk får, med svar som kan etterprøves.
+ *
+ * Hvert svar peker på en egenskap ved tjenesten som finnes i dag — ikke på en
+ * plan. Rekkefølgen er den de stilles i: pris først, så kilde, så hva som
+ * kommer i innboksen, så hvordan man kommer seg ut igjen.
+ */
+export const LANDING_FAQ = [
+  {
+    q: 'Hva koster det?',
+    a: 'Ingenting. Luma Training lever av kurs i anbudsarbeid, ikke av å selge data eller oppmerksomhet. Du betaler aldri for varslene.',
+  },
+  {
+    q: 'Hvor kommer anbudene fra?',
+    a: 'Fra kunngjøringer publisert på Doffin, den offisielle databasen for offentlige anskaffelser i Norge. Vi endrer ikke innholdet i en kunngjøring, og vi lenker alltid til originalen.',
+  },
+  {
+    q: 'Hvor ofte får jeg varsler?',
+    a: 'Du velger selv: daglig sammendrag, eller varsel med en gang et treff dukker opp. Varslingsprofilen starter på pause, så du rekker å se over kriteriene før det første varselet går ut.',
+  },
+  {
+    q: 'Hvorfor fikk jeg akkurat dette treffet?',
+    a: 'Hvert treff kan åpnes og viser hva som traff: CPV-koden, søkeordet og området. Rangeringen påvirkes aldri av kurs, annonser eller kommersielle hensyn.',
+  },
+  {
+    q: 'Kan jeg slutte?',
+    a: 'Ja. Du kan pause varslingen, eller slette varslingsprofilen og opplysningene om deg, når som helst. Vi ber aldri om kortopplysninger.',
+  },
+] as const;
+
+/* ---------------------------------------------------------------------------
+ * Bransjevelgeren (/finn-anbud).
+ * ------------------------------------------------------------------------- */
+
+export const PICKER_HEADING = 'Finn anbud i din bransje';
+
+export const PICKER_INTRO =
+  'Velg hva virksomheten din leverer, så viser vi kunngjøringene som er publisert på Doffin de siste 90 dagene. Du trenger ikke registrere deg for å se dem.';
+
+export const PICKER_HELPER =
+  'Velg det som ligner mest. Vi fyller ut CPV-koder og søkeord for deg, og du kan justere alt etterpå.';
+
 export const SIGNUP_HEADING = 'Kom i gang';
 
 export const SIGNUP_INTRO =

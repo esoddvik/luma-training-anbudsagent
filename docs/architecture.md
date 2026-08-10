@@ -2,7 +2,7 @@
 
 This is the document to read first. It describes what the system is, how it is split, how data moves through it, and where the boundaries are that must not be crossed.
 
-The authoritative product specification is `Luma_Anbudsvarsling_IDE_Agent_Specification_v2.md` in the repository root (Norwegian, 54 sections). Where this document and the spec disagree, the spec wins, except where an ADR in `docs/adr/` records a deliberate deviation. Two such deviations exist and are noted below.
+The authoritative product specification is `Luma_Anbudsvarsling_IDE_Agent_Specification_v2.md` in the repository root (Norwegian, 54 sections), supplemented by `Luma_Anbudsvarsling_IDE_Agent_Specification_v3.md` beside it (search-first funnel, Pluss, document pipeline, split MCP scope). v3 renumbers nothing, so the same number means different sections in the two documents and a v3 citation says so by name. Where this document and a spec disagree, the spec wins — v3 over v2 — except where an ADR in `docs/adr/` records a deliberate deviation. Two such deviations exist and are noted below.
 
 ## 1. What the system does
 

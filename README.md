@@ -11,6 +11,7 @@ The service is also Luma Training's marketing surface toward the supplier market
 | Document | What it covers |
 | --- | --- |
 | [`Luma_Anbudsvarsling_IDE_Agent_Specification_v2.md`](Luma_Anbudsvarsling_IDE_Agent_Specification_v2.md) | The authoritative product specification (Norwegian, 54 sections). Everything else defers to it. |
+| [`Luma_Anbudsvarsling_IDE_Agent_Specification_v3.md`](Luma_Anbudsvarsling_IDE_Agent_Specification_v3.md) | Supplements v2 (Norwegian, 13 sections): search-first funnel, Anbudsvarsling Pluss, document pipeline, split MCP scope. Its section numbers are its own — cite it by name. Where the two conflict, v3 wins. |
 | [`docs/architecture.md`](docs/architecture.md) | System overview, package graph, data flow, deployment split. Start here. |
 | [`docs/adr/`](docs/adr/) | Architecture decision records, including the ones that exist for legal or trust reasons rather than technical ones. |
 | [`docs/deployment.md`](docs/deployment.md) | Where each service runs, what it needs, and how to deploy it. |

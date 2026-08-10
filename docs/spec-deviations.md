@@ -1,12 +1,12 @@
 # Deviations from the specification
 
-`Luma_Anbudsvarsling_IDE_Agent_Specification_v2.md` is the authoritative product document. Where the implementation departs from it, the departure is recorded here with the reason.
+`Luma_Anbudsvarsling_IDE_Agent_Specification_v2.md` is the authoritative product document, supplemented by `Luma_Anbudsvarsling_IDE_Agent_Specification_v3.md`. Where the implementation departs from either, the departure is recorded here with the reason.
 
 Most entries exist because the specification made a reasonable assumption about the Doffin API that turned out to be wrong when checked against the live service. The evidence for those is in [`doffin-api-findings.md`](doffin-api-findings.md), captured 2026-08-03.
 
 A deviation is only legitimate if it is written down. If you find behaviour that contradicts the spec and is not listed here, treat it as a bug rather than an undocumented decision.
 
-The code and docs cite the spec by section throughout, and `pnpm check:citations` resolves every one of those references against the spec's own headings. It catches a citation pointing at nothing. It cannot catch the more expensive kind — a citation pointing at a real but *wrong* section, which survives any existence check and sends the reader somewhere plausible to read the wrong rule. Three of those were found by hand during the build, all three by resolving the reference and reading what was actually there. Do that when a citation matters.
+The code and docs cite the spec by section throughout, and `pnpm check:citations` resolves every one of those references against the spec's own headings — each form against its own document, since v3's section numbers are not v2's. It catches a citation pointing at nothing. It cannot catch the more expensive kind — a citation pointing at a real but *wrong* section, which survives any existence check and sends the reader somewhere plausible to read the wrong rule. Three of those were found by hand during the build, all three by resolving the reference and reading what was actually there. Do that when a citation matters.
 
 That limitation is demonstrated rather than assumed. `legal.ts`'s reference to §21 for the `consentType` union was flipped to §20 and the output re-read: «Samtykkemodell» against "the consent type each legal document maps to" is a pairing any reviewer waves through, and nothing flagged it. It is wrong all the same — §21 enumerates the three consent types and §20 is the narrative about obligatory versus optional consent, so the correct citation carries information the plausible one does not. The check was written knowing it cannot see that difference.
 

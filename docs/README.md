@@ -4,6 +4,8 @@ Documentation for **Luma Anbudsvarsling**, the free Norwegian public-tender aler
 
 The authoritative product specification is **`Luma_Anbudsvarsling_IDE_Agent_Specification_v2.md` in the repository root** (Norwegian bokmål, 54 sections). It defines the product, the trust contract, the data model, the phases and the launch blockers. Everything in this directory explains or records decisions about how that specification is implemented. Where a document here conflicts with the spec, the spec wins, unless an ADR records the deviation deliberately.
 
+**`Luma_Anbudsvarsling_IDE_Agent_Specification_v3.md`** sits beside it and supplements it: the search-first funnel, Anbudsvarsling Pluss, the document pipeline and the split MCP scope. It renumbers nothing, so the two number-spaces overlap and mean different things — v3 §3 is the search-first funnel, v2 §3 is the trust contract. A citation therefore names v3 explicitly («IDE Agent Spec v3, section 3.2») or it is a v2 citation, and `scripts/check-citations.js` resolves each form against its own document. Where v2 and v3 conflict, v3 wins; it says so itself.
+
 Customer-facing text is Norwegian. Code, schema, logs and these documents are English, as permitted by spec §6.
 
 ## Start here

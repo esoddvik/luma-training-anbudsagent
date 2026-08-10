@@ -4,7 +4,7 @@ Documentation for **Luma Anbudsvarsling**, the free Norwegian public-tender aler
 
 The authoritative product specification is **`Luma_Anbudsvarsling_IDE_Agent_Specification_v2.md` in the repository root** (Norwegian bokmål, 54 sections). It defines the product, the trust contract, the data model, the phases and the launch blockers. Everything in this directory explains or records decisions about how that specification is implemented. Where a document here conflicts with the spec, the spec wins, unless an ADR records the deviation deliberately.
 
-**`Luma_Anbudsvarsling_IDE_Agent_Specification_v3.md`** sits beside it and supplements it: the search-first funnel, Anbudsvarsling Pluss, the document pipeline and the split MCP scope. It renumbers nothing, so the two number-spaces overlap and mean different things — v3 §3 is the search-first funnel, v2 §3 is the trust contract. A citation therefore names v3 explicitly («IDE Agent Spec v3, section 3.2») or it is a v2 citation, and `scripts/check-citations.js` resolves each form against its own document. Where v2 and v3 conflict, v3 wins; it says so itself.
+**`Luma_Anbudsvarsling_IDE_Agent_Specification_v3.md`** sits beside it and supplements it: the search-first funnel, Anbudsvarsling Pluss, the document pipeline and the split MCP scope. It renumbers nothing, so the two number-spaces overlap and mean different things — v3 §3 is the search-first funnel, v2 §3 is the trust contract. A citation therefore names v3 explicitly («IDE Agent Spec v3, section 3.2») or it is a v2 citation, and `scripts/check-citations.js` resolves each form against its own document. Where v2 and v3 conflict, v3 wins; it says so itself. Both are edited here — see [`spec-sync.md`](spec-sync.md).
 
 Customer-facing text is Norwegian. Code, schema, logs and these documents are English, as permitted by spec §6.
 
@@ -16,7 +16,7 @@ Customer-facing text is Norwegian. Code, schema, logs and these documents are En
 | [`adr/`](adr/) | Architecture decision records. Sixteen accepted decisions, listed below. |
 | [`deployment.md`](deployment.md) | Operator guide: what runs where, Vercel and Railway configuration, environment variable names per service. |
 | [`phase-7-billing-reference.md`](phase-7-billing-reference.md) | The v1 order and subscription model, kept as reference for phase 7 per spec §28.3. Nothing in it is implemented. |
-| [`spec-sync.md`](spec-sync.md) | The v3 specification is authored in Rable and copied into this repository. Which direction of drift CI catches, which it structurally cannot, and how to re-export. |
+| [`spec-sync.md`](spec-sync.md) | Where the two specifications live, why v3 moved out of Rable into this repository, and what to run when you change one. |
 
 ## Architecture decision records
 

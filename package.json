@@ -17,7 +17,6 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,mjs,cjs,json,css,yaml,yml}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mjs,cjs,json,css,yaml,yml}\"",
     "check:citations": "node scripts/check-citations.js",
-    "check:spec-copy": "node scripts/check-spec-copy.js",
     "db:generate": "pnpm --filter @luma/db db:generate",
     "db:migrate": "pnpm --filter @luma/db db:migrate",
     "db:studio": "pnpm --filter @luma/db db:studio"

@@ -1,85 +1,57 @@
-# Keeping the v3 specification copy in sync
+# Where the specifications live
 
-`Luma_Anbudsvarsling_IDE_Agent_Specification_v3.md` in the repository root is a
-**copy**. The document is authored in Rable, in the note _"Luma Anbudsvarsling
-IDE Agent Spec v3: Søk-først, Pluss og dokumentpipeline"_ (id
-`f1781a17-8552-413d-8a7b-f5caaaa6639a`).
+Both specifications are files in this repository, and both are edited here:
 
-It is here because `scripts/check-citations.js` needs real headings to resolve
-against. Before it existed, the ~80 v3 citations in the code matched no pattern
-and nothing verified them, while the check reported a confident green over the
-rest of the repository.
+| Document | Covers |
+| --- | --- |
+| `Luma_Anbudsvarsling_IDE_Agent_Specification_v2.md` | The product: trust contract, data model, phases, launch blockers. 54 sections. |
+| `Luma_Anbudsvarsling_IDE_Agent_Specification_v3.md` | Supplements v2: search-first funnel, Anbudsvarsling Pluss, document pipeline, split MCP scope. 13 sections. |
 
-Two copies of anything drift. This document is about which drift is caught,
-which is not, and what to do about the gap.
+v3 was drafted in Rable and moved here on 2026-08-10. The Rable note is now a
+mirror, marked as one at the top. **Edit the file, not the note.**
 
-## The two directions
+## Why the source of truth moved instead of being copied
 
-| Direction | Caught by | When |
-| --- | --- | --- |
-| The **copy** is edited here | `pnpm check:spec-copy`, in CI | Every push |
-| The **note** is edited in Rable | Nothing automatic | — |
+v3 acquired a reader that a note cannot serve. `scripts/check-citations.js`
+resolves roughly eighty references in the code against v3's headings, so
+renaming a section has to break the build — that is the entire point of
+tracking it. Before it was tracked, those eighty citations matched no pattern
+and the check reported a confident green over the half of the repository it
+could still see.
 
-### Why CI cannot check the second one
+Tracking a *copy* was the first attempt, and it only half worked. Drift has two
+directions:
 
-Rable is reachable only through an MCP connector authenticated in a Claude
-session. There is no API token, no service account and no HTTP endpoint a
-GitHub runner could call. A CI step that "exports the note and compares" has
-nothing to authenticate with, so it cannot be written — not as a matter of
-effort, but of access.
+- **The copy is edited here.** Catchable, and it was caught — a hash over the
+  body, recomputed in CI.
+- **The note is edited instead.** Not catchable. Rable is reachable only
+  through an MCP connector authenticated in a Claude session. There is no API
+  token, no service account and no HTTP endpoint a GitHub runner could call, so
+  a CI step that exports the note and compares has nothing to authenticate
+  with. This was checked, not assumed: the connector appears in the session
+  tool list, not in `.mcp.json` or any repository configuration.
 
-This was checked rather than assumed: the connector appears in the session's
-tool list, not in `.mcp.json` or any repository configuration, and carries no
-credential that could be handed to a runner as a secret.
+A check that covers one direction of a two-direction problem reads as coverage
+and is not. Moving the source of truth deletes the second direction rather than
+watching it, so the hash receipt and its CI step came back out — with the repo
+authoritative, editing the file *is* the correct way to change the
+specification, and a check blocking that would fight the workflow it exists to
+protect.
 
-### What the receipt does prove
+## Changing a specification
 
-The copy's header carries a `body-sha256` over everything below it.
-`check-spec-copy` recomputes it on every push. So a hand edit to the
-specification text — the drift that actually happens by accident, because the
-file sits right there next to the code — turns CI red and says why.
+1. Edit the file.
+2. Run `pnpm check:citations`. Renaming or removing a section surfaces here as
+   a dangling citation, listing every reference that has to move with it.
+3. Commit both together — the specification change and the citations it broke.
 
-What it does **not** prove is that the copy is current. A green
-`check-spec-copy` means *nobody edited this file*, which is a different claim
-from *this file matches the note*, and the script's own output says so rather
-than letting the name imply otherwise.
+Do not renumber v3 into v2's space. They overlap deliberately and the citation
+forms distinguish them: a reference names v3 («IDE Agent Spec v3, section 3.2»)
+or it is a v2 citation.
 
-## Re-exporting after the note changes
+## The Rable mirror
 
-This needs a Claude session with the Rable connector. It is four steps:
-
-1. Read the note: `read_note_content({ id: "f1781a17-8552-413d-8a7b-f5caaaa6639a" })`.
-2. Replace everything **after** the `-->` of the provenance header with the
-   note body, minus its trailing `#tag` lines. Leave the header itself alone
-   except for `note-updated:`, which takes the note's `updated_at`.
-3. `node scripts/check-spec-copy.js --record` to write the new hash.
-4. `pnpm check:citations`. A section that was renumbered or removed in the note
-   will surface here as a dangling citation — which is the point of the copy
-   existing at all.
-
-Step 4 is the one worth not skipping. The whole reason to track the copy is
-that a renamed section in the note should break the build rather than quietly
-make eighty comments wrong.
-
-### Checking for drift without re-exporting
-
-Same session requirement, but cheap enough to do in passing:
-
-```
-get_note({ id: "f1781a17-8552-413d-8a7b-f5caaaa6639a" })
-```
-
-and compare `updated_at` against the `note-updated:` line in the copy's header.
-If they differ, the copy is stale — re-export. If they match, the copy is
-current, and unlike the hash this is real evidence of that.
-
-Worth doing whenever v3 is being worked from, and it is the only check that
-covers the direction CI is blind to.
-
-## The alternative nobody has picked yet
-
-The gap closes completely if the repository becomes the source of truth and
-Rable holds the copy — then `check-spec-copy` is checking the real document and
-there is no second direction to worry about. That is a decision about where the
-product owner edits specifications, not a technical one, so it is recorded here
-as an open option rather than made unilaterally.
+Kept because the spec family and the surrounding product notes are read
+together there. It carries a banner pointing here and is not authoritative. If
+it is ever worth refreshing, that is a manual copy out of this file — no
+tooling depends on it, and nothing breaks if it stays behind.

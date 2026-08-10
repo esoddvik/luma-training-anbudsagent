@@ -102,8 +102,8 @@ export function InlineSignup({
               {SIGNUP_SUBMIT}
             </Button>
             <p className="m-0 text-sm text-text-muted">
-              Gratis, ingen kortopplysninger. Du godtar{' '}
-              <Link href="/vilkar">bruksvilkårene</Link> når du åpner lenken vi sender, og kan lese{' '}
+              Gratis, ingen kortopplysninger. Du godtar <Link href="/vilkar">bruksvilkårene</Link>{' '}
+              når du åpner lenken vi sender, og kan lese{' '}
               <Link href="/personvern">personvernerklæringen</Link> først.
             </p>
           </Stack>

@@ -317,8 +317,8 @@ function CourseCard() {
   return (
     <Promotion heading="Vinn flere anbud med AI">
       <p className="m-0">
-        Én dag med konkrete oppskrifter på hvordan du bruker AI i anbudsarbeidet, med egne anbud
-        som case.
+        Én dag med konkrete oppskrifter på hvordan du bruker AI i anbudsarbeidet, med egne anbud som
+        case.
       </p>
       <p className="m-0 mt-xs">
         <a
@@ -338,8 +338,8 @@ function CourseCard() {
 function SourceNote() {
   return (
     <p className="prose-measure m-0 text-sm text-text-muted">
-      Denne siden gjengir en kunngjøring fra Doffin. Vi endrer ikke innholdet. Ved uoverensstemmelser
-      gjelder oppdragsgiverens kunngjøring.
+      Denne siden gjengir en kunngjøring fra Doffin. Vi endrer ikke innholdet. Ved
+      uoverensstemmelser gjelder oppdragsgiverens kunngjøring.
     </p>
   );
 }

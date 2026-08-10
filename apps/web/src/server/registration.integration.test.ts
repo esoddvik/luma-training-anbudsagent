@@ -447,12 +447,8 @@ describeDb('the search-first entry door', () => {
    */
   describe('where a confirmed signup lands', () => {
     async function confirmThrough(searchParams: Record<string, string>): Promise<string> {
-      const { default: ConfirmPage } = await import(
-        '../../app/(public)/registrering/bekreft/page'
-      );
-      return redirectTargetOf(() =>
-        ConfirmPage({ searchParams: Promise.resolve(searchParams) }),
-      );
+      const { default: ConfirmPage } = await import('../../app/(public)/registrering/bekreft/page');
+      return redirectTargetOf(() => ConfirmPage({ searchParams: Promise.resolve(searchParams) }));
     }
 
     it('sends the reader to the review step, carrying the profile it just created', async () => {

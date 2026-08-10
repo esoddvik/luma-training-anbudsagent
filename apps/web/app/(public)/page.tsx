@@ -175,7 +175,10 @@ export default async function LandingPage() {
               <h2 className="eyebrow text-text-muted">{LANDING_LIVE_HEADING}</h2>
               <ul className="m-0 flex list-none flex-col gap-sm p-0">
                 {heroTenders.map((tender) => (
-                  <li key={tender.id} className="luma-card luma-card--raised luma-card--interactive">
+                  <li
+                    key={tender.id}
+                    className="luma-card luma-card--raised luma-card--interactive"
+                  >
                     <Link href={`/kunngjoring/${tender.id}`} className="font-semibold">
                       {tender.title}
                     </Link>

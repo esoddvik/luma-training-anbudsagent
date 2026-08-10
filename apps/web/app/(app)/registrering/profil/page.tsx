@@ -28,7 +28,8 @@ export const metadata: Metadata = {
  *
  * `confirmSignup` creates the user, the terms acceptance, the consent mirror
  * and the profile in one transaction during the GET that redeems the emailed
- * link, and it creates the profile **paused** on purpose (spec section 3.2).
+ * link, and it creates the profile **paused** on purpose (IDE Agent Spec v3,
+ * section 3.2).
  * There is no earlier moment at which a review screen could exist: before that
  * transaction there is no session, no profile and nothing to show. So this page
  * is not "confirm before we build it" — it is "here is what we built from your

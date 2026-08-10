@@ -36,7 +36,7 @@ export const metadata: Metadata = {
  * On success the person lands on the review step, `(app)/registrering/profil`.
  * `confirmSignup` creates the profile paused, and that page is where they see
  * what was built from their choices, take out what does not fit, and switch it
- * on — the last step of the funnel (design B5, spec section 3.2).
+ * on — the last step of the funnel (design B5, IDE Agent Spec v3, section 3.2).
  *
  * ## What happened to `returnPath`
  *

@@ -35,23 +35,21 @@
  * ships, running `--apply` will discard whatever an editor changed, and the
  * module above needs a real answer before then.
  *
- *   pnpm tsx scripts/sync-service-templates.mts            # report only
- *   pnpm tsx scripts/sync-service-templates.mts --apply    # write
+ *   pnpm tsx scripts/sync-service-templates.ts            # report only
+ *   pnpm tsx scripts/sync-service-templates.ts --apply    # write
  */
 import { createDatabase } from '@luma/db';
 import {
   applyServiceTemplateDrift,
   loadServiceTemplateDrift,
   SEED_FIELD_LABELS_NB,
-} from '../src/server/admin-service-templates.ts';
+} from '../src/server/admin-service-templates';
 
 const apply = process.argv.includes('--apply');
 const { db, close } = createDatabase({ max: 2 });
 
 try {
-  const report = apply
-    ? await applyServiceTemplateDrift(db)
-    : await loadServiceTemplateDrift(db);
+  const report = apply ? await applyServiceTemplateDrift(db) : await loadServiceTemplateDrift(db);
 
   for (const slug of report.missingSlugs) {
     console.log(`MISSING   ${slug} — no row. This script does not insert.`);

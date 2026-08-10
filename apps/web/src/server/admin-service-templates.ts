@@ -16,7 +16,7 @@ import { getWebDb, type Database } from './db';
  * step. Removing `98300000 Diverse tjenester` from the renhold seed left
  * production serving the old CPV list from a row no diff shows.
  *
- * `apps/web/scripts/sync-service-templates.mts` does the same job from a
+ * `apps/web/scripts/sync-service-templates.ts` does the same job from a
  * terminal and imports its comparison from here, so the two cannot drift. It
  * is not enough on its own: this project marks its production environment
  * variables sensitive, so `vercel env pull --environment=production` returns

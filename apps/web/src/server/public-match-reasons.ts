@@ -317,9 +317,7 @@ function groupCpvCodes(matched: readonly string[]): string[][] {
       const a = codes[i] as string;
       const b = codes[j] as string;
       const related =
-        cpvFamilyOf(a) === cpvFamilyOf(b) ||
-        isCpvDescendantOf(a, b) ||
-        isCpvDescendantOf(b, a);
+        cpvFamilyOf(a) === cpvFamilyOf(b) || isCpvDescendantOf(a, b) || isCpvDescendantOf(b, a);
       if (related) union(a, b);
     }
   }

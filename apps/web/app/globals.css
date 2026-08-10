@@ -270,6 +270,97 @@
     text-decoration: underline;
   }
 
+  /* ---------------------------------------------------------------------------
+   * The narrow-screen menu — a `<details>`, so it opens without JavaScript.
+   * See the comment on `SiteHeader` for why the links exist twice.
+   * ------------------------------------------------------------------------ */
+  /* The two navs are switched here rather than with `hidden` / `md:hidden`
+   * utilities, because a utility can be outranked by unlayered component CSS
+   * and this pair silently shipped both menus at once when it was. */
+  .site-nav {
+    display: none;
+    align-items: center;
+    gap: var(--luma-space-2xs);
+  }
+
+  .site-menu {
+    position: relative;
+    display: block;
+  }
+
+  @media (min-width: 48rem) {
+    .site-nav {
+      display: flex;
+    }
+
+    .site-menu {
+      display: none;
+    }
+  }
+
+  .site-menu__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--luma-hit-target-min);
+    min-height: var(--luma-hit-target-min);
+    border-radius: var(--luma-radius-sm);
+    cursor: pointer;
+    /* Both are needed: the standard property, and the WebKit pseudo-element
+     * that older Safari still draws the triangle with. */
+    list-style: none;
+  }
+
+  .site-menu__toggle::-webkit-details-marker {
+    display: none;
+  }
+
+  /* Three bars drawn from one element, so the toggle has no icon dependency. */
+  .site-menu__bars,
+  .site-menu__bars::before,
+  .site-menu__bars::after {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: var(--luma-color-text);
+    border-radius: var(--luma-radius-pill);
+  }
+
+  .site-menu__bars::before,
+  .site-menu__bars::after {
+    content: '';
+    position: relative;
+  }
+
+  .site-menu__bars::before {
+    top: -6px;
+  }
+
+  .site-menu__bars::after {
+    top: 4px;
+  }
+
+  .site-menu[open] .site-menu__panel {
+    display: flex;
+  }
+
+  .site-menu__panel {
+    position: absolute;
+    inset-inline-end: 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--luma-space-2xs);
+    min-width: 12rem;
+    margin-block-start: var(--luma-space-xs);
+    padding: var(--luma-space-xs);
+    border: var(--luma-border-width) solid var(--luma-color-border);
+    border-radius: var(--luma-radius-lg);
+    background: var(--luma-color-surface-raised);
+    box-shadow: var(--luma-shadow-md);
+  }
+
   .site-nav-link[aria-current='page'] {
     color: var(--luma-color-primary);
     text-decoration: underline;

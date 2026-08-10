@@ -106,31 +106,37 @@ export default async function NationalPage({ params }: { params: Promise<{ brans
   ];
 
   return (
-    <Stack gap="xl">
-      {/* Beacons, not calls from this function: the page is prerendered, so
+    // The design floats each screen on a rounded cream panel rather than
+    // letting content sit straight on the page background. `.bleed` is what
+    // lets the panel run the full width and carry its own surface; the shell
+    // width is restored inside it.
+    <div className="bleed">
+      <Stack gap="xl" className="luma-panel app-shell">
+        {/* Beacons, not calls from this function: the page is prerendered, so
           this function runs once an hour rather than once per reader. */}
-      <FunnelBeacon type="trade_selected" bransje={template.slug} />
-      <FunnelBeacon type="results_viewed" bransje={template.slug} />
-      <Stack gap="md" className="prose-measure">
-        <h1 className="page-heading">Anbud for {template.name}</h1>
-        <p className="m-0">{template.description}</p>
-        {template.supplierForm === 'cross_sector' && regions.length > 1 ? (
-          <p className="m-0 text-sm text-text-muted">
-            Virksomheter som leverer dette selger over hele landet. Vil du se én landsdel?
-          </p>
-        ) : null}
-      </Stack>
+        <FunnelBeacon type="trade_selected" bransje={template.slug} />
+        <FunnelBeacon type="results_viewed" bransje={template.slug} />
+        <Stack gap="md" className="prose-measure">
+          <h1 className="page-heading">Anbud for {template.name}</h1>
+          <p className="m-0">{template.description}</p>
+          {template.supplierForm === 'cross_sector' && regions.length > 1 ? (
+            <p className="m-0 text-sm text-text-muted">
+              Virksomheter som leverer dette selger over hele landet. Vil du se én landsdel?
+            </p>
+          ) : null}
+        </Stack>
 
-      <ResultsExplorer
-        templateName={template.name}
-        regional={result.regional.map((tender) => toExplorerTender(tender, template))}
-        nationwide={result.nationwide.map((tender) => toExplorerTender(tender, template))}
-        templateCpv={template.cpvInclude}
-        templateKeywords={template.keywordsInclude}
-        regions={regions.length > 1 ? regions : []}
-        nowIso={now.toISOString()}
-        rail={<InlineSignup templateSlug={template.slug} templateName={template.name} />}
-      />
-    </Stack>
+        <ResultsExplorer
+          templateName={template.name}
+          regional={result.regional.map((tender) => toExplorerTender(tender, template))}
+          nationwide={result.nationwide.map((tender) => toExplorerTender(tender, template))}
+          templateCpv={template.cpvInclude}
+          templateKeywords={template.keywordsInclude}
+          regions={regions.length > 1 ? regions : []}
+          nowIso={now.toISOString()}
+          rail={<InlineSignup templateSlug={template.slug} templateName={template.name} />}
+        />
+      </Stack>
+    </div>
   );
 }

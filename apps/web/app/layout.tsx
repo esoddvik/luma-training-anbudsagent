@@ -7,7 +7,7 @@ import type { ReactNode } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Poppins } from 'next/font/google';
-import { buttonClassName, Cluster, SkipLink } from '@luma/ui';
+import { buttonClassName, SkipLink } from '@luma/ui';
 import { privacyPolicyUrl } from '@/lib/legal';
 import { lumaUrl } from '@/lib/luma-links';
 import { basePathed, PRODUCTION_URL } from '@/lib/site';
@@ -129,34 +129,76 @@ function BrandLockup() {
   );
 }
 
+/**
+ * The four destinations, rendered into whichever of the two navs is visible.
+ *
+ * The picker is the top of the funnel, so it belongs in the chrome and not only
+ * in the hero: someone who lands three pages deep from a search result has no
+ * other way back to it.
+ */
+function NavDestinations() {
+  return (
+    <>
+      <Link href="/finn-anbud" className="site-nav-link">
+        Finn anbud
+      </Link>
+      <Link href="/ai-verktoy" className="site-nav-link">
+        AI-verktøy
+      </Link>
+      <Link href="/logg-inn" className="site-nav-link">
+        Logg inn
+      </Link>
+      <Link href="/#registrering" className={buttonClassName({ variant: 'secondary', size: 'sm' })}>
+        Kom i gang
+      </Link>
+    </>
+  );
+}
+
+/**
+ * ## Why there are two navs and only ever one landmark
+ *
+ * This used to be one wrapping `Cluster`, on the reasoning that three
+ * destinations do not earn a disclosure widget and that a menu needing
+ * JavaScript to open is a menu that can fail to open. The second half of that
+ * is still true and is why there is no client component here. The first half
+ * did not survive being looked at on a phone: at 390 the row wrapped three
+ * deep — brand, then links, then the pill — and ate the top 360 pixels before
+ * any content, so the chrome was the page.
+ *
+ * `<details>` is the fix that keeps the argument intact. It is native HTML, it
+ * opens with the bundle stripped, and it needs no state.
+ *
+ * The links appear twice in the markup, once per breakpoint, and exactly one of
+ * the two containers is ever `display: none`. That matters: `display: none`
+ * removes a subtree from the accessibility tree outright, so a screen reader
+ * meets one «Hovedmeny» landmark and one set of links, never two — and the
+ * hidden copy holds nothing focusable, which is what keeps the skip link first
+ * in the tab order.
+ */
 function SiteHeader() {
   return (
     <header className="site-header">
-      {/* Wraps to two rows on a narrow screen rather than collapsing into a
-          hamburger. Three destinations do not earn a disclosure widget, and a
-          menu that needs JavaScript to open is a menu that can fail to open. */}
-      <div className="app-shell flex flex-wrap items-center justify-between gap-sm py-md">
+      <div className="app-shell flex items-center justify-between gap-sm py-md">
         <BrandLockup />
-        <Cluster as="nav" gap="xs" aria-label="Hovedmeny">
-          {/* The picker is the top of the funnel, so it belongs in the chrome
-              and not only in the hero: someone who lands three pages deep from
-              a search result has no other way back to it. */}
-          <Link href="/finn-anbud" className="site-nav-link">
-            Finn anbud
-          </Link>
-          <Link href="/ai-verktoy" className="site-nav-link">
-            AI-verktøy
-          </Link>
-          <Link href="/logg-inn" className="site-nav-link">
-            Logg inn
-          </Link>
-          <Link
-            href="/#registrering"
-            className={buttonClassName({ variant: 'secondary', size: 'sm' })}
-          >
-            Kom i gang
-          </Link>
-        </Cluster>
+
+        {/* Deliberately NOT a `Cluster`. `.luma-cluster` is unlayered CSS and
+            sets `display: flex`, which outranks Tailwind's `hidden` sitting in
+            `@layer utilities` — so the wide nav stayed visible at 390 and the
+            page carried two menus. Both breakpoints are driven from
+            `.site-nav` / `.site-menu` in globals.css, where nothing competes. */}
+        <nav className="site-nav" aria-label="Hovedmeny">
+          <NavDestinations />
+        </nav>
+
+        <details className="site-menu">
+          <summary className="site-menu__toggle" aria-label="Meny">
+            <span className="site-menu__bars" aria-hidden="true" />
+          </summary>
+          <nav className="site-menu__panel" aria-label="Hovedmeny">
+            <NavDestinations />
+          </nav>
+        </details>
       </div>
     </header>
   );

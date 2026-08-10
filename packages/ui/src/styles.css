@@ -373,7 +373,12 @@
   padding: var(--luma-space-xs) var(--luma-space-sm);
   border: var(--luma-border-width) solid var(--luma-color-border);
   border-radius: var(--luma-radius-md);
-  background: var(--luma-color-surface);
+  /* White, not the page cream. This used to be `--luma-color-surface`, which
+   * put an *enabled* field one cream away from the `:disabled` rule below —
+   * two warm near-whites a few percent apart, so a live search box read as a
+   * dead one at a glance. On white the field is unambiguously a field on every
+   * surface the app renders, and disabled now actually looks disabled. */
+  background: var(--luma-color-surface-raised);
   color: var(--luma-color-text);
   font-family: inherit;
   /* 16px avoids the iOS Safari zoom-on-focus jump. */

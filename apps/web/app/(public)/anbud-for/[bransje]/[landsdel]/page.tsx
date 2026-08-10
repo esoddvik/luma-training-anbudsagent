@@ -116,39 +116,44 @@ export default async function RegionalPage({
   ];
 
   return (
-    <Stack gap="xl">
-      {/* Beacons, not calls from this function: the page is prerendered, so
+    // See the twin on the national page: `.bleed` lets the cream panel run the
+    // full width and carry its own surface, and `.app-shell` restores the shell
+    // width inside it.
+    <div className="bleed">
+      <Stack gap="xl" className="luma-panel app-shell">
+        {/* Beacons, not calls from this function: the page is prerendered, so
           this function runs once an hour rather than once per reader. */}
-      <FunnelBeacon type="region_selected" bransje={template.slug} landsdel={region.slug} />
-      <FunnelBeacon type="results_viewed" bransje={template.slug} landsdel={region.slug} />
-      <Stack gap="md" className="prose-measure">
-        <h1 className="page-heading">
-          Anbud for {template.name} i {region.name}
-        </h1>
-        <p className="m-0">{template.description}</p>
-        <p className="m-0 text-sm text-text-muted">
-          <Link href={`/anbud-for/${template.slug}`}>Se hele landet i stedet</Link>
-        </p>
-      </Stack>
+        <FunnelBeacon type="region_selected" bransje={template.slug} landsdel={region.slug} />
+        <FunnelBeacon type="results_viewed" bransje={template.slug} landsdel={region.slug} />
+        <Stack gap="md" className="prose-measure">
+          <h1 className="page-heading">
+            Anbud for {template.name} i {region.name}
+          </h1>
+          <p className="m-0">{template.description}</p>
+          <p className="m-0 text-sm text-text-muted">
+            <Link href={`/anbud-for/${template.slug}`}>Se hele landet i stedet</Link>
+          </p>
+        </Stack>
 
-      <ResultsExplorer
-        templateName={template.name}
-        landsdelName={region.name}
-        regional={result.regional.map((tender) => toExplorerTender(tender, template, region))}
-        nationwide={result.nationwide.map((tender) => toExplorerTender(tender, template, region))}
-        templateCpv={template.cpvInclude}
-        templateKeywords={template.keywordsInclude}
-        regions={regions}
-        nowIso={now.toISOString()}
-        rail={
-          <InlineSignup
-            templateSlug={template.slug}
-            templateName={template.name}
-            landsdelSlug={region.slug}
-            landsdelName={region.name}
-          />
-        }
-      />
-    </Stack>
+        <ResultsExplorer
+          templateName={template.name}
+          landsdelName={region.name}
+          regional={result.regional.map((tender) => toExplorerTender(tender, template, region))}
+          nationwide={result.nationwide.map((tender) => toExplorerTender(tender, template, region))}
+          templateCpv={template.cpvInclude}
+          templateKeywords={template.keywordsInclude}
+          regions={regions}
+          nowIso={now.toISOString()}
+          rail={
+            <InlineSignup
+              templateSlug={template.slug}
+              templateName={template.name}
+              landsdelSlug={region.slug}
+              landsdelName={region.name}
+            />
+          }
+        />
+      </Stack>
+    </div>
   );
 }

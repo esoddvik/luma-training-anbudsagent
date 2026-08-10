@@ -64,10 +64,13 @@ export default async function FinnAnbudPage() {
               href={`/anbud-for/${template.slug}`}
               className="luma-card luma-card--raised luma-card--interactive w-full no-underline"
             >
-              {/* The flex column is a child, not the card: `.luma-card` ships
-                  unlayered from `@luma/ui` and its `display: block` beats a
-                  Tailwind `flex` in `@layer utilities` regardless of
-                  specificity. */}
+              {/* The flex column is a child rather than the card. It had to be
+                  once, when `.luma-card` was unlayered and its `display: block`
+                  beat the utility; `@luma/ui` now loads into
+                  `@layer components`, so `className="luma-card flex flex-col"`
+                  would work too and this span could go. Left as-is because
+                  removing it changes the DOM, and the before/after harness that
+                  cleared this change measured the DOM it has. */}
               <span className="flex flex-col gap-xs">
                 <span
                   aria-hidden="true"

@@ -167,9 +167,10 @@ function TenderCard({
   ];
 
   return (
-    // `Stack` rather than `flex flex-col` on the card itself: `.luma-card` is an
-    // unlayered rule from `@luma/ui`, and an unlayered `display: block` beats a
-    // Tailwind utility in `@layer utilities` no matter what order they load in.
+    // `Stack` rather than `flex flex-col` on the card itself. This was once the
+    // only thing that worked, because `.luma-card` was unlayered and beat the
+    // utility; `@luma/ui` now loads into `@layer components`, so it is simply
+    // the tidier of two options that both work.
     <li className="luma-card">
       <Stack gap="sm">
         {tender.planned ? (

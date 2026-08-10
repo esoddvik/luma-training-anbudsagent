@@ -47,9 +47,10 @@ export function InlineSignup({
   landsdelName?: string;
 }) {
   return (
-    // `Stack` inside rather than `flex flex-col` on the card: `.luma-card` is an
-    // unlayered `display: block` from `@luma/ui`, which outranks a Tailwind
-    // utility sitting in `@layer utilities`.
+    // `Stack` inside rather than `flex flex-col` on the card. That used to be
+    // forced — `.luma-card` was unlayered and outranked the utility — and is
+    // now a plain preference: `Stack` names the gap in tokens rather than
+    // spelling the layout out in utilities. Either would work.
     <section aria-labelledby="varsling-tittel" className="luma-card" id="registrering">
       <Stack gap="md">
         <h2 id="varsling-tittel" className="m-0 text-xl font-semibold">

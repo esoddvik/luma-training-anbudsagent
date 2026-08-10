@@ -205,10 +205,12 @@ export default async function LandingPage() {
             {LANDING_STEPS_HEADING}
           </h2>
           {/* The flex column inside each card is an inner element rather than
-              the card itself: `.luma-card` ships unlayered from `@luma/ui`, so
-              its `display: block` beats a Tailwind `flex` in `@layer utilities`
-              no matter the specificity. Anything that would fight a primitive's
-              own declaration goes on a child. */}
+              the card itself. That was a workaround for `.luma-card` shipping
+              unlayered and beating the utility; `@luma/ui` now loads into
+              `@layer components`, so a utility on the card wins and these inner
+              `<div>`s are optional. Kept for now — they are load-bearing for
+              nothing, and collapsing them is a DOM change that wants its own
+              before/after run. */}
           <ol className="m-0 grid list-none gap-md p-0 md:grid-cols-3">
             {LANDING_STEPS.map((step, index) => (
               <li key={step.title} className="luma-card luma-card--raised">

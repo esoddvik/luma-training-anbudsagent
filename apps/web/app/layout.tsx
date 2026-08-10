@@ -184,11 +184,13 @@ function SiteHeader() {
       <div className="app-shell flex items-center justify-between gap-sm py-md">
         <BrandLockup />
 
-        {/* Deliberately NOT a `Cluster`. `.luma-cluster` is unlayered CSS and
-            sets `display: flex`, which outranks Tailwind's `hidden` sitting in
-            `@layer utilities` — so the wide nav stayed visible at 390 and the
-            page carried two menus. Both breakpoints are driven from
-            `.site-nav` / `.site-menu` in globals.css, where nothing competes. */}
+        {/* A plain `<nav>` rather than a `Cluster` with `hidden md:flex`. The
+            utility version shipped both menus at 390 at once, back when
+            `.luma-cluster` was unlayered and its `display: flex` outranked
+            `hidden`. `@luma/ui` now loads into `@layer components`, so that
+            version would work — but the two breakpoints are a single decision
+            and they read better as one media query in globals.css than as
+            opposite utilities on two sibling elements. */}
         <nav className="site-nav" aria-label="Hovedmeny">
           <NavDestinations />
         </nav>

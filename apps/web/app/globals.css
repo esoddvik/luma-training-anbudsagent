@@ -224,8 +224,22 @@
    * closes on a `<Card as="section">` — but the rule is what stops the next
    * top-level card from silently losing 8px a side.
    *
-   * Still a `components` rule, so a caller's `px-*` utility overrides it. */
-  .site-main > .luma-card {
+   * Still a `components` rule, so a caller's `px-*` utility overrides it.
+   *
+   * `.luma-promotion` is here for the same reason and was found the same way.
+   * The landing page closes on the Luma band as a top-level block, and the
+   * before/after harness caught it losing 24px to 16px on the inline axis at
+   * both 1440 and 390 — six elements per width, all of them the band's children
+   * silently gaining 16px of width. It is the one regression the layer change
+   * actually produced.
+   *
+   * The rule is a list rather than something clever because the property it
+   * guards belongs to whichever primitive draws its own surface, and there is
+   * no selector for "draws its own surface". If a third one turns up as a
+   * direct child of `.site-main`, the harness is how it gets found — not
+   * review, which missed this one twice. */
+  .site-main > .luma-card,
+  .site-main > .luma-promotion {
     padding-inline: var(--luma-space-lg);
   }
 

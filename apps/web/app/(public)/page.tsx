@@ -239,7 +239,15 @@ export default async function LandingPage() {
           <blockquote className="m-0 flex flex-col gap-sm rounded-lg bg-primary-soft p-lg">
             <p className="m-0 text-xl font-semibold leading-snug">{TRUST_TEXT}</p>
             <p className="m-0 text-sm text-text-muted">{LANDING_TRANSPARENCY_SUPPORT}</p>
-            <footer className="text-sm text-text-muted">{LANDING_TRANSPARENCY_CAPTION}</footer>
+            {/* A `<footer>` here would be the semantically tidy choice, and it
+                is what the first version used. Chrome exposes a `<footer>`
+                inside a `<blockquote>` as a `contentinfo` landmark anyway, so
+                the page shipped with two of them and anyone navigating by
+                landmark met a second "footer" halfway down the article. A
+                caption is not a landmark; `<cite>` says what this line is. */}
+            <cite className="text-sm not-italic text-text-muted">
+              {LANDING_TRANSPARENCY_CAPTION}
+            </cite>
           </blockquote>
 
           {/* The one inverted surface in the app. `bg-ink` may only carry the

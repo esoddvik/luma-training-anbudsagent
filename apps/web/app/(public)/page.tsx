@@ -17,6 +17,7 @@ import {
   LANDING_HERO_SECONDARY,
   LANDING_INTRO,
   LANDING_LIVE_HEADING,
+  LANDING_PROMOTION_FACTS,
   LANDING_PROMOTION_HEADING,
   LANDING_PROMOTION_LINK,
   LANDING_PROMOTION_TEXT,
@@ -204,26 +205,17 @@ export default async function LandingPage() {
           <h2 id="slik-fungerer-det-tittel" className="page-heading">
             {LANDING_STEPS_HEADING}
           </h2>
-          {/* The flex column inside each card is an inner element rather than
-              the card itself. That was a workaround for `.luma-card` shipping
-              unlayered and beating the utility; `@luma/ui` now loads into
-              `@layer components`, so a utility on the card wins and these inner
-              `<div>`s are optional. Kept for now — they are load-bearing for
-              nothing, and collapsing them is a DOM change that wants its own
-              before/after run. */}
           <ol className="m-0 grid list-none gap-md p-0 md:grid-cols-3">
             {LANDING_STEPS.map((step, index) => (
-              <li key={step.title} className="luma-card luma-card--raised">
-                <div className="flex flex-col gap-xs">
-                  <span
-                    aria-hidden="true"
-                    className="inline-flex h-[2.375rem] w-[2.375rem] items-center justify-center rounded-[var(--luma-radius-pill)] bg-primary-soft font-semibold text-primary"
-                  >
-                    {index + 1}
-                  </span>
-                  <span className="text-lg font-semibold">{step.title}</span>
-                  <span className="text-sm text-text-muted">{step.body}</span>
-                </div>
+              <li key={step.title} className="luma-card luma-card--raised flex flex-col gap-xs">
+                <span
+                  aria-hidden="true"
+                  className="inline-flex h-[2.375rem] w-[2.375rem] items-center justify-center rounded-[var(--luma-radius-pill)] bg-primary-soft font-semibold text-primary"
+                >
+                  {index + 1}
+                </span>
+                <span className="text-lg font-semibold">{step.title}</span>
+                <span className="text-sm text-text-muted">{step.body}</span>
               </li>
             ))}
           </ol>
@@ -288,9 +280,9 @@ export default async function LandingPage() {
           promotion surface all come from `Promotion`, so this block cannot ship
           without the section 23.4 marking. Placement is still this page's job:
           it sits after the service's own content and before the signup. */}
-      <Promotion heading={LANDING_PROMOTION_HEADING}>
-        <p className="m-0">{LANDING_PROMOTION_TEXT}</p>
-        <p className="m-0 mt-xs">
+      <Promotion
+        heading={LANDING_PROMOTION_HEADING}
+        action={
           <a
             href={lumaUrl('/kurs/vinn-flere-anbud-med-ai', {
               medium: 'landingsside',
@@ -299,8 +291,24 @@ export default async function LandingPage() {
             })}
           >
             {LANDING_PROMOTION_LINK}
+            <span aria-hidden="true">→</span>
           </a>
-        </p>
+        }
+        rail={
+          <>
+            <p className="luma-promotion__rail-heading">Kurset, kort fortalt</p>
+            <dl className="luma-promotion__facts">
+              {LANDING_PROMOTION_FACTS.map((fact) => (
+                <div key={fact.term}>
+                  <dt>{fact.term}</dt>
+                  <dd>{fact.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </>
+        }
+      >
+        <p className="prose-measure m-0">{LANDING_PROMOTION_TEXT}</p>
       </Promotion>
 
       <section aria-labelledby="faq-tittel">

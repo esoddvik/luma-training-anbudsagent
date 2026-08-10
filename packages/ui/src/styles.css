@@ -537,6 +537,133 @@
   font-weight: var(--luma-font-weight-semibold);
 }
 
+/* --- Promotion, two-column form -------------------------------------------------
+ * Used where the block is the page's one course placement and has room to say
+ * something concrete rather than only assert (the landing page). Everywhere
+ * else the plain block above still applies.
+ *
+ * The heavy rule moves from the top edge to the leading edge. A tinted box with
+ * a thick top border and a centred stack of eyebrow / title / paragraph / link
+ * is the shape every generated callout has; the same separation read as an
+ * editorial sidebar instead is a rule down the side, which is also the older
+ * convention in print for "this is adjacent, not part of the argument". Section
+ * 23.4's requirement is that the separation be unmistakable, not that it be a
+ * box, and the warm surface is doing most of that work regardless.
+ * ------------------------------------------------------------------------------- */
+.luma-promotion--feature {
+  display: grid;
+  gap: var(--luma-space-lg);
+  border-top-width: var(--luma-border-width);
+  border-inline-start-width: var(--luma-border-width-heavy);
+}
+
+/*
+ * The block keeps its own padding and the dividers are drawn inside it.
+ *
+ * The first version made the columns edge-to-edge with `padding: 0` and lost:
+ * the app gives a top-level promotion block its interior padding back from
+ * `.site-main > .luma-promotion`, at equal specificity, so the columns ended up
+ * inset twice — 48px on the outer edges against 24px between them — and every
+ * hairline stopped 25px short of both ends. Winning that would have meant this
+ * package writing a rule about `.site-main`, which is the application's
+ * selector, not the design system's.
+ */
+.luma-promotion__rail {
+  padding-top: var(--luma-space-lg);
+  border-top: var(--luma-border-width) solid var(--luma-color-promotion-border);
+}
+
+@media (min-width: 48rem) {
+  .luma-promotion--feature {
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    column-gap: var(--luma-space-xl);
+  }
+
+  /* The divider follows the stacking direction: above the facts when they sit
+     under the body, beside them when they sit next to it. A rail that keeps a
+     top border while stacked sideways reads as a detached second card. */
+  .luma-promotion__rail {
+    padding-top: 0;
+    padding-inline-start: var(--luma-space-xl);
+    border-top: 0;
+    border-inline-start: var(--luma-border-width) solid var(--luma-color-promotion-border);
+  }
+
+  .luma-promotion--feature .luma-promotion__disclosure {
+    grid-column: 1 / -1;
+  }
+}
+
+.luma-promotion__rail-heading {
+  margin: 0 0 var(--luma-space-sm);
+  font-size: var(--luma-font-size-xs);
+  font-weight: var(--luma-font-weight-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--luma-color-promotion-muted);
+}
+
+/*
+ * Term over value, ruled between rows — the same shape the notice page's fact
+ * strip uses. Borrowing the product's own idiom is most of what separates a
+ * block that belongs to this application from one that could be pasted into
+ * any other.
+ */
+.luma-promotion__facts {
+  margin: 0;
+  display: grid;
+  gap: var(--luma-space-sm);
+}
+
+.luma-promotion__facts > div + div {
+  padding-top: var(--luma-space-sm);
+  border-top: var(--luma-border-width) solid var(--luma-color-promotion-border);
+}
+
+.luma-promotion__facts dt {
+  margin: 0;
+  font-size: var(--luma-font-size-sm);
+  color: var(--luma-color-promotion-muted);
+}
+
+.luma-promotion__facts dd {
+  margin: 0;
+  font-weight: var(--luma-font-weight-semibold);
+}
+
+/*
+ * The action gets a row of its own and a hit target, instead of trailing the
+ * last sentence as an inline anchor. Still a link and still the promotion
+ * accent — a filled button here would out-shout the service's own calls to
+ * action, which section 23 does not allow and the trust contract likes even
+ * less.
+ */
+.luma-promotion__action {
+  margin-top: var(--luma-space-md);
+}
+
+.luma-promotion__action a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--luma-space-2xs);
+  min-height: var(--luma-hit-target-min);
+  padding: var(--luma-space-2xs) var(--luma-space-md);
+  border: var(--luma-border-width) solid var(--luma-color-promotion-border);
+  border-radius: var(--luma-radius-pill);
+  text-decoration: none;
+}
+
+.luma-promotion__action a:hover {
+  background: var(--luma-color-promotion-border);
+  color: var(--luma-color-promotion-surface);
+}
+
+.luma-promotion--feature .luma-promotion__disclosure {
+  margin: 0;
+  padding-top: var(--luma-space-sm);
+  border-top: var(--luma-border-width) solid var(--luma-color-promotion-border);
+}
+
 /* --- Chip ---------------------------------------------------------------------
  * One base class for every pill in the funnel: CPV labels, match reasons,
  * region choices, filter values. `min-height` is the 44px hit target even on the

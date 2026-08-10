@@ -118,13 +118,38 @@ export const ASSISTANT_SAMPLE_ANSWER =
 
 export const ASSISTANT_LINK = 'Se hvordan du kobler til';
 
-/** Kursbåndet nederst. Merkingen kommer fra `Promotion` i @luma/ui. */
-export const LANDING_PROMOTION_HEADING = 'En gratis tjeneste fra Luma Training';
+/**
+ * Kursbåndet nederst. Merkingen «Fra Luma Training» kommer fra `Promotion` i
+ * @luma/ui.
+ *
+ * Overskriften navngir kurset. Den sto tidligere som «En gratis tjeneste fra
+ * Luma Training», og det er ordrett `SERVICE_TAGLINE`, som allerede står som
+ * stikktittel øverst på samme side — og nesten ordrett merkelappen rett over
+ * overskriften. Samme setning tre ganger på én side, og blokken navnga aldri
+ * det den faktisk selger. Kunngjøringssiden har hele tiden skrevet kursnavnet;
+ * det er landingssiden som var den vage.
+ */
+export const LANDING_PROMOTION_HEADING = 'Vinn flere anbud med AI';
 
 export const LANDING_PROMOTION_TEXT =
   'Vi lever av kurs i anbudsarbeid. Varslingen er gratis, og blir det. Du betaler eventuelt for arbeid vi gjør for deg, aldri for data.';
 
 export const LANDING_PROMOTION_LINK = 'Se kursdatoer';
+
+/**
+ * Tre fakta om kurset, i høyre spalte av kursbåndet.
+ *
+ * Hentet fra kursteksten som allerede står på kunngjøringssiden («Én dag med
+ * konkrete oppskrifter på hvordan du bruker AI i anbudsarbeidet, med egne anbud
+ * som case»). Ingenting her er nytt om kurset: pris, sted og datoer står ikke,
+ * fordi tjenesten ikke kjenner dem, og en oppdiktet dato i en promoteringsblokk
+ * er nøyaktig den typen påstand seksjon 3 forbyr.
+ */
+export const LANDING_PROMOTION_FACTS = [
+  { term: 'Varighet', value: 'Én dag' },
+  { term: 'Form', value: 'Konkrete oppskrifter' },
+  { term: 'Case', value: 'Deres egne anbud' },
+] as const;
 
 export const LANDING_FAQ_HEADING = 'Ofte stilte spørsmål';
 

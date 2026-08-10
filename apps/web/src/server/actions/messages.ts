@@ -113,6 +113,16 @@ export const ACTION_MESSAGES_NB = {
     tone: 'danger',
     text: 'Etterfyllingen kunne ikke kjøres.',
   },
+  'maler-synkronisert': {
+    tone: 'success',
+    text: 'Tjenestemalene er synkronisert med det redaksjonelle innholdet. Avvikene under er borte når siden er lastet på nytt.',
+  },
+  'maler-uendret': {
+    tone: 'info',
+    // Not a warning. Someone pressing the button on a page that showed no
+    // drift has done nothing wrong, and the table was already right.
+    text: 'Ingen avvik å synkronisere. Tabellen er allerede lik det redaksjonelle innholdet.',
+  },
   ugyldig: {
     tone: 'danger',
     text: 'Forespørselen var ugyldig. Last siden på nytt og prøv igjen.',

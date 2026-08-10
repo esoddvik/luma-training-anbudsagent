@@ -47,69 +47,67 @@ export function InlineSignup({
   landsdelName?: string;
 }) {
   return (
-    // `Stack` inside rather than `flex flex-col` on the card. That used to be
-    // forced — `.luma-card` was unlayered and outranked the utility — and is
-    // now a plain preference: `Stack` names the gap in tokens rather than
-    // spelling the layout out in utilities. Either would work.
-    <section aria-labelledby="varsling-tittel" className="luma-card" id="registrering">
-      <Stack gap="md">
-        <h2 id="varsling-tittel" className="m-0 text-xl font-semibold">
-          Få disse treffene på e-post
-        </h2>
-        <p className="m-0 text-sm text-text-muted">
-          Vi følger med på nye kunngjøringer for {templateName.toLowerCase()}
-          {landsdelName ? ` i ${landsdelName}` : ''} og sender deg treffene. Gratis. Profilen
-          starter på pause, så du rekker å se over kriteriene før det første varselet går ut.
-        </p>
-        {/*
-         * ## No consent checkbox here, and that is the honest shape
-         *
-         * The design draws «Jeg godtar vilkårene» on this card. A version of
-         * this file shipped it as a `required` checkbox, enforced by the
-         * browser's own constraint validation — which is not enforcement. The
-         * field would have gated nothing: `requestSignupAction` never reads it,
-         * and a crafted POST skips the browser entirely.
-         *
-         * The deeper reason it does not belong here is that acceptance is not
-         * recorded at this step at all. `confirmSignup` writes the
-         * `user_legal_acceptances` row and its `consent_events` mirror — with
-         * the terms version, a timestamp and an IP hash — when the emailed link
-         * is opened. Clicking that link *is* the acceptance, and it is the only
-         * event with a version attached to it.
-         *
-         * So the card says what the landing form says: you will accept in the
-         * next step. One sentence that is true beats a checkbox that looks like
-         * a gate and is not one.
-         */}
-        <form action={requestSignupAction} noValidate>
-          <Stack gap="md">
-            {/* Known at render time, so the page stays static. Re-resolved
+    <section
+      aria-labelledby="varsling-tittel"
+      className="luma-card flex flex-col gap-md"
+      id="registrering"
+    >
+      <h2 id="varsling-tittel" className="m-0 text-xl font-semibold">
+        Få disse treffene på e-post
+      </h2>
+      <p className="m-0 text-sm text-text-muted">
+        Vi følger med på nye kunngjøringer for {templateName.toLowerCase()}
+        {landsdelName ? ` i ${landsdelName}` : ''} og sender deg treffene. Gratis. Profilen starter
+        på pause, så du rekker å se over kriteriene før det første varselet går ut.
+      </p>
+      {/*
+       * ## No consent checkbox here, and that is the honest shape
+       *
+       * The design draws «Jeg godtar vilkårene» on this card. A version of
+       * this file shipped it as a `required` checkbox, enforced by the
+       * browser's own constraint validation — which is not enforcement. The
+       * field would have gated nothing: `requestSignupAction` never reads it,
+       * and a crafted POST skips the browser entirely.
+       *
+       * The deeper reason it does not belong here is that acceptance is not
+       * recorded at this step at all. `confirmSignup` writes the
+       * `user_legal_acceptances` row and its `consent_events` mirror — with
+       * the terms version, a timestamp and an IP hash — when the emailed link
+       * is opened. Clicking that link *is* the acceptance, and it is the only
+       * event with a version attached to it.
+       *
+       * So the card says what the landing form says: you will accept in the
+       * next step. One sentence that is true beats a checkbox that looks like
+       * a gate and is not one.
+       */}
+      <form action={requestSignupAction} noValidate>
+        <Stack gap="md">
+          {/* Known at render time, so the page stays static. Re-resolved
               server-side against the live template table regardless. */}
-            <input type="hidden" name="tjenestemal" value={templateSlug} />
-            {landsdelSlug ? <input type="hidden" name="landsdel" value={landsdelSlug} /> : null}
-            <Field id="e-post-inline" label={SIGNUP_EMAIL_LABEL} hint={SIGNUP_EMAIL_HINT} required>
-              {(controlProps) => (
-                <Input
-                  {...controlProps}
-                  name="epost"
-                  type="email"
-                  autoComplete="email"
-                  inputMode="email"
-                  placeholder="navn@virksomhet.no"
-                />
-              )}
-            </Field>
-            <Button type="submit" variant="primary" fullWidth>
-              {SIGNUP_SUBMIT}
-            </Button>
-            <p className="m-0 text-sm text-text-muted">
-              Gratis, ingen kortopplysninger. Du godtar <Link href="/vilkar">bruksvilkårene</Link>{' '}
-              når du åpner lenken vi sender, og kan lese{' '}
-              <Link href="/personvern">personvernerklæringen</Link> først.
-            </p>
-          </Stack>
-        </form>
-      </Stack>
+          <input type="hidden" name="tjenestemal" value={templateSlug} />
+          {landsdelSlug ? <input type="hidden" name="landsdel" value={landsdelSlug} /> : null}
+          <Field id="e-post-inline" label={SIGNUP_EMAIL_LABEL} hint={SIGNUP_EMAIL_HINT} required>
+            {(controlProps) => (
+              <Input
+                {...controlProps}
+                name="epost"
+                type="email"
+                autoComplete="email"
+                inputMode="email"
+                placeholder="navn@virksomhet.no"
+              />
+            )}
+          </Field>
+          <Button type="submit" variant="primary" fullWidth>
+            {SIGNUP_SUBMIT}
+          </Button>
+          <p className="m-0 text-sm text-text-muted">
+            Gratis, ingen kortopplysninger. Du godtar <Link href="/vilkar">bruksvilkårene</Link> når
+            du åpner lenken vi sender, og kan lese{' '}
+            <Link href="/personvern">personvernerklæringen</Link> først.
+          </p>
+        </Stack>
+      </form>
     </section>
   );
 }

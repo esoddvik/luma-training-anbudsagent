@@ -167,50 +167,44 @@ function TenderCard({
   ];
 
   return (
-    // `Stack` rather than `flex flex-col` on the card itself. This was once the
-    // only thing that worked, because `.luma-card` was unlayered and beat the
-    // utility; `@luma/ui` now loads into `@layer components`, so it is simply
-    // the tidier of two options that both work.
-    <li className="luma-card">
-      <Stack gap="sm">
-        {tender.planned ? (
-          // Never a fabricated deadline. A planned procurement has none, and
-          // saying so is the point of the category (ADR-13).
-          <p className="m-0">
-            <Badge variant="planlagt">Planlagt anskaffelse</Badge>
-          </p>
-        ) : null}
-        <h3 className="m-0 text-lg font-semibold">{tender.title}</h3>
-        <CountyLine tender={tender} />
-        <DeadlineLine tender={tender} now={now} />
+    <li className="luma-card flex flex-col gap-sm">
+      {tender.planned ? (
+        // Never a fabricated deadline. A planned procurement has none, and
+        // saying so is the point of the category (ADR-13).
+        <p className="m-0">
+          <Badge variant="planlagt">Planlagt anskaffelse</Badge>
+        </p>
+      ) : null}
+      <h3 className="m-0 text-lg font-semibold">{tender.title}</h3>
+      <CountyLine tender={tender} />
+      <DeadlineLine tender={tender} now={now} />
 
-        {chips.length > 0 ? (
-          <p className="m-0 flex flex-wrap gap-xs">
-            {chips.map((chip) => (
-              <Chip key={chip.key} tone="soft">
-                {chip.text}
-              </Chip>
-            ))}
-          </p>
-        ) : null}
+      {chips.length > 0 ? (
+        <p className="m-0 flex flex-wrap gap-xs">
+          {chips.map((chip) => (
+            <Chip key={chip.key} tone="soft">
+              {chip.text}
+            </Chip>
+          ))}
+        </p>
+      ) : null}
 
-        {tender.reasons.length === 0 ? null : hydrated ? (
-          <Disclosure
-            id={`hvorfor-${tender.id}`}
-            summary="Hvorfor traff dette?"
-            open={open}
-            onToggle={onToggle}
-            tone="card"
-          >
-            <ReasonRows tender={tender} />
-          </Disclosure>
-        ) : (
-          <section aria-label="Hvorfor traff dette?" className="flex flex-col gap-xs">
-            <h4 className="m-0 text-sm font-semibold">Hvorfor traff dette?</h4>
-            <ReasonRows tender={tender} />
-          </section>
-        )}
-      </Stack>
+      {tender.reasons.length === 0 ? null : hydrated ? (
+        <Disclosure
+          id={`hvorfor-${tender.id}`}
+          summary="Hvorfor traff dette?"
+          open={open}
+          onToggle={onToggle}
+          tone="card"
+        >
+          <ReasonRows tender={tender} />
+        </Disclosure>
+      ) : (
+        <section aria-label="Hvorfor traff dette?" className="flex flex-col gap-xs">
+          <h4 className="m-0 text-sm font-semibold">Hvorfor traff dette?</h4>
+          <ReasonRows tender={tender} />
+        </section>
+      )}
     </li>
   );
 }

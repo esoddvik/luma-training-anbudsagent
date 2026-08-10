@@ -62,26 +62,17 @@ export default async function FinnAnbudPage() {
           <li key={template.slug} className="flex">
             <Link
               href={`/anbud-for/${template.slug}`}
-              className="luma-card luma-card--raised luma-card--interactive w-full no-underline"
+              className="luma-card luma-card--raised luma-card--interactive flex w-full flex-col gap-xs no-underline"
             >
-              {/* The flex column is a child rather than the card. It had to be
-                  once, when `.luma-card` was unlayered and its `display: block`
-                  beat the utility; `@luma/ui` now loads into
-                  `@layer components`, so `className="luma-card flex flex-col"`
-                  would work too and this span could go. Left as-is because
-                  removing it changes the DOM, and the before/after harness that
-                  cleared this change measured the DOM it has. */}
-              <span className="flex flex-col gap-xs">
-                <span
-                  aria-hidden="true"
-                  className="inline-flex h-[2.5rem] w-[2.5rem] items-center justify-center rounded-md bg-primary-soft font-semibold text-primary"
-                >
-                  {initials(template.name)}
-                </span>
-                <span className="text-lg font-semibold text-text">{template.name}</span>
-                <span className="text-sm text-text-muted">
-                  {template.onboardingHint ?? template.description}
-                </span>
+              <span
+                aria-hidden="true"
+                className="inline-flex h-[2.5rem] w-[2.5rem] items-center justify-center rounded-md bg-primary-soft font-semibold text-primary"
+              >
+                {initials(template.name)}
+              </span>
+              <span className="text-lg font-semibold text-text">{template.name}</span>
+              <span className="text-sm text-text-muted">
+                {template.onboardingHint ?? template.description}
               </span>
             </Link>
           </li>

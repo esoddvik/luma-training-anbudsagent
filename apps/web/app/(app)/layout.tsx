@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { requireUser } from '@/server/session';
 import { NavTabs } from './_components/nav-tabs';
+import { SignOutForm } from './_components/sign-out-form';
 
 /**
  * Layout for the authenticated part of the service.
@@ -35,6 +36,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     <div className="flex flex-col gap-xl">
       <NavTabs items={NAV_ITEMS} label="Tjenestemeny" />
       {children}
+      <SignOutForm className="mt-lg" />
     </div>
   );
 }

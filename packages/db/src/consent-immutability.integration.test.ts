@@ -195,11 +195,18 @@ describe.skipIf(!hasDatabase)('consent_events immutability (ADR-9)', () => {
 
   it('guards user_legal_acceptances the same way', async () => {
     const userId = await insertUser();
-    const documentId = randomUUID();
-    await harness.db.execute(sql`
-      INSERT INTO legal_documents (id, kind, title)
-      VALUES (${documentId}, 'terms', 'Vilkår for bruk')
-    `);
+
+    // The parent document is seeded by migration 0008 and `legal_documents`
+    // is unique on `kind`, so this reuses the row rather than inserting a
+    // second one. Only the setup changed: what is under test is the
+    // append-only guard on `user_legal_acceptances`, and every assertion below
+    // is the one that was here before.
+    const documentRows = await harness.db.execute<{ id: string }>(
+      sql`SELECT id FROM legal_documents WHERE kind = 'terms'`,
+    );
+    const documentId = [...documentRows][0]?.id;
+    expect(documentId).toBeDefined();
+
     await harness.db.execute(sql`
       INSERT INTO legal_document_versions
         (legal_document_id, kind, version, body, is_placeholder, effective_from)

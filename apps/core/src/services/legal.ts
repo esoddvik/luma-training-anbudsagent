@@ -7,6 +7,7 @@ import {
 } from '@luma/db';
 import {
   consentSourceSchema,
+  isAcceptanceOutstanding,
   legalDocumentKindSchema,
   type ConsentType,
   type LegalDocumentKind,
@@ -108,7 +109,7 @@ export async function getLegalStatus(
         currentVersion: current?.version ?? null,
         acceptedVersion: mine?.version ?? null,
         acceptedAt: mine?.acceptedAt ?? null,
-        outstanding: Boolean(current) && mine?.version !== current?.version,
+        outstanding: isAcceptanceOutstanding(current?.version ?? null, mine?.version ?? null),
         isPlaceholder: current?.isPlaceholder ?? true,
       };
     }),

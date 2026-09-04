@@ -114,6 +114,27 @@ export const userLegalAcceptanceSchema = z.object({
 export type UserLegalAcceptance = z.infer<typeof userLegalAcceptanceSchema>;
 
 /**
+ * Whether the user owes an acceptance of the version now in force (section 20.1).
+ *
+ * One copy, imported by `apps/core`'s `getLegalStatus` and by `apps/web`'s
+ * terms gate. Two runtimes deciding this separately would eventually disagree
+ * about a fact with legal weight — the same argument `machine-signature.ts`
+ * makes about being written twice.
+ *
+ * A null `currentVersion` is **not** outstanding. No version in force means
+ * there is nothing to accept, and treating it as owed would block every user
+ * the moment `legal_document_versions` was empty — which is its state on a
+ * fresh database.
+ */
+export function isAcceptanceOutstanding(
+  currentVersion: string | null,
+  acceptedVersion: string | null,
+): boolean {
+  if (currentVersion === null) return false;
+  return acceptedVersion !== currentVersion;
+}
+
+/**
  * Notification preferences (spec section 22).
  *
  * `includeLumaPromotionsInTenderEmails` is a content setting for the tender

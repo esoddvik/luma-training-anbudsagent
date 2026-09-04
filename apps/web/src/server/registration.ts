@@ -11,7 +11,7 @@ import {
 import { appUrlFor, renderSignupConfirmation } from '@luma/email';
 import * as schema from '@luma/db/schema';
 import { BASE_PATH } from '@/lib/site';
-import { authPepper, getWebDb, privacyPolicyVersion, type Database } from './db';
+import { authPepper, getWebDb, type Database } from './db';
 import { hashIpAddress } from './client-identity';
 import { appUrl, baseEmailContext, getWebEmailClient } from './email';
 import {
@@ -20,6 +20,7 @@ import {
   serialiseDraftProfile,
   type DraftProfile,
 } from './draft-profile';
+import { recordTermsAcceptance } from './legal';
 import { writeCriteria, type Tx } from './profile-write';
 
 /**
@@ -431,101 +432,6 @@ async function findOrCreateUser(tx: Tx, input: { email: string; now: Date }): Pr
 
   if (!created) throw new Error('Kunne ikke opprette brukeren.');
   return created.id;
-}
-
-/**
- * Records the terms acceptance, and mirrors it into the consent log.
- *
- * This is `acceptLegalDocument` from `apps/core/src/services/legal.ts` reduced
- * to the one path registration needs, and it must stay behaviourally identical
- * to it: the same two tables, the same `accepted` status, the same
- * `consent_text_versions` row registered under the document version. Spec
- * section 21 lists `terms_acceptance` as a consent type, and until core's
- * mirror existed `GET /consents` reported `false` for a user who had just
- * accepted — two tables disagreeing about a fact with legal weight. A second
- * entry door that skipped the mirror would reintroduce exactly that split.
- *
- * `signup` is the source, which is what it is: spec section 9.1 step 7.
- *
- * **This does not merge what spec section 20.1 keeps apart.** The consent type
- * written here is `terms_acceptance` and nothing else. Accepting the terms
- * cannot make `marketing_email` true — no code path in this file can write
- * that type — and marketing consent stays voluntary, separate and unticked
- * (spec section 20.2).
- */
-async function recordTermsAcceptance(
-  tx: Tx,
-  input: {
-    userId: string;
-    version: string;
-    body: string;
-    effectiveFrom: Date;
-    now: Date;
-    ipAddressHash: string | null;
-    userAgent: string | null;
-  },
-): Promise<void> {
-  const inserted = await tx
-    .insert(schema.userLegalAcceptances)
-    .values({
-      userId: input.userId,
-      kind: 'terms',
-      version: input.version,
-      acceptedAt: input.now,
-      ipAddressHash: input.ipAddressHash,
-    })
-    // Accepting the same version twice is the same fact, and the first
-    // timestamp is the one that matters evidentially.
-    .onConflictDoNothing({
-      target: [
-        schema.userLegalAcceptances.userId,
-        schema.userLegalAcceptances.kind,
-        schema.userLegalAcceptances.version,
-      ],
-    })
-    .returning({ id: schema.userLegalAcceptances.id });
-
-  // Only a genuinely new acceptance is mirrored. A returning user confirming a
-  // second profile must not append a second consent event: the log is
-  // append-only, so a spurious row can never be cleaned up afterwards, and the
-  // sequence *is* the evidence.
-  if (inserted.length === 0) return;
-
-  // `consent_events.consent_text_version` has a composite foreign key onto
-  // `consent_text_versions`, so a row has to exist there first. For this
-  // consent type the "consent text" *is* the document version the user was
-  // shown, so it is registered under the same version string with the same
-  // body. `onConflictDoNothing` rather than an upsert: an existing row must
-  // never be rewritten, because other people's consent events point at it.
-  await tx
-    .insert(schema.consentTextVersions)
-    .values({
-      consentType: 'terms_acceptance',
-      version: input.version,
-      body: input.body,
-      effectiveFrom: input.effectiveFrom,
-      createdAt: input.now,
-    })
-    .onConflictDoNothing({
-      target: [schema.consentTextVersions.consentType, schema.consentTextVersions.version],
-    });
-
-  await tx.insert(schema.consentEvents).values({
-    userId: input.userId,
-    consentType: 'terms_acceptance',
-    // `accepted`, not `granted`. Spec section 20.1 calls this «obligatorisk
-    // aksept», and the two words are different in the enum for the same reason
-    // they are different in the specification.
-    status: 'accepted',
-    source: 'signup',
-    sourceDetail: `Aksept av bruksvilkår versjon ${input.version} ved registrering.`,
-    policyVersion: privacyPolicyVersion() ?? null,
-    termsVersion: input.version,
-    consentTextVersion: input.version,
-    occurredAt: input.now,
-    ipAddressHash: input.ipAddressHash,
-    userAgent: input.userAgent,
-  });
 }
 
 async function createProfileFromDraft(

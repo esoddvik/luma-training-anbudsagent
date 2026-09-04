@@ -40,9 +40,7 @@ export default async function GodtaVilkarPage({
 }) {
   const user = await requireUser();
   const params = await searchParams;
-  const retur = safeReturnPath(
-    typeof params['retur'] === 'string' ? params['retur'] : undefined,
-  );
+  const retur = safeReturnPath(typeof params['retur'] === 'string' ? params['retur'] : undefined);
 
   const outstanding = await outstandingTerms(getWebDb(), user.id);
 
@@ -94,9 +92,8 @@ export default async function GodtaVilkarPage({
 
       <Stack gap="sm">
         <p className="m-0 text-sm text-text-muted">
-          Vil du ikke godta? Du kan{' '}
-          <a href="/innstillinger/eksport">laste ned dataene dine</a> eller{' '}
-          <a href="/innstillinger/slett-konto">slette kontoen din</a>.
+          Vil du ikke godta? Du kan <a href="/innstillinger/eksport">laste ned dataene dine</a>{' '}
+          eller <a href="/innstillinger/slett-konto">slette kontoen din</a>.
         </p>
         <SignOutForm />
       </Stack>

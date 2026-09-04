@@ -50,7 +50,7 @@ async function setTenderState(
   formData: FormData,
   state: 'saved' | 'dismissed' | 'opened',
 ): Promise<never> {
-    // Gated on the terms in force (spec section 20.1): this is ordinary use of
+  // Gated on the terms in force (spec section 20.1): this is ordinary use of
   // the service, and continuing to use it under text nobody agreed to is what
   // the gate exists to stop. See `requireCurrentTerms`.
   const user = await requireCurrentTerms();
@@ -112,7 +112,7 @@ async function setTenderState(
  * that section forbids.
  */
 export async function submitFeedbackAction(formData: FormData): Promise<void> {
-    // Gated on the terms in force (spec section 20.1): this is ordinary use of
+  // Gated on the terms in force (spec section 20.1): this is ordinary use of
   // the service, and continuing to use it under text nobody agreed to is what
   // the gate exists to stop. See `requireCurrentTerms`.
   const user = await requireCurrentTerms();
@@ -195,7 +195,7 @@ export async function submitFeedbackAction(formData: FormData): Promise<void> {
  * one.
  */
 export async function createShareAction(formData: FormData): Promise<void> {
-    // Gated on the terms in force (spec section 20.1): this is ordinary use of
+  // Gated on the terms in force (spec section 20.1): this is ordinary use of
   // the service, and continuing to use it under text nobody agreed to is what
   // the gate exists to stop. See `requireCurrentTerms`.
   const user = await requireCurrentTerms();
@@ -234,7 +234,7 @@ export async function createShareAction(formData: FormData): Promise<void> {
 
 /** Revokes a share link. Immediate: the public page reads `revoked_at` live. */
 export async function revokeShareAction(formData: FormData): Promise<void> {
-    // Deliberately NOT gated on the terms in force (spec section 20.1).
+  // Deliberately NOT gated on the terms in force (spec section 20.1).
   // Revoking a share removes access somebody else has. Blocking it would keep a
   // link alive because its owner would not accept new terms.
   // The gate stops continued *use* of the service under text nobody agreed

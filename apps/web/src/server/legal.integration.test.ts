@@ -103,7 +103,6 @@ describeDb('outstandingTerms', () => {
       '2026-09-gjennomgatt',
     ]);
   });
-
 });
 
 /**

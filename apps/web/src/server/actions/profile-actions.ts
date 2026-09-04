@@ -118,7 +118,7 @@ function readProfileForm(formData: FormData): ProfileForm | null {
 }
 
 export async function createProfileAction(formData: FormData): Promise<void> {
-    // Gated on the terms in force (spec section 20.1): this is ordinary use of
+  // Gated on the terms in force (spec section 20.1): this is ordinary use of
   // the service, and continuing to use it under text nobody agreed to is what
   // the gate exists to stop. See `requireCurrentTerms`.
   const user = await requireCurrentTerms();
@@ -159,7 +159,7 @@ export async function createProfileAction(formData: FormData): Promise<void> {
 }
 
 export async function updateProfileAction(formData: FormData): Promise<void> {
-    // Gated on the terms in force (spec section 20.1): this is ordinary use of
+  // Gated on the terms in force (spec section 20.1): this is ordinary use of
   // the service, and continuing to use it under text nobody agreed to is what
   // the gate exists to stop. See `requireCurrentTerms`.
   const user = await requireCurrentTerms();
@@ -202,7 +202,7 @@ export async function updateProfileAction(formData: FormData): Promise<void> {
 
 /** Pauses or resumes a profile (spec section 4.4). Never deletes anything. */
 export async function toggleProfileActiveAction(formData: FormData): Promise<void> {
-    // Gated on the terms in force (spec section 20.1): this is ordinary use of
+  // Gated on the terms in force (spec section 20.1): this is ordinary use of
   // the service, and continuing to use it under text nobody agreed to is what
   // the gate exists to stop. See `requireCurrentTerms`.
   const user = await requireCurrentTerms();
@@ -248,7 +248,7 @@ export async function toggleProfileActiveAction(formData: FormData): Promise<voi
  * path is what removes it for real.
  */
 export async function deleteProfileAction(formData: FormData): Promise<void> {
-    // Deliberately NOT gated on the terms in force (spec section 20.1).
+  // Deliberately NOT gated on the terms in force (spec section 20.1).
   // Removing a profile reduces what the service does for the user. Nobody should
   // have to agree to new terms to stop something.
   // The gate stops continued *use* of the service under text nobody agreed

@@ -191,7 +191,5 @@ export async function requireCurrentTerms(returnPath?: string): Promise<SignedIn
   const outstanding = await outstandingTerms(getWebDb(), user.id);
   if (!outstanding) return user;
 
-  redirect(
-    returnPath ? `/vilkar/godta?retur=${encodeURIComponent(returnPath)}` : '/vilkar/godta',
-  );
+  redirect(returnPath ? `/vilkar/godta?retur=${encodeURIComponent(returnPath)}` : '/vilkar/godta');
 }

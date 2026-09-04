@@ -124,7 +124,6 @@ export async function recordTermsAcceptance(
   });
 }
 
-
 /**
  * The terms version in force and whether this user still owes it
  * (spec section 20.1).

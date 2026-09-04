@@ -75,6 +75,25 @@ docker exec luma-postgres psql -U luma -d luma_anbudsvarsling \
 pnpm --filter @luma/db db:migrate
 ```
 
+## Publishing a terms version
+
+`legal_document_versions` is not edited by hand. The documents live in
+`packages/content/src/legal-documents.ts`, migration `0008` seeds the
+placeholder so a fresh database can accept a signup, and everything after that
+is published by the reconciliation in `apps/web`:
+
+- **as a human**: `/admin/vilkar`, which shows each version's whole body before
+  offering the button;
+- **as a machine**: `POST /synk-vilkar`, signed with `CRON_SECRET` over the body
+  (the same scheme as `/synk-tjenestemaler`). Omit `apply` for a dry run.
+
+Publishing **inserts only**. A version already in the table is never rewritten
+and never removed: `user_legal_acceptances` carries a foreign key onto
+`(kind, version)`, so changing a published body would change what people
+already agreed to (ADR-11). If the committed text and the stored row disagree,
+the sync reports a conflict and writes nothing — the correction is a new
+version, not an overwrite.
+
 Integration tests each create a throwaway `luma_test_<uuid>` database and drop
 it afterwards. A crashed run can leave one behind; to clear them:
 

@@ -105,7 +105,7 @@ function readReturnPath(formData: FormData): string | undefined {
  * be the opposite of what the button says.
  */
 export async function removeProfileCriterionAction(formData: FormData): Promise<void> {
-    // Gated on the terms in force (spec section 20.1): this is ordinary use of
+  // Gated on the terms in force (spec section 20.1): this is ordinary use of
   // the service, and continuing to use it under text nobody agreed to is what
   // the gate exists to stop. See `requireCurrentTerms`.
   const user = await requireCurrentTerms();
@@ -180,7 +180,7 @@ export async function removeProfileCriterionAction(formData: FormData): Promise<
  * does nothing. The screen states the fact instead.
  */
 export async function activateProfileAction(formData: FormData): Promise<void> {
-    // Gated on the terms in force (spec section 20.1): this is ordinary use of
+  // Gated on the terms in force (spec section 20.1): this is ordinary use of
   // the service, and continuing to use it under text nobody agreed to is what
   // the gate exists to stop. See `requireCurrentTerms`.
   const user = await requireCurrentTerms();

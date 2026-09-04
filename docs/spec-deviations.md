@@ -38,6 +38,31 @@ A second specification document, `Luma Anbudsvarsling IDE Agent Spec v3: Søk-f�
 | Section 3.1: registration «med begge-grener-sender-e-post» | Both branches send, and the HTTP response is identical in text, shape and destination | Note this **inverts** `login.ts`, which deliberately sends nothing to an unknown address and documents three reasons why. Both are correct: a login link for a non-existent account cannot work, whereas creating the account *is* what registration is for. The two files each carry the argument for their own choice, because a reader who finds them contradictory is asking a fair question. |
 | — | `pending_signups` is swept by `signup.cleanup` at 03:40 | Not in v2's §38 job list. An abandoned row is an email address whose lawful basis — completing the signup — expires with its token, so deleting it is an obligation under §40's data minimisation rather than housekeeping. Mirrors `share.cleanup`. |
 
+### Terms re-acceptance, and the publishing path under it
+
+Neither v2 nor v3 specifies what happens when a new terms version is published
+to users who accepted an older one. §20.1 requires acceptance of the version in
+force and §19 requires version history and acceptance history, but nothing joins
+them: `getLegalStatus` reported `outstanding` to an API nobody called.
+
+| What we do | Why |
+| --- | --- |
+| A hard block on the signed-in service until the version in force is accepted | §20.1 says the user **must** accept. A dismissible banner leaves usage under unaccepted terms accumulating, which is the problem it would be there to solve. |
+| Account deletion, data export, sign-out, the acceptance page and notification preferences stay reachable | A gate that traps a user who declines is worse than no gate. "Accept our new terms or you cannot delete your data — or stop our emails" inverts the obligation. Actions are gated by whether they *continue* use, never by whether they write. |
+| Exempt routes live in a `(konto)` route group | A Next.js layout does not receive the pathname, so `(app)`'s gate cannot exempt one child. Route groups do not change URLs. |
+| Terms text moved from the page into `@luma/content`, seeded by migration 0008, published by an insert-only sync | The version had **two** sources of truth — a `TERMS_VERSION` constant behind `/vilkar` and a row in `legal_document_versions` — and a user could accept version X while reading version Y. Separately, nothing had ever populated that table, so `confirmSignup` returned `no_terms` and **signup did not work on a clean deploy**. |
+| The sync never updates or deletes a version, only inserts | An acceptance carries a composite foreign key onto `(kind, version)`. Correcting a drifted body would rewrite what people already agreed to (ADR-11). A differing body is reported as a conflict and refused. |
+| Sign-out was built as part of this | There was none: `revoke()` existed on the session store and nothing called it. Under a hard block, deleting the account would otherwise have been the only exit. |
+| The `privacy` document kind is not gated | It is an external URL with no in-app version to accept, so gating on it would block every user permanently. |
+
+**Still outstanding.** `CURRENT_TERMS_VERSION` — an environment variable
+`apps/core` stamps onto mirrored consent events — is a third place a terms
+version lives, and this work did not touch it. `legal_documents.current_version`
+is a fourth: the column is commented "points at the version currently in force"
+and is maintained by nothing, while both `getLegalStatus` and the new gate
+derive that from the newest `effective_from`. Both should be reconciled or
+removed.
+
 **Known gap, not yet closed.** Users who sign up during Fase A accept the *placeholder* terms, because that is the only version in force (§51 blocker 2). The re-acceptance flow that must run when real terms are published does not exist. It is tracked in [`launch-readiness.md`](launch-readiness.md) and has to be built alongside the terms text, not after it.
 
 ### Anbudsvarsling Pluss (Fase D) — partially built, and the missing half is named

@@ -33,5 +33,19 @@ export default defineConfig({
      * Set at project level so a suite added later inherits it.
      */
     hookTimeout: 60_000,
+    /**
+     * The same argument, for the tests themselves rather than their hooks.
+     *
+     * The reasoning above was applied to `hookTimeout` and stopped there,
+     * which left every test in this package on Vitest's 5-second default.
+     * That is not enough for an integration test that makes a dozen
+     * sequential round trips: `registration.integration.test.ts`'s
+     * "checks the budget before looking the account up" drives twelve
+     * `requestSignupConfirmation` calls and a `truncate` past the rate
+     * limiter, and it timed out in a full parallel run and passed on its own.
+     *
+     * Matched to `packages/db`, which reached 30 seconds by the same route.
+     */
+    testTimeout: 30_000,
   },
 });

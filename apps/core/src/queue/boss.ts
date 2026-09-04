@@ -56,12 +56,39 @@ export interface StartQueueOptions {
    * serves HTTP without competing for jobs.
    */
   readonly worker?: boolean;
+  /**
+   * Whether this process runs pg-boss's cron timekeeper. Defaults to `worker`,
+   * which is what production wants and what `main.ts` gets by leaving it out.
+   *
+   * It is separable from `worker` for one reason, and it is not a preference:
+   * **a cron tick is durable before it is a job, so unscheduling cannot recall
+   * one.** pg-boss's timekeeper does not send `doffin.sync` directly. It
+   * inserts a row on an internal `__pgboss__send-it` queue, and a second
+   * worker — polling every five seconds — turns that row into the real job.
+   * Between those two steps the tick is a database row that outlives the
+   * instance that made it: `boss.stop()` does not drain it, and a later
+   * instance connecting to the same database picks it up on its first poll.
+   *
+   * So `unschedule()` empties the schedule table without emptying the pipe,
+   * and there is no ordering of "unschedule, then check" that closes it. The
+   * only way to be sure this process neither makes nor consumes ticks is to
+   * not start the timekeeper. That is what an integration test asserting on
+   * queue contents needs, and it cannot get it from `worker` alone, because it
+   * also needs the handlers that `worker` turns on.
+   *
+   * Note what this does *not* buy: turning cron off on every worker in an
+   * estate stops all scheduled production, and the depth metrics below cannot
+   * tell that apart from a quiet hour. See `queueStatus`.
+   */
+  readonly schedule?: boolean;
 }
 
 export interface QueueRuntime {
   readonly boss: PgBoss;
   /** Whether this instance runs handlers, cron and maintenance. */
   readonly worker: boolean;
+  /** Whether this instance started pg-boss's cron timekeeper. */
+  readonly schedule: boolean;
   /**
    * Stops polling, waits for in-flight handlers, then closes the queue's own
    * pool. Registered between HTTP and the database in `installShutdownHandlers`.
@@ -72,6 +99,7 @@ export interface QueueRuntime {
 export async function startQueue(options: StartQueueOptions): Promise<QueueRuntime> {
   const { logger } = options;
   const worker = options.worker ?? true;
+  const schedule = options.schedule ?? worker;
   const stopTimeoutMs = options.stopTimeoutMs ?? DEFAULT_STOP_TIMEOUT_MS;
 
   const boss = new PgBoss({
@@ -81,8 +109,9 @@ export async function startQueue(options: StartQueueOptions): Promise<QueueRunti
     max: options.max ?? DEFAULT_POOL_MAX,
     // Cron and maintenance are worker responsibilities. A producer-only
     // instance that still ran the timekeeper would fire scheduled jobs it has
-    // no intention of processing.
-    schedule: worker,
+    // no intention of processing. Cron can be declined separately; see
+    // `StartQueueOptions.schedule` for the one case that needs to.
+    schedule,
     supervise: worker,
   });
 
@@ -101,11 +130,12 @@ export async function startQueue(options: StartQueueOptions): Promise<QueueRunti
   });
 
   await boss.start();
-  logger.info({ schema: QUEUE_SCHEMA, worker }, 'queue started');
+  logger.info({ schema: QUEUE_SCHEMA, worker, schedule }, 'queue started');
 
   return {
     boss,
     worker,
+    schedule,
     close: async () => {
       // graceful: stop fetching, let in-flight handlers finish, then close the
       // pool. Abandoning a handler mid-send is the one way this system could
@@ -207,7 +237,10 @@ const QUEUE_STATUS_TIMEOUT_MS = 5_000;
  * both sit at zero, now *correctly* computed rather than frozen, and a
  * depth-based alert stays quiet while the entire system is idle. `/ready` does
  * not help either — `checkQueueHealth` is `isInstalled()`, which a
- * producer-only replica passes.
+ * producer-only replica passes. `startQueue` now lets `schedule` be declined
+ * without declining `worker`, which widens that hole rather than narrowing it:
+ * an estate of workers all started with `schedule: false` consumes normally
+ * and produces nothing, and reads here exactly like a quiet hour.
  *
  * So §47 needs both signals, and they are not interchangeable: queue depth for
  * a consumer-side stall, and evidence the work itself produces for "nothing is

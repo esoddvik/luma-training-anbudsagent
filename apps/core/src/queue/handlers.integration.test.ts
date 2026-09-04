@@ -303,6 +303,14 @@ describeDb('the queue handlers', () => {
         // Two, not the production default of five. A test drives one job at a
         // time and every spare connection here is one another suite cannot have.
         max: 2,
+        // Handlers yes, cron no. This queue lives for the whole file and every
+        // test below asserts a delta on `fake.sent`, so a scheduled
+        // `notification.digest.prepare` firing mid-file would add a send that
+        // no test made. `unschedule()` afterwards does not close that: a tick
+        // is a durable row on pg-boss's internal send-it queue before it is a
+        // job. See the `start()` helper in `queue.integration.test.ts`, where
+        // the same hole was diagnosed with timestamps.
+        schedule: false,
       });
       await registerJobs({
         boss: runtime.boss,

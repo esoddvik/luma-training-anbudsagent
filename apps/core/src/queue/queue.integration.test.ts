@@ -47,6 +47,12 @@ import { registerJobs, registerSchedules } from './register.js';
  * row written on the way in. Where a count is asserted, capture a baseline
  * first: this suite shares one database across its tests, so an absolute count
  * can be satisfied by a previous test's leftovers.
+ *
+ * The same question, asked of a *guard* rather than a wait, is what the
+ * `start()` helper below answers. Its predecessor turned cron off and checked
+ * the schedule table was empty — a true statement that did not mean what it
+ * was read to mean, and under which the load-bearing test failed roughly once
+ * an hour.
  */
 
 const describeDb = hasDatabase ? describe : describe.skip;
@@ -109,35 +115,6 @@ async function jobsCreated(boss: PgBoss, name: string): Promise<number> {
   return Number(result.rows[0]?.count ?? 0);
 }
 
-/**
- * Removes the cron schedules `registerJobs` just installed.
- *
- * Every test in this file shares one database, and a worker instance runs
- * pg-boss's timekeeper. `CRON.doffinSync` is `'0 * * * *'`, so a run that
- * happens to cross the top of an hour gets a real `doffin.sync` injected into
- * it — which ingests, which enqueues `tender.match`, which lands in the counts
- * another test is asserting on.
- *
- * That is not hypothetical. It cost a run at 17:00:37, thirty-seven seconds
- * after the boundary, and passed on either side of it. A test that fails once
- * an hour reads as a flake and gets re-run, which is exactly how a real defect
- * acquires camouflage.
- */
-/*
- * Derived from what is actually scheduled, not from a list written here.
- *
- * This used to name the three jobs explicitly, and adding a fourth
- * (`signup.cleanup`) walked straight into the failure mode the paragraph above
- * describes: the new schedule survived `disableCron`, its timekeeper fired
- * mid-test, and an unrelated assertion about queue contents went red. The
- * hardcoded list could only ever be correct until the next schedule was added,
- * and the cost of it being wrong is a test that fails on a timer.
- */
-async function disableCron(boss: PgBoss): Promise<void> {
-  const scheduled = await boss.getSchedules();
-  await Promise.all(scheduled.map((entry) => boss.unschedule(entry.name)));
-}
-
 async function jobStates(boss: PgBoss, name: string): Promise<string[]> {
   const result = await boss
     .getDb()
@@ -191,6 +168,38 @@ describeDb('the pg-boss job runtime', () => {
     await harness?.destroy();
   });
 
+  /**
+   * **No test in this file may start pg-boss's cron timekeeper.**
+   *
+   * Every test here shares one database and asserts on what is in it, so a
+   * scheduled job firing mid-run lands in somebody's counts. The obvious
+   * defence — let cron start, then `unschedule()` everything before asserting
+   * — is what this file used to do, and it does not work. A tick is durable
+   * before it is a job: the timekeeper writes a row on pg-boss's internal
+   * `__pgboss__send-it` queue, and a second worker polling every five seconds
+   * turns that row into the real `doffin.sync`. Emptying the schedule table
+   * cannot recall a row that is already past it.
+   *
+   * The row also outlives the instance that wrote it. Observed, with
+   * timestamps, while diagnosing an intermittent failure of `enqueues matching
+   * only for tenders that changed`: the *previous* test's timekeeper inserted
+   * the tick at 20:29.863 and its runtime closed 100ms later without draining
+   * it; this test's queue started at 20:30.383 and its own send-it worker
+   * picked up the leftover on its first poll, creating a `doffin.sync` at
+   * 20:30.418 — before `disableCron` had even finished running, and entirely
+   * unaffected by it. A third ingestion run then appeared in a test that
+   * asserts there are two.
+   *
+   * It reads as a flake and it is a real defect wearing one: the tick only
+   * exists in the sixty seconds after the top of an hour, so the re-run that
+   * follows a red build passes roughly fifty-nine times out of sixty.
+   *
+   * So the guard is structural rather than a cleanup. `schedule: false` means
+   * this process never starts a timekeeper, which means it neither writes a
+   * tick nor consumes one another instance left behind. `worker` is left
+   * alone: the handlers are the subject of most of these tests, and it is only
+   * cron that has to go.
+   */
   async function start(options: { worker?: boolean } = {}): Promise<QueueRuntime> {
     const runtime = await startQueue({
       connectionString,
@@ -201,8 +210,10 @@ describeDb('the pg-boss job runtime', () => {
       // keeps that contention from being reported as a failure; not holding
       // three connections a test never uses is still the right default.
       max: 2,
+      schedule: false,
       ...(options.worker === undefined ? {} : { worker: options.worker }),
     });
+    expect(runtime.schedule).toBe(false);
     started.push(runtime);
     return runtime;
   }
@@ -338,8 +349,6 @@ describeDb('the pg-boss job runtime', () => {
       config: emailConfig(),
     });
 
-    await disableCron(boss);
-
     const working = new Set(boss.getWipData().map((entry) => entry.name));
     const unconsumed = ALL_JOB_NAMES.filter((name) => !working.has(name)).sort();
 
@@ -448,16 +457,22 @@ describeDb('the pg-boss job runtime', () => {
       config: emailConfig(),
     });
 
-    // Before anything is enqueued: cron off, and a baseline for the counts
-    // below. Both are needed — cron off so the hourly `doffin.sync` cannot
-    // inject an ingest into the middle of this test, the baseline so a job
-    // from an earlier test cannot satisfy the assertion on its own.
-    await disableCron(boss);
-    // Asserted, not assumed. Waiting for a run that happens to cross the top
-    // of an hour would make this gate fire once per twenty-four attempts; the
-    // schedule table being empty is the same fact, checkable every time.
-    expect(await boss.getSchedules()).toEqual([]);
+    // This test owns every `doffin.sync` that runs during it, and says so
+    // twice: here, and again at the end. Nothing else in this file sends one,
+    // and `start()` guarantees no timekeeper can, so anything but zero means a
+    // scheduled tick got in and the counts below are measuring two runs of
+    // this test plus an uninvited third.
+    //
+    // This replaced `expect(await boss.getSchedules()).toEqual([])`, which
+    // looked like the same fact and was not. That assertion held perfectly
+    // while a `doffin.sync` created ninety milliseconds earlier — by a tick a
+    // previous test's timekeeper had already pushed past the schedule table —
+    // sat queued and waiting to run. It checked the tap, not the pipe. See
+    // `start()`.
+    expect(await jobsCreated(boss, JOB.doffinSync)).toBe(0);
 
+    // A baseline, so a `tender.match` left by an earlier test cannot satisfy
+    // the assertion below on its own.
     const matchJobsBefore = await jobsCreated(boss, JOB.tenderMatch);
 
     const firstRun = await boss.send(JOB.doffinSync, {});
@@ -477,6 +492,11 @@ describeDb('the pg-boss job runtime', () => {
     // about a tender they were already told about.
     const secondRun = await boss.send(JOB.doffinSync, {});
     expect(await waitForJob(boss, secondRun)).toBe('completed');
+
+    // The other half of the guard above, and the half that catches a tick
+    // arriving *after* the baseline was taken rather than before it. Two jobs
+    // sent, two jobs in total: no third run happened at any point.
+    expect(await jobsCreated(boss, JOB.doffinSync)).toBe(2);
 
     const runs = await harness.db.select({ id: ingestionRuns.id }).from(ingestionRuns);
     expect(runs.length).toBe(2);

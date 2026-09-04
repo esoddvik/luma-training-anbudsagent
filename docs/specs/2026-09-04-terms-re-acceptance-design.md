@@ -142,13 +142,20 @@ the gate, which is deleting their account. "Refuse our terms and your only
 option is to destroy your data" is not a defensible position for a service whose
 terms are the thing being changed.
 
-**Open question for the owner, and the one thing this design does not settle.**
-Either sign-out is built as part of this work — a server action calling the
-existing `revoke()` and clearing the cookie, small and self-contained — or the
-gate ships knowing deletion is the only exit and that is recorded as a deliberate
-choice in `launch-readiness.md`. This document assumes the former; if the answer
-is the latter, the exempt-route table loses a row and the reasoning above must be
-written down rather than dropped.
+**Decided: sign-out is built as part of this work.** A server action that calls
+the existing `revoke()` on the current session and clears the cookie, reachable
+from the exempt route group and from the app navigation. It is small, it is
+self-contained, and the gate should not be the reason it finally gets built —
+but the gate is the reason it can no longer wait.
+
+| Route | Why it must stay reachable |
+| --- | --- |
+| Sign-out | A user must not be held inside a session by the gate, and deletion must not be the only way out of one. |
+
+Sign-out revokes the session row rather than only dropping the cookie. A cleared
+cookie leaves a live session behind that anything holding the token could still
+use; `validateSession` reads `revoked_at` on every request, so revoking is what
+actually ends it.
 
 Public and shared surfaces — `/delt/[token]`, `/finn-anbud`,
 `/kunngjoring/[id]`, the landing pages — are outside `(app)` and unaffected by
@@ -181,6 +188,9 @@ Integration, against a real database:
   a second submit of the same version writes neither;
 - accepting the terms grants no marketing consent (the existing assertion, kept
   passing across the new path);
+- sign-out revokes the session row, and the revoked session is refused on the
+  next request rather than merely losing its cookie;
+- sign-out is reachable while an acceptance is outstanding;
 - the sync inserts a new version, refuses a changed body on an existing version,
   and never deletes;
 - public routes are unaffected.

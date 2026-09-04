@@ -16,3 +16,9 @@ export {
   FORBIDDEN_PROMOTION_PHRASES,
   type EditorialSeed,
 } from './editorial-seeds.js';
+export {
+  currentLegalDocumentSeed,
+  legalDocumentSeedSchema,
+  LEGAL_DOCUMENT_SEEDS,
+  type LegalDocumentSeed,
+} from './legal-documents.js';

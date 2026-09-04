@@ -80,9 +80,22 @@ it afterwards. A crashed run can leave one behind; to clear them:
 
 ```bash
 docker exec luma-postgres psql -U luma -d postgres -tAc \
-  "SELECT 'DROP DATABASE \"' || datname || '\" WITH (FORCE);' FROM pg_database WHERE datname LIKE 'luma_test_%'" \
+  "SELECT 'DROP DATABASE \"' || datname || '\" WITH (FORCE);' FROM pg_database WHERE datname ~ '^luma_test_[0-9a-f]{32}$'" \
   | docker exec -i luma-postgres psql -U luma -d postgres
 ```
+
+**Match with `~`, not with `LIKE 'luma_test_%'`.** In SQL's `LIKE`, `_` is a
+single-character wildcard, so that pattern also matches names like
+`lumaXtestY...` — and this PostgreSQL instance is not necessarily Luma's alone.
+A machine running several projects keeps their databases here too, and this
+snippet generates `DROP DATABASE ... WITH (FORCE)` for everything it matches.
+
+The regex is anchored at both ends and spells the generated name out exactly:
+`testing/harness.ts` builds it as `luma_test_` followed by a `randomUUID()`
+with the dashes removed, which is always 32 lowercase hex characters.
+
+Read the `SELECT` output before piping it into the second `psql` if the
+instance holds anything you cannot re-create.
 
 ---
 

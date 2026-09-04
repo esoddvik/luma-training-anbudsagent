@@ -9,7 +9,7 @@ import { z } from 'zod';
 import { getWebDb, marketingConsentTextVersion, privacyPolicyVersion, type Database } from '../db';
 import { safeDraftReturnPath } from '../draft-profile';
 import { recordFunnelEvent } from '../funnel';
-import { requireUser } from '../session';
+import { requireCurrentTerms } from '../session';
 import { withMessage } from './messages';
 
 /**
@@ -38,7 +38,7 @@ import { withMessage } from './messages';
  * controlled, and every action below re-resolves the session and re-checks the
  * ownership itself. A layout is not a security boundary for a server action —
  * Next does not re-run it — which is the same reason `profile-actions.ts`
- * calls `requireUser()` in every export.
+ * calls `requireCurrentTerms()` in every export.
  */
 
 const REVIEW_PATH = '/registrering/profil';
@@ -105,7 +105,10 @@ function readReturnPath(formData: FormData): string | undefined {
  * be the opposite of what the button says.
  */
 export async function removeProfileCriterionAction(formData: FormData): Promise<void> {
-  const user = await requireUser();
+    // Gated on the terms in force (spec section 20.1): this is ordinary use of
+  // the service, and continuing to use it under text nobody agreed to is what
+  // the gate exists to stop. See `requireCurrentTerms`.
+  const user = await requireCurrentTerms();
 
   const idParsed = z.uuid().safeParse(formData.get('profileId'));
   const fieldParsed = criterionField.safeParse(formData.get('felt'));
@@ -177,7 +180,10 @@ export async function removeProfileCriterionAction(formData: FormData): Promise<
  * does nothing. The screen states the fact instead.
  */
 export async function activateProfileAction(formData: FormData): Promise<void> {
-  const user = await requireUser();
+    // Gated on the terms in force (spec section 20.1): this is ordinary use of
+  // the service, and continuing to use it under text nobody agreed to is what
+  // the gate exists to stop. See `requireCurrentTerms`.
+  const user = await requireCurrentTerms();
 
   const idParsed = z.uuid().safeParse(formData.get('profileId'));
   if (!idParsed.success) redirect(withMessage('/varsler', 'ugyldig'));

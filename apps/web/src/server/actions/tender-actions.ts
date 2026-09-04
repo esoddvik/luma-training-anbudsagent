@@ -9,7 +9,7 @@ import { feedbackVerdictSchema } from '@luma/domain';
 import { MATCHING_VERSION } from '@luma/matching';
 import { z } from 'zod';
 import { getWebDb, shareTtlDays } from '../db';
-import { requireUser } from '../session';
+import { requireCurrentTerms, requireUser } from '../session';
 import { findActiveShare } from '../shares';
 import { withMessage } from './messages';
 
@@ -50,7 +50,10 @@ async function setTenderState(
   formData: FormData,
   state: 'saved' | 'dismissed' | 'opened',
 ): Promise<never> {
-  const user = await requireUser();
+    // Gated on the terms in force (spec section 20.1): this is ordinary use of
+  // the service, and continuing to use it under text nobody agreed to is what
+  // the gate exists to stop. See `requireCurrentTerms`.
+  const user = await requireCurrentTerms();
   const returnTo = readReturnTo(formData);
   const parsed = uuid.safeParse(formData.get('tenderId'));
   if (!parsed.success) redirect(withMessage(returnTo, 'ugyldig'));
@@ -109,7 +112,10 @@ async function setTenderState(
  * that section forbids.
  */
 export async function submitFeedbackAction(formData: FormData): Promise<void> {
-  const user = await requireUser();
+    // Gated on the terms in force (spec section 20.1): this is ordinary use of
+  // the service, and continuing to use it under text nobody agreed to is what
+  // the gate exists to stop. See `requireCurrentTerms`.
+  const user = await requireCurrentTerms();
   const returnTo = readReturnTo(formData);
 
   const rawProfile = formData.get('alertProfileId');
@@ -189,7 +195,10 @@ export async function submitFeedbackAction(formData: FormData): Promise<void> {
  * one.
  */
 export async function createShareAction(formData: FormData): Promise<void> {
-  const user = await requireUser();
+    // Gated on the terms in force (spec section 20.1): this is ordinary use of
+  // the service, and continuing to use it under text nobody agreed to is what
+  // the gate exists to stop. See `requireCurrentTerms`.
+  const user = await requireCurrentTerms();
   const returnTo = readReturnTo(formData);
   const parsed = uuid.safeParse(formData.get('tenderId'));
   if (!parsed.success) redirect(withMessage(returnTo, 'ugyldig'));
@@ -225,6 +234,11 @@ export async function createShareAction(formData: FormData): Promise<void> {
 
 /** Revokes a share link. Immediate: the public page reads `revoked_at` live. */
 export async function revokeShareAction(formData: FormData): Promise<void> {
+    // Deliberately NOT gated on the terms in force (spec section 20.1).
+  // Revoking a share removes access somebody else has. Blocking it would keep a
+  // link alive because its owner would not accept new terms.
+  // The gate stops continued *use* of the service under text nobody agreed
+  // to; it must never stop somebody reducing their footprint or leaving.
   const user = await requireUser();
   const parsed = uuid.safeParse(formData.get('shareId'));
   if (!parsed.success) redirect(withMessage('/delinger', 'ugyldig'));

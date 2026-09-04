@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { requireUser } from '@/server/session';
+import { requireCurrentTerms } from '@/server/session';
 import { NavTabs } from './_components/nav-tabs';
 import { SignOutForm } from './_components/sign-out-form';
 
@@ -16,6 +16,18 @@ import { SignOutForm } from './_components/sign-out-form';
  * server action re-resolves the session itself, and every query in
  * `src/server/` takes a user id and scopes by it. This check keeps the *pages*
  * honest; the actions defend themselves.
+ *
+ * `requireCurrentTerms` is `requireUser` plus the terms gate (spec section
+ * 20.1): a user who has not accepted the version in force is sent to
+ * `/vilkar/godta`. It is here for exactly the same reason the authentication
+ * check is, and it is repeated in the write actions for exactly the same
+ * reason too.
+ *
+ * The routes that must stay reachable while an acceptance is outstanding --
+ * the acceptance page, account deletion, data export, sign-out -- are not
+ * under this layout. They live in `(konto)`, which authenticates without
+ * gating, because a layout cannot see the pathname and so cannot exempt one
+ * child.
  */
 
 const NAV_ITEMS = [
@@ -30,7 +42,7 @@ const NAV_ITEMS = [
 ] as const;
 
 export default async function AppLayout({ children }: { children: ReactNode }) {
-  await requireUser();
+  await requireCurrentTerms();
 
   return (
     <div className="flex flex-col gap-xl">

@@ -6,6 +6,7 @@ import * as schema from '@luma/db/schema';
 import type { Database } from './db';
 import { loginPath } from '@/lib/return-path';
 import { authPepper, getWebDb } from './db';
+import { outstandingTerms } from './legal';
 
 /**
  * The authentication boundary for the web app (spec section 10, ADR-16).
@@ -152,4 +153,45 @@ export async function userProfileIds(db: Database, userId: string): Promise<stri
     .from(schema.alertProfiles)
     .where(and(eq(schema.alertProfiles.userId, userId), isNull(schema.alertProfiles.deletedAt)));
   return rows.map((row) => row.id);
+}
+
+/**
+ * The signed-in user, or a redirect to the acceptance they owe
+ * (spec section 20.1, section 51 blocker 2).
+ *
+ * Spec section 20.1 says the user **must** accept the terms in force. Until
+ * this existed, publishing a new version changed nothing for anyone already
+ * signed up: every user recruited under the placeholder kept using the service
+ * under text nobody had agreed to, and `getLegalStatus` reported it to an API
+ * nobody called.
+ *
+ * ## Where this is called, and why in two places
+ *
+ * `(app)/layout.tsx` calls it, which covers the pages. Every server action
+ * that writes calls it again, because Next does not re-run a layout for a
+ * server action and a route handler bypasses layouts entirely — the same
+ * reason `requireUser` is repeated in the actions rather than trusted from the
+ * layout above them.
+ *
+ * ## What it must not reach
+ *
+ * The acceptance page itself, account deletion, data export and sign-out. They
+ * live in `(konto)`, which authenticates without gating, because a Next layout
+ * cannot see the pathname and so cannot exempt one child. A gate that blocked
+ * deletion would mean "accept our new terms or you cannot delete your data".
+ *
+ * When no version is in force, nothing is owed and this does not redirect.
+ * `isAcceptanceOutstanding` decides that, and the alternative — treating an
+ * empty table as "everybody owes an acceptance" — takes the whole service down
+ * for every user at once.
+ */
+export async function requireCurrentTerms(returnPath?: string): Promise<SignedInUser> {
+  const user = await requireUser(returnPath);
+
+  const outstanding = await outstandingTerms(getWebDb(), user.id);
+  if (!outstanding) return user;
+
+  redirect(
+    returnPath ? `/vilkar/godta?retur=${encodeURIComponent(returnPath)}` : '/vilkar/godta',
+  );
 }

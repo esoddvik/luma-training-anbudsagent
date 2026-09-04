@@ -46,6 +46,11 @@ function checkbox(formData: FormData, name: string): boolean {
 }
 
 export async function updateNotificationPreferencesAction(formData: FormData): Promise<void> {
+    // Deliberately NOT gated on the terms in force (spec section 20.1).
+  // This is how a user turns the emails off. Gating it would mean "accept our
+  // new terms or you cannot stop our emails".
+  // The gate stops continued *use* of the service under text nobody agreed
+  // to; it must never stop somebody reducing their footprint or leaving.
   const user = await requireUser();
 
   const parsed = preferencesForm.safeParse({
@@ -80,6 +85,11 @@ export async function updateNotificationPreferencesAction(formData: FormData): P
  * screen.
  */
 export async function setMarketingConsentAction(formData: FormData): Promise<void> {
+    // Deliberately NOT gated on the terms in force (spec section 20.1).
+  // Section 20.2 requires marketing consent to be withdrawable. Gating it would
+  // make withdrawal conditional on accepting something else.
+  // The gate stops continued *use* of the service under text nobody agreed
+  // to; it must never stop somebody reducing their footprint or leaving.
   const user = await requireUser();
   const grant = formData.get('samtykke') === 'ja';
 
@@ -128,6 +138,11 @@ export async function setMarketingConsentAction(formData: FormData): Promise<voi
  * row that no longer exists.
  */
 export async function deleteAccountAction(formData: FormData): Promise<void> {
+    // Deliberately NOT gated on the terms in force (spec section 20.1).
+  // "Accept our new terms or you cannot delete your data" is exactly backwards,
+  // and the terms are the thing being changed.
+  // The gate stops continued *use* of the service under text nobody agreed
+  // to; it must never stop somebody reducing their footprint or leaving.
   const user = await requireUser();
   const confirmation = formData.get('bekreftelse');
 

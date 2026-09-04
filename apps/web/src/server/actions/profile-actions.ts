@@ -9,7 +9,7 @@ import { z } from 'zod';
 import { getWebDb, type Database } from '../db';
 import { recordFunnelEvent } from '../funnel';
 import { clearCriteria, writeCriteria } from '../profile-write';
-import { requireUser } from '../session';
+import { requireCurrentTerms, requireUser } from '../session';
 import { withMessage } from './messages';
 
 /**
@@ -118,7 +118,10 @@ function readProfileForm(formData: FormData): ProfileForm | null {
 }
 
 export async function createProfileAction(formData: FormData): Promise<void> {
-  const user = await requireUser();
+    // Gated on the terms in force (spec section 20.1): this is ordinary use of
+  // the service, and continuing to use it under text nobody agreed to is what
+  // the gate exists to stop. See `requireCurrentTerms`.
+  const user = await requireCurrentTerms();
   const form = readProfileForm(formData);
   if (!form) redirect(withMessage('/varsler/ny', 'ugyldig'));
 
@@ -156,7 +159,10 @@ export async function createProfileAction(formData: FormData): Promise<void> {
 }
 
 export async function updateProfileAction(formData: FormData): Promise<void> {
-  const user = await requireUser();
+    // Gated on the terms in force (spec section 20.1): this is ordinary use of
+  // the service, and continuing to use it under text nobody agreed to is what
+  // the gate exists to stop. See `requireCurrentTerms`.
+  const user = await requireCurrentTerms();
   const idParsed = z.uuid().safeParse(formData.get('profileId'));
   if (!idParsed.success) redirect(withMessage('/varsler', 'ugyldig'));
 
@@ -196,7 +202,10 @@ export async function updateProfileAction(formData: FormData): Promise<void> {
 
 /** Pauses or resumes a profile (spec section 4.4). Never deletes anything. */
 export async function toggleProfileActiveAction(formData: FormData): Promise<void> {
-  const user = await requireUser();
+    // Gated on the terms in force (spec section 20.1): this is ordinary use of
+  // the service, and continuing to use it under text nobody agreed to is what
+  // the gate exists to stop. See `requireCurrentTerms`.
+  const user = await requireCurrentTerms();
   const idParsed = z.uuid().safeParse(formData.get('profileId'));
   if (!idParsed.success) redirect(withMessage('/varsler', 'ugyldig'));
 
@@ -239,6 +248,11 @@ export async function toggleProfileActiveAction(formData: FormData): Promise<voi
  * path is what removes it for real.
  */
 export async function deleteProfileAction(formData: FormData): Promise<void> {
+    // Deliberately NOT gated on the terms in force (spec section 20.1).
+  // Removing a profile reduces what the service does for the user. Nobody should
+  // have to agree to new terms to stop something.
+  // The gate stops continued *use* of the service under text nobody agreed
+  // to; it must never stop somebody reducing their footprint or leaving.
   const user = await requireUser();
   const idParsed = z.uuid().safeParse(formData.get('profileId'));
   if (!idParsed.success) redirect(withMessage('/varsler', 'ugyldig'));

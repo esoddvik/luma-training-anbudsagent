@@ -2,8 +2,13 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { and, eq } from 'drizzle-orm';
+import * as schema from '@luma/db/schema';
+import { safeReturnPath } from '@/lib/return-path';
+import { getWebDb } from '../db';
+import { recordTermsAcceptance } from '../legal';
 import { applyLegalDocumentDrift } from '../legal-documents';
-import { requireAdmin } from '../session';
+import { requireAdmin, requireUser } from '../session';
 import { withMessage } from './messages';
 
 /**
@@ -44,4 +49,64 @@ export async function syncLegalDocumentsAction(): Promise<void> {
         : 'vilkar-uendret';
 
   redirect(withMessage('/admin/vilkar', code));
+}
+
+/**
+ * Accepting the terms version the user was shown (spec section 20.1).
+ *
+ * ## The version comes from the form
+ *
+ * Not re-read as "whatever is current now". If a newer version is published
+ * between the page rendering and the button being pressed, the user accepts
+ * the one they actually read, and the gate catches them again on the next
+ * request — which is correct, because they have not seen the newer one.
+ * Recording an acceptance of text nobody was shown is the failure this whole
+ * flow exists to fix, and doing it here would be doing it deliberately.
+ *
+ * An unknown version is a stale or forged form, so it is sent back to the page
+ * rather than recorded. `recordTermsAcceptance` would refuse it anyway — the
+ * acceptance has a composite foreign key onto the version — but a Norwegian
+ * page is a better answer than a constraint violation.
+ */
+export async function acceptTermsAction(formData: FormData): Promise<void> {
+  const user = await requireUser();
+  const version = String(formData.get('versjon') ?? '');
+  const returnPath = safeReturnPath(String(formData.get('retur') ?? ''));
+
+  const db = getWebDb();
+  const [documentVersion] = await db
+    .select({
+      version: schema.legalDocumentVersions.version,
+      body: schema.legalDocumentVersions.body,
+      effectiveFrom: schema.legalDocumentVersions.effectiveFrom,
+    })
+    .from(schema.legalDocumentVersions)
+    .where(
+      and(
+        eq(schema.legalDocumentVersions.kind, 'terms'),
+        eq(schema.legalDocumentVersions.version, version),
+      ),
+    )
+    .limit(1);
+
+  if (!documentVersion) redirect('/vilkar/godta');
+
+  await db.transaction(async (tx) => {
+    await recordTermsAcceptance(tx, {
+      userId: user.id,
+      version: documentVersion.version,
+      body: documentVersion.body,
+      effectiveFrom: documentVersion.effectiveFrom,
+      now: new Date(),
+      // Not captured here. The acceptance carries the same evidential weight
+      // wherever it happened, and the signup path records these because it has
+      // them on the pending row; inventing them from a server action would be
+      // recording something we did not observe.
+      ipAddressHash: null,
+      userAgent: null,
+      source: 'account_settings',
+    });
+  });
+
+  redirect(returnPath ?? '/oversikt');
 }

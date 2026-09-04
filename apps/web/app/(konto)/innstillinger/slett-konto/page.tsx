@@ -4,7 +4,11 @@ import { Alert, Button, buttonClassName, Card, Field, Input, Stack } from '@luma
 import { deleteAccountAction } from '@/server/actions/settings-actions';
 import { requireUser } from '@/server/session';
 import { privacyPolicyUrl } from '@/lib/legal';
-import { PageHeader } from '../../_components/page-header';
+// Imported across the route-group boundary rather than copied, the same way
+// `(admin)` imports it. This page lives in `(konto)` so the terms gate cannot
+// reach it: a user who declines new terms must still be able to delete their
+// account. The URL is unchanged -- route groups do not appear in paths.
+import { PageHeader } from '../../../(app)/_components/page-header';
 
 export const metadata: Metadata = {
   title: 'Slett kontoen',

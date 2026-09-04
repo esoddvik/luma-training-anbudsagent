@@ -1,6 +1,7 @@
-import type { ConsentSource } from '@luma/domain';
+import { and, desc, eq } from 'drizzle-orm';
+import { isAcceptanceOutstanding, type ConsentSource } from '@luma/domain';
 import * as schema from '@luma/db/schema';
-import { privacyPolicyVersion } from './db';
+import { privacyPolicyVersion, type Database } from './db';
 import type { Tx } from './profile-write';
 
 /**
@@ -123,3 +124,49 @@ export async function recordTermsAcceptance(
   });
 }
 
+
+/**
+ * The terms version in force and whether this user still owes it
+ * (spec section 20.1).
+ *
+ * Returns the body alongside the version so the acceptance page renders
+ * exactly the text the user is being asked to accept, rather than fetching it
+ * a second time and risking a different answer between the two reads.
+ *
+ * `null` means nothing is owed — which includes the case where no version is
+ * in force at all. `isAcceptanceOutstanding` decides that, in `@luma/domain`,
+ * so this and `apps/core`'s `getLegalStatus` cannot answer it differently.
+ */
+export async function outstandingTerms(
+  db: Database,
+  userId: string,
+): Promise<{ version: string; body: string; effectiveFrom: Date } | null> {
+  const [current] = await db
+    .select({
+      version: schema.legalDocumentVersions.version,
+      body: schema.legalDocumentVersions.body,
+      effectiveFrom: schema.legalDocumentVersions.effectiveFrom,
+    })
+    .from(schema.legalDocumentVersions)
+    .where(eq(schema.legalDocumentVersions.kind, 'terms'))
+    .orderBy(desc(schema.legalDocumentVersions.effectiveFrom))
+    .limit(1);
+
+  const [accepted] = await db
+    .select({ version: schema.userLegalAcceptances.version })
+    .from(schema.userLegalAcceptances)
+    .where(
+      and(
+        eq(schema.userLegalAcceptances.userId, userId),
+        eq(schema.userLegalAcceptances.kind, 'terms'),
+      ),
+    )
+    .orderBy(desc(schema.userLegalAcceptances.acceptedAt))
+    .limit(1);
+
+  if (!isAcceptanceOutstanding(current?.version ?? null, accepted?.version ?? null)) return null;
+
+  // Non-null whenever the decision above says something is outstanding: a null
+  // current version is never outstanding.
+  return current!;
+}

@@ -127,8 +127,6 @@ describeDb('legal document sync', () => {
     const after = await harness.db.select().from(schema.legalDocumentVersions);
 
     expect(after).toHaveLength(before.length);
-    expect(after.map((row) => row.version).sort()).toEqual(
-      before.map((row) => row.version).sort(),
-    );
+    expect(after.map((row) => row.version).sort()).toEqual(before.map((row) => row.version).sort());
   });
 });

@@ -58,10 +58,7 @@ describe('computeLegalDocumentDrift', () => {
   });
 
   it('keeps the two kinds apart', () => {
-    const report = computeLegalDocumentDrift(
-      [row({ kind: 'privacy' })],
-      [seed({ kind: 'terms' })],
-    );
+    const report = computeLegalDocumentDrift([row({ kind: 'privacy' })], [seed({ kind: 'terms' })]);
     expect(report.insertable.map((entry) => entry.kind)).toEqual(['terms']);
     expect(report.unseeded).toEqual([{ kind: 'privacy', version: '2026-03' }]);
   });

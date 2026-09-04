@@ -113,6 +113,24 @@ export const ACTION_MESSAGES_NB = {
     tone: 'danger',
     text: 'Etterfyllingen kunne ikke kjøres.',
   },
+  'vilkar-publisert': {
+    tone: 'success',
+    text: 'Nye vilkårsversjoner er publisert. De gjelder fra datoen som står på hver versjon.',
+  },
+  'vilkar-uendret': {
+    tone: 'info',
+    // Not a warning, for the same reason as `maler-uendret` below: pressing
+    // the button on a page that showed nothing to publish is not a mistake.
+    text: 'Ingen nye vilkårsversjoner å publisere. Tabellen er allerede lik det som er sjekket inn.',
+  },
+  'vilkar-konflikt': {
+    tone: 'danger',
+    // A conflict means a published version's text was changed directly in the
+    // database. It is not fixed by synchronising -- doing that would rewrite
+    // what people have already accepted -- so the message says what to do
+    // instead.
+    text: 'En publisert vilkårsversjon er endret direkte i databasen. Den blir ikke overskrevet. Publiser en ny versjon i stedet.',
+  },
   'maler-synkronisert': {
     tone: 'success',
     text: 'Tjenestemalene er synkronisert med det redaksjonelle innholdet. Avvikene under er borte når siden er lastet på nytt.',

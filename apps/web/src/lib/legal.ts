@@ -20,5 +20,8 @@ export function privacyPolicyUrl(): string {
     : FALLBACK_PRIVACY_POLICY_URL;
 }
 
-/** Version identifier stamped on accepted terms. Spec section 19 and 21. */
-export const TERMS_VERSION = '2026-01-utkast';
+// `TERMS_VERSION` used to live here. It is gone deliberately: the version is a
+// property of the document, and the document is `@luma/content`'s
+// `LEGAL_DOCUMENT_SEEDS`. A constant here was a second answer to "which
+// version is in force", and it disagreed with `legal_document_versions`
+// without anything noticing.

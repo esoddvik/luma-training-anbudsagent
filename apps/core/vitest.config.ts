@@ -25,5 +25,36 @@ export default defineConfig({
      * tomorrow inherits it without its author having to discover this.
      */
     hookTimeout: 60_000,
+    /**
+     * The same argument, for the tests themselves rather than their hooks.
+     *
+     * The reasoning above was applied to `hookTimeout` and stopped there,
+     * leaving 166 of this package's 176 integration tests on Vitest's
+     * five-second default. `queue.integration.test.ts` worked around that by
+     * declaring a timeout on every single test — a per-file fix for something
+     * that belongs here, and one the next suite's author would have to know to
+     * repeat.
+     *
+     * **What this does not fix, because the two are easy to confuse.** A
+     * reported test duration is not the number `testTimeout` is compared
+     * against. Vitest starts the duration clock before `beforeEach` and stops
+     * it after `afterEach`, while the timeout's own timer starts inside the
+     * wrapper around the test function — so hooks are counted in the duration
+     * and guarded by `hookTimeout` instead. That is why a test here was
+     * observed reporting 40114ms and passing under the five-second default:
+     * roughly 38 seconds of it was a `truncate ... cascade` in `beforeEach`
+     * waiting on ACCESS EXCLUSIVE against a PostgreSQL shared by fourteen
+     * suites, and its body ran in the same ~1.6s as its two siblings.
+     *
+     * So this is insurance for test *bodies*, not an answer to those long
+     * durations. It is worth having anyway: the queue suite's bodies alone run
+     * two to thirteen seconds, and a body that drifts past five under load
+     * would fail at random — which, after two false alarms, teaches everyone
+     * to re-run rather than to look.
+     *
+     * Matched to `apps/web` and `packages/db`, which reached 30 seconds by the
+     * same route.
+     */
+    testTimeout: 30_000,
   },
 });

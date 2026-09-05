@@ -152,7 +152,7 @@ describeDb('the pg-boss job runtime', () => {
   beforeAll(async () => {
     harness = await createTestDatabase();
     connectionString = connectionStringFor(harness.databaseName);
-  }, 60_000);
+  });
 
   afterEach(async () => {
     // Each test owns its queue instance. Stopping them here rather than in the
@@ -237,7 +237,7 @@ describeDb('the pg-boss job runtime', () => {
     expect(tables).toContain('schedule');
 
     expect(await boss.isInstalled()).toBe(true);
-  }, 60_000);
+  });
 
   it('picks up and runs an enqueued job', async () => {
     const { boss } = await start({ worker: false });
@@ -254,7 +254,7 @@ describeDb('the pg-boss job runtime', () => {
 
     await waitFor(async () => seen.length === 1, 'the job to be handled');
     expect(seen[0]).toBe(jobId);
-  }, 60_000);
+  });
 
   it('retries a throwing handler and lands it in a failed, dead-lettered state', async () => {
     const { boss } = await start({ worker: false });
@@ -298,7 +298,7 @@ describeDb('the pg-boss job runtime', () => {
       async () => (await jobsCreated(boss, DEAD_LETTER_QUEUE)) > deadLetteredBefore,
       'the job to be dead-lettered',
     );
-  }, 60_000);
+  });
 
   it('reports real depth on an instance that runs no monitor', async () => {
     // `worker: false` means `supervise: false`, which means this process never
@@ -336,7 +336,7 @@ describeDb('the pg-boss job runtime', () => {
     // "missing" without consulting the job registry itself.
     expect(status.length).toBe(ALL_JOB_NAMES.length + 1);
     expect(status.map((entry) => entry.name)).toContain(DEAD_LETTER_QUEUE);
-  }, 60_000);
+  });
 
   it('leaves exactly the five known job types without a worker', async () => {
     const { boss } = await start();
@@ -369,7 +369,7 @@ describeDb('the pg-boss job runtime', () => {
         JOB.orderRequestNotify,
       ].sort(),
     );
-  }, 60_000);
+  });
 
   it('throws rather than hanging when the reading exceeds its budget', async () => {
     const { boss } = await start({ worker: false });
@@ -386,7 +386,7 @@ describeDb('the pg-boss job runtime', () => {
     // A dashboard that renders "unavailable" is more use than one that never
     // paints, so the caller needs a rejection it can catch.
     await expect(queueStatus(boss, 1)).rejects.toThrow(/timed out/);
-  }, 60_000);
+  });
 
   it('configures every real queue with backoff, a retry limit and a dead letter', async () => {
     const { boss } = await start({ worker: false });
@@ -410,7 +410,7 @@ describeDb('the pg-boss job runtime', () => {
     // The one queue that must NOT retry: a retried send is a second email.
     const send = await boss.getQueue(JOB.emailSend);
     expect(send?.retryLimit).toBe(0);
-  }, 60_000);
+  });
 
   it('registers each cron schedule exactly once, however many times it boots', async () => {
     const { boss } = await start({ worker: false });
@@ -438,7 +438,7 @@ describeDb('the pg-boss job runtime', () => {
     const again = await boss.getSchedules();
     expect(again.length).toBe(first.length);
     expect(new Set(again.map((entry) => entry.name)).size).toBe(4);
-  }, 60_000);
+  });
 
   it('enqueues matching only for tenders that changed', async () => {
     await harness.db.execute(
@@ -502,6 +502,24 @@ describeDb('the pg-boss job runtime', () => {
     expect(runs.length).toBe(2);
 
     expect(await jobsCreated(boss, JOB.tenderMatch)).toBe(afterFirstRun);
+
+    // The only test in this file that still declares its own budget, now that
+    // `testTimeout: 30_000` at project level covers the other nine.
+    //
+    // It is the slowest test here by a wide margin — two full ingests, each
+    // waiting on a worker that polls every two seconds — and the gap between
+    // its typical run and its worst is what decides this. Measured across full
+    // parallel runs of fourteen suites against one PostgreSQL: about 4.5s
+    // typical, 13.0s at its worst. The rest of the file peaks below 5s and has
+    // six times the headroom on 30 seconds; this one would have two.
+    //
+    // Two times is not enough *here specifically*, and the reason is in the
+    // header above: a test that goes red at random gets re-run rather than
+    // read, which is precisely how the cron defect this file was built to
+    // catch stayed hidden. A timeout failure is a false red, not a false
+    // green, so it hides nothing directly — but it spends the credibility of
+    // the one gate standing between an idempotent re-ingest and a user being
+    // alerted twice, and that is not a cheap thing to spend.
   }, 90_000);
 
   it('drains an in-flight handler on shutdown rather than abandoning it', async () => {
@@ -527,7 +545,7 @@ describeDb('the pg-boss job runtime', () => {
     started.pop();
 
     expect(finished).toBe(true);
-  }, 60_000);
+  });
 });
 
 /** The non-database configuration the email jobs need. Values are irrelevant here. */

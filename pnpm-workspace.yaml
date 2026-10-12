@@ -17,7 +17,7 @@ catalog:
   # Language and tooling
   typescript: ^5.9.3
   tsx: ^4.23.5
-  vite: ^7.3.1
+  vite: ^8.3.4
   vitest: ^4.1.10
   '@vitest/coverage-v8': ^4.1.10
 

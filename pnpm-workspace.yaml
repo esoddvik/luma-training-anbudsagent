@@ -15,7 +15,7 @@ onlyBuiltDependencies:
 # forbids alpha features in the MVP. Everything else takes a caret range.
 catalog:
   # Language and tooling
-  typescript: ^5.9.3
+  typescript: ^6.0.3
   tsx: ^4.23.5
   vite: ^7.3.1
   vitest: ^4.1.10
